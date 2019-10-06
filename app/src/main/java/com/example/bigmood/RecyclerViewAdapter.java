@@ -31,10 +31,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //set up a new viewholder to mount onto main activity
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_main, parent, false);
-       ViewHolder holder = new ViewHolder(view);
-       holder.text.setText(moodIDs.get(viewType).mood());
-       return holder;
+       //View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_main, parent, false);
+       //ViewHolder holder = new ViewHolder(view);
+       //
+       //holder.text.setText(moodIDs.get(viewType).mood());
+       //return holder;
+        return null;
 
     }
 
@@ -58,17 +60,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     //constructor for ViewHolder object, which holds our xml components together
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView text;
-        CoordinatorLayout parentLayout;
+        // TextView text;
+        // CoordinatorLayout parentLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             //establish views here
-            text = itemView.findViewById(R.id.textView);
             // date = itemView.findViewById(R.id.dateView);
             // time  = itemView.findViewById(R.id.timeView);
             // distance = itemView.findViewById(R.id.distanceView);
-            parentLayout = itemView.findViewById(R.id.C);
+            // parentLayout = itemView.findViewById(R.id.C);
         }
     }
 }
