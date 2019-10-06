@@ -18,8 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    //private ArrayList<mood_object> m = new ArrayList<>();
-    private ArrayList moodObject = new ArrayList<>();
+    private ArrayList<moodObject> moodObject = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
 
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-       FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -40,14 +39,15 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
+        moodObject.add(new moodObject("BigMood"));
+        moodObject.add(new moodObject("BigMood2"));
+        moodObject.add(new moodObject("BigMood3"));
         initRecyclerView();
     }
 
     private void initRecyclerView(){
         Log.d(TAG, "initRecyclerView: init recyclerview");
-        //recyclerView = findViewById(R.id.recyclerView);
-        //id of recycler view should be this.
+        recyclerView = findViewById(R.id.recyclerView);
         adapter = new RecyclerViewAdapter(moodObject, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
