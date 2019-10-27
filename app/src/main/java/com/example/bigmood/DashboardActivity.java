@@ -18,9 +18,10 @@ public class DashboardActivity extends AppCompatActivity {
     private RecyclerViewAdapter adapter;
     private ArrayList<moodObject> moodObjects = new ArrayList<>();
     FloatingActionButton fab;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_dashboard);
 
         this.fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

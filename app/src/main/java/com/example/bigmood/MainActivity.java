@@ -1,5 +1,6 @@
 package com.example.bigmood;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        Intent intent = new Intent(this, DashboardActivity.class);
+        startActivity(intent);
     }
 }
