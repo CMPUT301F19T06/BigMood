@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         findViewById(R.id.button_login_button).setOnClickListener(this);
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -100,11 +101,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             findViewById(R.id.button_login_button).setVisibility(View.GONE);
             TextView welcomeMsg = findViewById(R.id.textView_login_welcome_msg);
             welcomeMsg.setText(String.format("Welcome %s", account.getDisplayName()));
+            welcomeMsg.setVisibility(View.VISIBLE);
+            startDashboard(account.getId());
         }
     }
 
-    protected void startDashboard() {
+    protected void startDashboard(String id) {
         Intent intent = new Intent(this, DashboardActivity.class);
+        intent.putExtra("USER_ID", id);
         startActivity(intent);
     }
 }
