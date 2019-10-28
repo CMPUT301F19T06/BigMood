@@ -1,8 +1,10 @@
 package com.example.bigmood;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,6 +35,10 @@ public class DashboardActivity extends AppCompatActivity {
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
 
         initRecyclerView();
+
+        Intent intent = getIntent();
+        TextView temp = findViewById(R.id.hello_world);
+        temp.setText(intent.getExtras().getString("USER_ID"));
     }
 
     private void startSideMenu() {
