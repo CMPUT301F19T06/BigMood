@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
     private static final String TAG = "DASHBOARDACTIVITY";
-    public static final int START = 1;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private ArrayList<moodObject> moodObjects = new ArrayList<>();
