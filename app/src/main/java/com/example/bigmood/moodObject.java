@@ -1,6 +1,8 @@
 package com.example.bigmood;
 
-public class moodObject {
+import java.io.Serializable;
+
+public class moodObject implements Serializable {
     private String mood;
 
     public moodObject (String mood) {
