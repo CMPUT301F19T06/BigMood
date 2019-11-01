@@ -14,6 +14,8 @@ public class moodObject implements Serializable {
     private int moodColor;
     private Date moodDate;
 
+    private String moodID;
+
     public moodObject (String mood) {
         this.moodType = mood;
     }
