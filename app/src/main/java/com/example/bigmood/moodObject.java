@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-public class Mood implements Serializable {
+public class moodObject implements Serializable {
 
     private String moodType; //The type of mood
 
