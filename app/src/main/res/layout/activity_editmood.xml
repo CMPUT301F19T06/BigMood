@@ -34,8 +34,8 @@
 
     <Button
         android:id="@+id/button_editmood_save"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
@@ -55,9 +55,21 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:clickable="true"
-        app:elevation="6dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_editmood_image"
         app:srcCompat="?attr/colorAccent" />
+
+    <Spinner
+        android:id="@+id/spinner_editmood_moodType"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:clipChildren="false"
+        android:dropDownWidth="wrap_content"
+        android:entries="@array/editmood_moodspinner"
+        android:popupBackground="@color/colorAccent"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="@+id/button_editmood_emoji"
+        app:layout_constraintStart_toEndOf="@+id/button_editmood_emoji" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
