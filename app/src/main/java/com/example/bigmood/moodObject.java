@@ -16,8 +16,57 @@ public class moodObject implements Serializable {
 
     private String moodID;
 
+    public String getMoodTitle() {
+        return moodTitle;
+    }
+
+    public void setMoodTitle(String moodTitle) {
+        this.moodTitle = moodTitle;
+    }
+
+    public String getMoodReason() {
+        return moodReason;
+    }
+
+    public void setMoodReason(String moodReason) {
+        this.moodReason = moodReason;
+    }
+
+    public String getMoodPhoto() {
+        return moodPhoto;
+    }
+
+    public void setMoodPhoto(String moodPhoto) {
+        this.moodPhoto = moodPhoto;
+    }
+
+    public String getMoodEmoji() {
+        return moodEmoji;
+    }
+
+    public void setMoodEmoji(String moodEmoji) {
+        this.moodEmoji = moodEmoji;
+    }
+
+    private String moodTitle;
+    private String moodReason;
+    private String moodPhoto;
+    private String moodEmoji;
+
     public moodObject (String mood) {
         this.moodType = mood;
+    }
+
+    public void setMoodType(String moodType) {
+        this.moodType = moodType;
+    }
+
+    public String getMoodID() {
+        return moodID;
+    }
+
+    public void setMoodID(String moodID) {
+        this.moodID = moodID;
     }
 
     public moodObject (String moodType, String moodDescription, int moodColor, Date moodDate){
