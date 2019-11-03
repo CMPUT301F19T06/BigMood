@@ -4,29 +4,40 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Date;
 import java.util.HashMap;
 
 public class DatabaseManager {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public final CollectionReference userCollectionReference = db.collection("Users");
-    public final CollectionReference moodCollectionReference = db.collection("Moods");
-    public final CollectionReference requestsCollectionReference = db.collection("FollowRequests");
+    private FirebaseFirestore db;
+    private CollectionReference userCollectionReference;
+    private CollectionReference moodCollectionReference;
+    private CollectionReference requestsCollectionReference;
     public final String SET_MOOD_TAG = "Set mood";
     public final String GET_MOOD_TAG = "Get mood";
     public final String SET_USER_TAG = "Set user";
     public final String GET_USER_TAG = "Get user";
     private User workingUser;
     private moodObject workingMood;
+
+    public DatabaseManager() {
+        this.db = FirebaseFirestore.getInstance();
+        this.userCollectionReference = db.collection("Users");
+        this.moodCollectionReference = db.collection("Moods");
+        this.requestsCollectionReference = db.collection("FollowRequests");
+    }
 
     public void addUser(User user) {
         //Possible errors: data fails to upload, invalid data maybe?
@@ -59,15 +70,15 @@ public class DatabaseManager {
     }
 
     public User getUser(String userId) {
-        DocumentReference docRef = userCollectionReference.document(userId);
-        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        Query query = userCollectionReference.whereEqualTo("userId", userId).limit(1);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                 workingUser = new User(documentSnapshot.getString("userId"), documentSnapshot.getString("displayName"));
-                 workingUser.setProfilePictureUrl(documentSnapshot.getString("profileRef"));
-                 workingUser.setDateCreated(documentSnapshot.getTimestamp("dateCreated"));
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                QuerySnapshot result = task.getResult();
+                workingUser = new User(result.getDocuments().get(0).getString("userId"), result.getDocuments().get(0).getString("displayName"));
             }
         });
+
         return this.workingUser;
     }
 
