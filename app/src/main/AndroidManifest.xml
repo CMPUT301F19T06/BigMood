@@ -22,9 +22,14 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".BaseDrawerActivity"
+            android:label="BigMood"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        </activity>
+        <activity
             android:name=".DashboardActivity"
             android:label="BigMood"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
