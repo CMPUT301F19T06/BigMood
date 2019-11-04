@@ -14,4 +14,7 @@
         <item>Sadness</item>
         <item>Disgust</item>
     </string-array>
+    <string name="moodName">Mood</string>
+    <string name="placeholder1">placeholder1</string>
+    <string name="placeholder2">placeholder2</string>
 </resources>

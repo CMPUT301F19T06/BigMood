@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -20,6 +23,8 @@ public class DashboardActivity extends AppCompatActivity {
     private RecyclerViewAdapter adapter;
     private ArrayList<moodObject> moodObjects = new ArrayList<>();
     FloatingActionButton fab;
+    Button moodViewButton;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +38,16 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
+        moodViewButton = (Button)findViewById(R.id.button);
+        moodViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
+                Intent testView = new Intent(DashboardActivity.this, testActivity.class);
+                startActivity(testView);
 
+            }
+        });
         initRecyclerView();
 
         Intent intent = getIntent();

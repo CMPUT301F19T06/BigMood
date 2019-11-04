@@ -11,4 +11,7 @@
     <color name="Surprise">#00FFFF</color>
     <color name="Sadness">#0054FF</color>
     <color name="Disgust">#CC00FF</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name= "colorBlue">#00acee</color>
+
 </resources>
