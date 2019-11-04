@@ -7,14 +7,14 @@
     android:background="@color/colorWhite"
     tools:context=".ActivityMoodView">
 
-    <androidx.appcompat.widget.AppCompatImageButton
+    <ImageView
         android:id="@+id/background_pic"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:orientation="horizontal"
-        android:background="@color/colorBlue">
-
-    </androidx.appcompat.widget.AppCompatImageButton>
+        android:background="@color/colorBlue"
+        android:src = "@drawable/camera_info">
+    </ImageView>
     <LinearLayout
         android:layout_width="350dp"
         android:layout_height="match_parent"
@@ -23,14 +23,18 @@
         android:background="@color/colorWhite">
 
         <TextView
-            android:id="@+id/currentMood"
             android:layout_width="109dp"
             android:layout_height="60dp"
             android:layout_marginLeft="200dp"
             android:layout_marginTop="10dp"
-            android:text="MOOD: GOOFY"
+            android:text="MOOD:"
             android:textSize="20sp">
+        <TextView
+            android:id="@+id/currentMood"
+            android:layout_height="60dp"
+            android:layout_marginLeft="200dp">
 
+        </TextView>
         </TextView>
         <TextView
             android:id="@+id/currentDate"
@@ -49,13 +53,12 @@
             android:text="Description">
 
         </TextView>
-        <EditText
+        <TextView
             android:id="@+id/moodDescription"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Feeling sad today">
+            android:layout_height="60dp">
 
-        </EditText>
+        </TextView>
 
     </LinearLayout>
 
