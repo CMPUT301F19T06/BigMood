@@ -4,4 +4,14 @@
     <string name="string_login_welcome">Welcome</string>
     <string name="string_login_error">We couldn\'t log you in, please try again</string>
     <string name="editmood_image_description">Displays either the color of the mood of the mood or a picture uploaded by the user.</string>
+    <string-array name="editmood_moodspinner">
+        <item>Anger</item>
+        <item>Anticipation</item>
+        <item>Joy</item>
+        <item>Trust</item>
+        <item>Fear</item>
+        <item>Surprise</item>
+        <item>Sadness</item>
+        <item>Disgust</item>
+    </string-array>
 </resources>
