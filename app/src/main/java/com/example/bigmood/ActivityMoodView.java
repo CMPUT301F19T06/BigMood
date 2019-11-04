@@ -1,8 +1,10 @@
 package com.example.bigmood;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,14 +21,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -40,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.example.bigmood.testActivity.moodObjects;
 
 public class ActivityMoodView extends AppCompatActivity {
-    TextView moodText, dateText;
+    TextView dateText, moodType;
     String dayString;
     MenuInflater menuInflater;
     public static final int CAMERA_ACCESS = 1001;
@@ -62,20 +69,20 @@ public class ActivityMoodView extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_view);
-        moodText = (TextView)findViewById(R.id.currentMood);
         dateText = (TextView)findViewById(R.id.currentDate);
         Date date = Calendar.getInstance().getTime();
         dayString = dateFormat.format(date);
         dateText.setText(dayString);
         ProfileImage = findViewById(R.id.Profile_image);
         TextView moodDescription = findViewById(R.id.moodDescription);
-
+        moodType = findViewById(R.id.currentMood);
 
         // Firebase
 
         // setting the stuff inside moodView from moodObject
-        moodDescription.setText(String.valueOf(moodObjects.get(0).toString()));
-        dateText.setText(String.valueOf(moodObjects.get(0).toString()));
+        moodDescription.setText( String.valueOf(moodObjects.get(0).getMoodDescription()));
+        dateText.setText("Date: \n" + String.valueOf(moodObjects.get(0).getMoodDate()));
+        moodType.setText("Mood: \n" + String.valueOf(moodObjects.get(0).getMoodType()));
         ProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,14 +138,43 @@ public class ActivityMoodView extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         context = getApplicationContext();
         super.onActivityResult(requestCode, resultCode, data);
-        String path = "firememes/" + UUID.randomUUID() + ".png";
-        StorageReference firememesRef = firebaseStorage.getInstance().getReference(path);
 
+        /**
+         * firebase stuff to do:
+         * todo: storing image to firebase if request code is camera
+         */
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        String path = "firememes/" + UUID.randomUUID() + ".png";
+        byte[] somedata = byteArrayOutputStream.toByteArray();
+
+        /**
+         * camera request
+         */
         if(requestCode==CAMERA_ACCESS && resultCode == RESULT_OK)    {
             // todo: adding this image in firabase
             Bitmap bitmap= (Bitmap) data.getExtras().get("data");
-            ProfileImage.setImageBitmap(bitmap);
+            final Uri imageUri = data.getData();
+
+
+            ProfileImage.setImageURI(imageUri);
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
+            //ProfileImage.setImageBitmap(bitmap);
+            StorageReference firememesRef = firebaseStorage.getInstance().getReference().child("Profile").child(imageUri.getLastPathSegment());
+
+            firememesRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(getApplicationContext(),"Uploaded...", Toast.LENGTH_SHORT);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(),"Not uploaded", Toast.LENGTH_SHORT);
+                }
+            });
         }
+
 
         else if(requestCode==GALLERY_ACCESS){
             try {
