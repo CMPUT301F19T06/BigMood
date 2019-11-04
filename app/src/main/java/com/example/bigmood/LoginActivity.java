@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     protected void startDashboard(String id) {
-        Intent intent = new Intent(this, DashboardActivity.class);
+        Intent intent = new Intent(this, BaseDrawerActivity.class);
         intent.putExtra("USER_ID", id);
         startActivity(intent);
     }
