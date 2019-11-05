@@ -19,7 +19,7 @@ public class moodFragment {
     private Context context;
 
     public moodFragment(Context context, ArrayList<moodObject> moods){
-        //super(context, 0, moods);
+        //super(context, moods);
         this.moods = moods;
         this.context = context;
     }
