@@ -12,28 +12,31 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class testActivity extends AppCompatActivity {
+public class testActivity extends BaseDrawerActivity{
     Button moodViewButton;
     public static ArrayList<Mood> moods;
     public static ArrayAdapter<Mood> moodArrayAdapter;
     ListView moodViews;
     LinearLayout moodContent;
     public static int index;
+    FloatingActionButton addMood;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test);
-        moodViewButton = (Button)findViewById(R.id.button);
+        getLayoutInflater().inflate(R.layout.activity_test, frameLayout);
         moods = new ArrayList<>();
         Date date = Calendar.getInstance().getTime();
         moodViews = findViewById(R.id.mood_Content);
         moodArrayAdapter = new CustomArrayAdapter(moods,this);
         moodViews.setAdapter(moodArrayAdapter);
         moodContent = findViewById(R.id.linearLayout);
+        addMood = findViewById(R.id.addMood);
 
         Mood happyMood = new Mood("Happy","Feeling good today","#ff0000",date);
         Mood sadMood = new Mood("Sad","Feeling sad today","#0054ff",date);
@@ -58,6 +61,20 @@ public class testActivity extends AppCompatActivity {
                 return false;
             }
         });
+        addMood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(testActivity.this, EditmoodActivity.class);
+                startActivity(intent);
+            }
+        });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // to check current activity in the navigation drawer
+        navigationView.getMenu().getItem(2).setChecked(true);
     }
 }

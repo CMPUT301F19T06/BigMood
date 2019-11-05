@@ -23,6 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.example.bigmood.testActivity.moodArrayAdapter;
+import static com.example.bigmood.testActivity.moods;
+
 /**
  * This is an array adapter created only for the purpose of demonstration for project part 2
  */
@@ -45,16 +48,21 @@ public class CustomArrayAdapter extends ArrayAdapter<Mood> {
         Mood some_mood =  moodArrayList.get(position);
         moodTitle = view.findViewById(R.id.moodName);
         moodDate = view.findViewById(R.id.moodDate);
-        moodTitle.setText(some_mood.getMoodType());
         moodDescription = view.findViewById(R.id.moodDescription);
         linearLayout = view.findViewById(R.id.linearLayout);
-
-
-        linearLayout.setBackgroundColor(Color.parseColor(some_mood.getMoodColor()));
-
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+
+
+        moodTitle.setText(some_mood.getMoodType());
         moodDate.setText(dateFormat.format(some_mood.getMoodDate()));
         moodDescription.setText(some_mood.getMoodDescription());
+        linearLayout.setBackgroundColor(Color.parseColor(some_mood.getMoodColor()));
+
+
+
+
+
+
         return view;
     }
 }

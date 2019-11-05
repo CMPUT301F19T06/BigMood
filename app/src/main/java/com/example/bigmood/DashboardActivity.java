@@ -77,21 +77,17 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
+
                 Intent testActivity = new Intent(DashboardActivity.this, com.example.bigmood.testActivity.class);
                 startActivity(testActivity);
             }
         });
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
-        moodViewButton = (Button)findViewById(R.id.button);
-        moodViewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
-                Intent testView = new Intent(DashboardActivity.this, testActivity.class);
-                startActivity(testView);
+        /**
+         * using moodView button here as fab
+         */
 
-            }
-        });
         initRecyclerView();
 
         Intent intent = getIntent();

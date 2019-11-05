@@ -34,6 +34,7 @@ import java.util.Calendar;
 import static com.example.bigmood.ActivityMoodView.CAMERA_ACCESS;
 import static com.example.bigmood.ActivityMoodView.GALLERY_ACCESS;
 import static com.example.bigmood.testActivity.index;
+import static com.example.bigmood.testActivity.moodArrayAdapter;
 import static com.example.bigmood.testActivity.moods;
 
 /**
@@ -46,6 +47,8 @@ public class EditmoodActivity extends AppCompatActivity {
     LinearLayout profileBackground;
     ImageView profilePic;
     Mood mood;
+    Mood new_mood;
+
     public String date;
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -79,6 +82,16 @@ public class EditmoodActivity extends AppCompatActivity {
 
             }
         });
+
+        /**
+         * save button
+         */
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,6 +117,33 @@ public class EditmoodActivity extends AppCompatActivity {
                 e.getMessage();
             }
 
+        }
+
+        //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
+
+        // todo: if no edited or a new mood object us added
+        else{
+            new_mood = new Mood();
+            //todo: mood object gives a null object reference to be fixed
+            new_mood.setMoodTitle("");
+            new_mood.setMoodDescription("");
+            try{
+                if (!new_mood.getMoodTitle().isEmpty()){
+                    new_mood.setMoodTitle(moodType.getText().toString());
+                    new_mood.setMoodDate(dateFormat.parse(dateText.getText().toString()));
+                    new_mood.setMoodColor("#00acee");
+
+                }
+                if (!new_mood.getMoodDescription().isEmpty()){
+                    new_mood.setMoodDescription(description.getText().toString());
+                }
+
+
+            } catch (ParseException e){
+                e.printStackTrace();
+            }
+            moods.add(new_mood);
+            moodArrayAdapter.notifyDataSetChanged();
         }
 
         /**

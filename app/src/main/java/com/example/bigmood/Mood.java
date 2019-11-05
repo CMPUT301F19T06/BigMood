@@ -56,7 +56,7 @@ public class Mood implements Serializable {
     public Mood (String mood) {
         this.moodType = mood;
     }
-
+    public Mood(){}
     public void setMoodType(String moodType) {
         this.moodType = moodType;
     }
