@@ -31,6 +31,7 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private ArrayList<moodObject> moodObjects = new ArrayList<>();
+    private String userID;
     FloatingActionButton fab;
     Button moodViewButton;
 
@@ -39,8 +40,10 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_dashboard, frameLayout);
-
+        this.userID = getIntent().getExtras().getString("USER_ID");
         toolbar.setTitle("Dashboard");
+
+        //TODO: get items from database using USER_ID
 
         /*
         //Activate the toolbar
