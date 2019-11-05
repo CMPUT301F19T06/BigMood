@@ -73,7 +73,13 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
         NavigationDrawerSetup navigationDrawerSetup = new NavigationDrawerSetup(this, drawer, toolbar, navigationView);
         navigationDrawerSetup.configDrawer();
 */
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent testActivity = new Intent();
 
+            }
+        });
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
         moodViewButton = (Button)findViewById(R.id.button);
         moodViewButton.setOnClickListener(new View.OnClickListener() {
