@@ -25,7 +25,7 @@ public class testActivity extends AppCompatActivity {
         Date date = Calendar.getInstance().getTime();
 
 
-        moodObject moodObject = new moodObject("Happy","Feeling good today","red",date);
+        moodObject moodObject = new moodObject("Happy","Feeling good today",0xff0000,date);
         moodObjects.add(moodObject);
         moodViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
