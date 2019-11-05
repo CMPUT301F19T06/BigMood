@@ -17,4 +17,11 @@
     <string name="moodName">Mood</string>
     <string name="placeholder1">placeholder1</string>
     <string name="placeholder2">placeholder2</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="search">Search</string>
+    <string name="friends">Friends</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nickname">Nickname</string>
+    <string name="username">Username</string>
 </resources>
