@@ -81,8 +81,8 @@ public class moodObject implements Serializable {
     public String getMoodDescription() { return moodDescription; }
     public void setMoodDescription(String moodDescription) { this.moodDescription = moodDescription; }
 
-    public String getMoodColor() { return moodColor; }
-    public void setMoodColor(String moodColor) { this.moodColor = moodColor; }
+    public int getMoodColor() { return moodColor; }
+    public void setMoodColor(int moodColor) { this.moodColor = moodColor; }
 
     public Date getMoodDate() { return moodDate; }
     public void setMoodDate(Date moodDate) { this.moodDate = moodDate; }
