@@ -11,7 +11,7 @@ public class Mood implements Serializable {
     private String moodType; //The type of mood
 
     private String moodDescription;
-    private int moodColor;
+    private String moodColor;
     private Date moodDate;
 
     private String moodID;
@@ -69,7 +69,7 @@ public class Mood implements Serializable {
         this.moodID = moodID;
     }
 
-    public Mood (String moodType, String moodDescription, int moodColor, Date moodDate){
+    public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
         this.moodType = moodType;
         this.moodDescription = moodDescription;
         this.moodColor = moodColor;
@@ -81,8 +81,12 @@ public class Mood implements Serializable {
     public String getMoodDescription() { return moodDescription; }
     public void setMoodDescription(String moodDescription) { this.moodDescription = moodDescription; }
 
-    public int getMoodColor() { return moodColor; }
-    public void setMoodColor(int moodColor) { this.moodColor = moodColor; }
+    /**
+     * Had to make this a string or else no use
+     * @return
+     */
+    public String getMoodColor() { return moodColor; }
+    public void setMoodColor(String moodColor) { this.moodColor = moodColor; }
 
     public Date getMoodDate() { return moodDate; }
     public void setMoodDate(Date moodDate) { this.moodDate = moodDate; }

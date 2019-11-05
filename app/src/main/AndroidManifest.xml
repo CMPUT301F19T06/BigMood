@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".testActivity"></activity>
+        <activity android:name=".EditmoodActivity"></activity>
         <activity android:name=".ActivityMoodView" />
         <activity
             android:name=".LoginActivity"

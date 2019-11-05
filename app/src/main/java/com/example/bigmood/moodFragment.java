@@ -33,9 +33,9 @@ public class moodFragment {
 
         Mood mood = moods.get(position);
 
-        TextView rMood = view.findViewById(R.id.name);
-        TextView rPlaceholder1 = view.findViewById(R.id.placeholder1);
-        TextView rPlaceholder2 = view.findViewById(R.id.placeholder2);
+        TextView rMood = view.findViewById(R.id.moodName);
+        TextView rPlaceholder1 = view.findViewById(R.id.moodDescription);
+        TextView rPlaceholder2 = view.findViewById(R.id.moodDate);
 
         //rMood.setText(mood.getMood());
 

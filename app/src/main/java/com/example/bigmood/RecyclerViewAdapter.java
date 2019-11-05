@@ -85,7 +85,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public ViewHolder(View itemView) {
             super(itemView);
             //establish views here
-            activityButton = itemView.findViewById(R.id.placeholder1);
+            activityButton = itemView.findViewById(R.id.button_editmood_addImage);
             // date = itemView.findViewById(R.id.dateView);
             // time  = itemView.findViewById(R.id.timeView);
             // distance = itemView.findViewById(R.id.distanceView);
