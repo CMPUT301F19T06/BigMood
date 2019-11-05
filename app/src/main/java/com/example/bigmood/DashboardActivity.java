@@ -30,7 +30,7 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
     private static final String TAG = "DASHBOARDACTIVITY";
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
-    private ArrayList<moodObject> moodObjects = new ArrayList<>();
+    private ArrayList<Mood> moodObjects = new ArrayList<>();
     private String userID;
     FloatingActionButton fab;
     Button moodViewButton;

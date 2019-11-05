@@ -25,7 +25,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String MOOD_ID = "com.example.bigmood.RecycleViewAdapter";
 
     //set up local arraylist to store rides
-    private ArrayList<moodObject> moodIDs = new ArrayList<>();
+    private ArrayList<Mood> moodIDs = new ArrayList<>();
 
     //set up interface components to measure input from clicks
     private Context mContext;
@@ -85,7 +85,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public ViewHolder(View itemView) {
             super(itemView);
             //establish views here
-            activityButton = itemView.findViewById(R.id.gotoMoodView);
+            activityButton = itemView.findViewById(R.id.placeholder1);
             // date = itemView.findViewById(R.id.dateView);
             // time  = itemView.findViewById(R.id.timeView);
             // distance = itemView.findViewById(R.id.distanceView);

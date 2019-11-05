@@ -30,7 +30,7 @@ public class DatabaseManager {
     public final String SET_USER_TAG = "Set user";
     public final String GET_USER_TAG = "Get user";
     private User workingUser;
-    private moodObject workingMood;
+    private Mood workingMood;
 
     public DatabaseManager() {
         this.db = FirebaseFirestore.getInstance();
@@ -64,7 +64,7 @@ public class DatabaseManager {
                 });
     }
 
-    public void addMood(User user, moodObject mood) {
+    public void addMood(User user, Mood mood) {
         //Possible errors: data fails to upload, invalid data maybe?
         // TODO: not tested
     }
@@ -82,7 +82,7 @@ public class DatabaseManager {
         return this.workingUser;
     }
 
-    public moodObject getMoodById(String moodId) {
+    public Mood getMoodById(String moodId) {
         // TODO: not tested
         DocumentReference docRef = moodCollectionReference.document(moodId);
         docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

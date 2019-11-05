@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 
-public class moodObject implements Serializable {
+public class Mood implements Serializable {
 
     private String moodType; //The type of mood
 
@@ -53,7 +53,7 @@ public class moodObject implements Serializable {
     private String moodPhoto;
     private String moodEmoji;
 
-    public moodObject (String mood) {
+    public Mood (String mood) {
         this.moodType = mood;
     }
 
@@ -69,7 +69,7 @@ public class moodObject implements Serializable {
         this.moodID = moodID;
     }
 
-    public moodObject (String moodType, String moodDescription, int moodColor, Date moodDate){
+    public Mood (String moodType, String moodDescription, int moodColor, Date moodDate){
         this.moodType = moodType;
         this.moodDescription = moodDescription;
         this.moodColor = moodColor;
