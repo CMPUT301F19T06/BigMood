@@ -16,7 +16,7 @@ public class EditmoodActivity extends AppCompatActivity {
 
         //Get the moodObject out of the intent
         Intent intent = getIntent();
-        moodObject mood = (moodObject) intent.getSerializableExtra("mood");
+        Mood mood = (Mood) intent.getSerializableExtra("mood");
 
         //Create the toolbar object and set it to the action bar setSupportAction
         //Create mood setter

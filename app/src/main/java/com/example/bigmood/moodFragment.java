@@ -15,10 +15,10 @@ import java.util.*;
 //TODO: extend something...
 public class moodFragment {
 
-    private ArrayList<moodObject> moods;
+    private ArrayList<Mood> moods;
     private Context context;
 
-    public moodFragment(Context context, ArrayList<moodObject> moods){
+    public moodFragment(Context context, ArrayList<Mood> moods){
         //super(context, moods);
         this.moods = moods;
         this.context = context;
@@ -31,7 +31,7 @@ public class moodFragment {
             view = LayoutInflater.from(context).inflate(R.layout.content_moodfragment, parent, false);
         }
 
-        moodObject mood = moods.get(position);
+        Mood mood = moods.get(position);
 
         TextView rMood = view.findViewById(R.id.name);
         TextView rPlaceholder1 = view.findViewById(R.id.placeholder1);

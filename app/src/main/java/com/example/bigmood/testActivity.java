@@ -15,7 +15,7 @@ import java.util.Date;
 
 public class testActivity extends AppCompatActivity {
     Button moodViewButton;
-    public static ArrayList<moodObject> moodObjects;
+    public static ArrayList<Mood> moodObjects;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +25,7 @@ public class testActivity extends AppCompatActivity {
         Date date = Calendar.getInstance().getTime();
 
 
-        moodObject moodObject = new moodObject("Happy","Feeling good today",0xff0000,date);
+        Mood moodObject = new Mood("Happy","Feeling good today",0xff0000,date);
         moodObjects.add(moodObject);
         moodViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
