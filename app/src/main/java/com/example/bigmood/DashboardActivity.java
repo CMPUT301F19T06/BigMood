@@ -73,11 +73,12 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
         NavigationDrawerSetup navigationDrawerSetup = new NavigationDrawerSetup(this, drawer, toolbar, navigationView);
         navigationDrawerSetup.configDrawer();
 */
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent testActivity = new Intent();
-
+                Intent testActivity = new Intent(DashboardActivity.this, com.example.bigmood.testActivity.class);
+                startActivity(testActivity);
             }
         });
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
