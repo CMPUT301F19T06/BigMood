@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,90 +7,91 @@
     android:background="@color/colorWhite"
     tools:context=".ActivityMoodView">
 
-    <ImageView
-        android:id="@+id/background_pic"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:orientation="horizontal"
-        android:background="@color/colorBlue"
-        android:src = "@drawable/camera_info">
-    </ImageView>
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="150dp"
         android:background="@color/colorWhite"
-        android:orientation="vertical">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".ActivityMoodView">
+
+        <ImageView
+            android:id="@+id/background_pic"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/colorBlue"
+            android:orientation="horizontal"
+            android:src="@drawable/camera_info"></ImageView>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="200dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:layout_marginTop="150dp"
+            android:background="@color/colorWhite"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/currentMood"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="200dp"
                 android:layout_marginTop="10dp"
-                android:layout_weight="1"
                 android:text="MOOD:"
                 android:textSize="20sp"></TextView>
 
-            <ImageView
-                android:id="@+id/currentMoodImage"
+            <TextView
+                android:id="@+id/currentDate"
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="200dp"
+                android:text="Date:"
+                android:textSize="20sp">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="400dp"
+                android:layout_height="60dp"
+                android:text="Description"
+                android:textSize="35sp">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/moodDescription"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:adjustViewBounds="true"
-                android:maxWidth="20sp"
-                android:maxHeight="20sp"
-                android:scaleType="centerInside"
-                app:srcCompat="@mipmap/emoji_angry" />
+                android:layout_height="60dp">
+
+            </TextView>
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/currentDate"
-            android:layout_width="200dp"
-            android:layout_height="100dp"
-            android:layout_marginLeft="200dp"
-            android:text="Date:"
-            android:textSize="15sp">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/Profile_image"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="56dp"
+            android:src="@drawable/camera_info"
+            app:civ_border_color="#00000000"
+            app:civ_circle_background_color="@color/colorWhite">
 
-        </TextView>
+        </de.hdodenhof.circleimageview.CircleImageView>
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="400dp"
-            android:layout_height="60dp"
-            android:text="Description"
-            android:textSize="35sp">
+    </RelativeLayout>
 
-        </TextView>
+    <ImageView
+        android:id="@+id/background_pic_full"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/colorBlue"
+        android:orientation="horizontal"
+        android:src="@drawable/camera_info"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
 
-        <TextView
-            android:id="@+id/moodDescription"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
-
-        </TextView>
-
-    </LinearLayout>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/Profile_image"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="56dp"
-        android:src ="@drawable/camera_info"
-        app:civ_border_color="#00000000"
-        app:civ_circle_background_color="@color/colorWhite"
-        >
-
-    </de.hdodenhof.circleimageview.CircleImageView>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
