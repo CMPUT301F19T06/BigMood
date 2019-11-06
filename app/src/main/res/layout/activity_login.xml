@@ -31,6 +31,19 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
 
+    <ProgressBar
+        android:id="@+id/progressBar_login_check_user"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.56"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/textView_login_error_msg"
         android:layout_width="wrap_content"
