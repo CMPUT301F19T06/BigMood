@@ -33,7 +33,6 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
     private ArrayList<Mood> moodObjects = new ArrayList<>();
     private String userID;
     FloatingActionButton fab;
-    Button moodViewButton;
 
 
     @Override
@@ -89,10 +88,6 @@ public class DashboardActivity extends BaseDrawerActivity /*implements Navigatio
          */
 
         initRecyclerView();
-
-        Intent intent = getIntent();
-        TextView temp = findViewById(R.id.hello_world);
-        temp.setText(intent.getExtras().getString("USER_ID"));
     }
 
     @Override
