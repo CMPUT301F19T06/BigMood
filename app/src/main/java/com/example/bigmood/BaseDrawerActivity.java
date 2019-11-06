@@ -61,6 +61,11 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             intent.putExtra("USER_ID", pass_id);
             startActivity(intent);
         } else if (id == R.id.nav_friends) {
+        } else if (id == R.id.nav_moods){
+            String pass_id = getIntent().getExtras().getString("USER_ID");
+            Intent intent = new Intent(getApplicationContext(), testActivity.class);
+            intent.putExtra("USER_ID", pass_id);
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);

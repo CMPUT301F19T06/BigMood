@@ -56,7 +56,12 @@ public class CustomArrayAdapter extends ArrayAdapter<Mood> {
         moodTitle.setText(some_mood.getMoodType());
         moodDate.setText(dateFormat.format(some_mood.getMoodDate()));
         moodDescription.setText(some_mood.getMoodDescription());
-        linearLayout.setBackgroundColor(Color.parseColor(some_mood.getMoodColor()));
+        String stringHEX = some_mood.getMoodColor();
+        try {
+            linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
 
 
 
