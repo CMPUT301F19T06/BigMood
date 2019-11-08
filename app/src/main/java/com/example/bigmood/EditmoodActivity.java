@@ -94,6 +94,7 @@ public class EditmoodActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
+                /***
                 try{
                     mood = new Mood(moodTitle.getText().toString(),description.getText().toString(),"#FFFF00",
                             dateFormat.parse(dateText.getText().toString()));
@@ -101,7 +102,7 @@ public class EditmoodActivity extends AppCompatActivity {
                 catch (ParseException e){
                     e.printStackTrace();
                 }
-
+*/
             }
         });
 
@@ -160,7 +161,7 @@ public class EditmoodActivity extends AppCompatActivity {
                 if (!new_mood.getMoodTitle().isEmpty()){
                     data.put("MoodType", moodTitle.getText().toString());
                     new_mood.setMoodTitle(moodTitle.getText().toString());
-                    new_mood.setMoodDate(dateFormat.parse(dateText.getText().toString()));
+                    //new_mood.setMoodDate(dateFormat.parse(dateText.getText().toString()));
                     new_mood.setMoodColor("#00acee");
 
                 }
@@ -169,7 +170,7 @@ public class EditmoodActivity extends AppCompatActivity {
                 }
 
 
-            } catch (ParseException e){
+            } catch (Exception e){
                 e.printStackTrace();
             }
             moods.add(new_mood);

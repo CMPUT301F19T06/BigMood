@@ -31,6 +31,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -67,6 +68,7 @@ public class ActivityAddMood extends AppCompatActivity {
     Date date = Calendar.getInstance().getTime();
     String dayString = dateFormat.format(date);
     private FusedLocationProviderClient fusedLocationClient;
+    private String userId;
 
 
     /**
@@ -102,7 +104,7 @@ public class ActivityAddMood extends AppCompatActivity {
         moodTitle = findViewById(R.id.moodTitle);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-
+        this.userId = getIntent().getExtras().getString("USER_ID");
         dateText.setText(dateFormat.format(date));
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
@@ -111,6 +113,9 @@ public class ActivityAddMood extends AppCompatActivity {
 
         final CollectionReference collectionReference = db.collection("Moods");
 
+        if (mood.getMoodDate() == null) {
+            mood.setMoodDate(Timestamp.now());
+        }
 
         /**
          * todo: photo is not saved yet. Everything else shows
@@ -152,17 +157,30 @@ public class ActivityAddMood extends AppCompatActivity {
                 mood.setMoodPhoto(image);
                 // date input given
                 try{
-                    mood.setMoodDate((dateFormat.parse(dateText.getText().toString())));
+                    mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
 
                 }catch (ParseException e){
                     e.getStackTrace();
                 }
-                moodArrayAdapter.notifyDataSetChanged();
-                moodArrayAdapter.add(mood);
+                mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("moodTitle", mood.getMoodTitle());
+                data.put("moodDescription", mood.getMoodDescription());
+                data.put("moodColor", mood.getMoodColor());
+                data.put("moodPhoto", mood.getMoodPhoto());
+                data.put("moodDate", mood.getMoodDate());
+                data.put("dateCreated", Timestamp.now());
+                data.put("dateUpdated", Timestamp.now());
+                data.put("moodId", mood.getMoodID());
+                data.put("moodCreator", userId);
+                //TODO: replace with enum for social situation
+                data.put("moodSituation", 0);
+                data.put("longitude", mood.getLongitude());
+                data.put("latitude", mood.getLatitude());
                 try{
                     collectionReference
-                            .document(mood.getMoodTitle())
-                            .set(mood)
+                            .document(mood.getMoodID())
+                            .set(data)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {

@@ -48,6 +48,11 @@ public class DashboardActivity extends BaseDrawerActivity {
     FloatingActionButton fab;
     Button moodViewButton;
 
+    public DashboardActivity() {
+        this.db = FirebaseFirestore.getInstance();
+        this.userCollectionReference = db.collection("Users");
+        this.moodCollectionReference = db.collection("Moods");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +69,11 @@ public class DashboardActivity extends BaseDrawerActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
-                Intent testActivity = new Intent(DashboardActivity.this, testActivity.class);
-                testActivity.putExtra("USER_ID", userId);
-                startActivity(testActivity);
+                Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
+                intent.putExtra("USER_ID", userId);
+                Mood mood = new Mood();
+                intent.putExtra("Mood",mood);
+                startActivity(intent);
             }
         });
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
@@ -75,19 +82,22 @@ public class DashboardActivity extends BaseDrawerActivity {
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 moodObjects.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.getString("moodCreator").compareTo(userId) == 0){
-                        Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
-                        String moodId = doc.getId();
-                        String moodDescription = doc.getString("moodDescription");
-                        String moodTitle = doc.getString("moodTitle");
-                        Timestamp moodDate = doc.getTimestamp("moodDate");
-                        Mood mood = new Mood();
-                        mood.setMoodID(moodId);
-                        mood.setMoodTitle(moodTitle);
-                        mood.setMoodDescription(moodDescription);
-                        mood.setMoodDate(moodDate);
-                        moodObjects.add(mood);
+                    if (doc.contains("moodCreator")){
+                        if (doc.getString("moodCreator").compareTo(userId) == 0){
+                            Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
+                            String moodId = doc.getId();
+                            String moodDescription = doc.getString("moodDescription");
+                            String moodTitle = doc.getString("moodTitle");
+                            Timestamp moodDate = doc.getTimestamp("moodDate");
+                            Mood mood = new Mood();
+                            mood.setMoodID(moodId);
+                            mood.setMoodTitle(moodTitle);
+                            mood.setMoodDescription(moodDescription);
+                            mood.setMoodDate(moodDate);
+                            moodObjects.add(mood);
+                        }
                     }
+
 
                 }
                 adapter.notifyDataSetChanged();

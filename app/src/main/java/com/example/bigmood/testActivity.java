@@ -48,11 +48,11 @@ public class testActivity extends BaseDrawerActivity{
         moodContent = findViewById(R.id.linearLayout);
         addMood = findViewById(R.id.addMood);
 
-        Mood happyMood = new Mood("Happy","Feeling good today","#ff0000",date);
-        Mood sadMood = new Mood("Sad","Feeling sad today","#0054ff",date);
-        Mood fearMood = new Mood("Afraid","Feeling afraid today","#1AFF00",date);
-        Mood  loveMood= new Mood("Love","Feeling loved today","#FFFF00",date);
-        Mood angryMood = new Mood("Angry","Feeling angry today","#CC00FF",date);
+        //Mood happyMood = new Mood("Happy","Feeling good today","#ff0000",date);
+        //Mood sadMood = new Mood("Sad","Feeling sad today","#0054ff",date);
+        //Mood fearMood = new Mood("Afraid","Feeling afraid today","#1AFF00",date);
+        //Mood  loveMood= new Mood("Love","Feeling loved today","#FFFF00",date);
+        //Mood angryMood = new Mood("Angry","Feeling angry today","#CC00FF",date);
         /**
          * Adding all the mood objects in the array adapter
          */
@@ -102,7 +102,7 @@ public class testActivity extends BaseDrawerActivity{
                     Log.d(TAG, String.valueOf(doc.getData().get("moodTitle")));
                     String moodTitle = doc.getId();
                     String moodDescription = (String) doc.getData().get("moodDescription");
-                    moods.add(new Mood(moodTitle, moodDescription, "#FFFF00",date));
+                    //moods.add(new Mood(moodTitle, moodDescription, "#FFFF00",date));
                 }
                 moodArrayAdapter.notifyDataSetChanged();
             }
