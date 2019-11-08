@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.bigmood.Mood;
-import com.example.bigmood.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
