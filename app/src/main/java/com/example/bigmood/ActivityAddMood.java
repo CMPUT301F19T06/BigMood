@@ -49,7 +49,7 @@ import static com.example.bigmood.testActivity.moodArrayAdapter;
 import static com.example.bigmood.testActivity.moods;
 
 /**
- * todo: Edit mood is using activity_add_mood as a layout
+ * todo: Activity add mood does both edit and add
  */
 public class ActivityAddMood extends AppCompatActivity {
     private Context context;
@@ -96,8 +96,6 @@ public class ActivityAddMood extends AppCompatActivity {
         moodTitle = findViewById(R.id.moodTitle);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-        //dateText.setText(dateFormat.format(moods.get(index).getMoodDate()));
-        // object added to moods array adapter
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
 
@@ -105,7 +103,8 @@ public class ActivityAddMood extends AppCompatActivity {
 
 
         /**
-         * todo: No error checks are done here, need to be done if a new mood is added
+         * todo: photo is not saved yet. Everything else shows
+         * using index for now if a mood object is clicked on list
          */
         final String TAG = "Sample";
         // checking if it's an edit moof
@@ -130,7 +129,9 @@ public class ActivityAddMood extends AppCompatActivity {
             }
 
         }
-
+        /**
+         * Save button to save mood object with it's requirements
+         */
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,7 +170,7 @@ public class ActivityAddMood extends AppCompatActivity {
         });
 
         /**
-         * save button
+         * setting image on profile picture
          */
 
         profilePic.setOnClickListener(new View.OnClickListener() {
@@ -178,12 +179,6 @@ public class ActivityAddMood extends AppCompatActivity {
                 OpenCamera(view);
             }
         });
-        //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
-        //todo: mood object gives a null object reference to be fixed
-        // todo: I will probably need to separate add and edit to make things simpler
-
-
-
         /**
          * date picker
          */
@@ -242,7 +237,7 @@ public class ActivityAddMood extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
-            moods.get(index).setMoodPhoto(temp);
+            //moods.get(index).setMoodPhoto(temp);
             image = temp;
             profilePic.setImageBitmap(bitmap);
         }

@@ -41,7 +41,8 @@ import static com.example.bigmood.testActivity.moodArrayAdapter;
 import static com.example.bigmood.testActivity.moods;
 
 /**
- * todo: Edit mood is using activity_add_mood as a layout
+ * important: this is not used
+ * todo: Edit mood activity is not being used
  */
 public class EditmoodActivity extends AppCompatActivity {
     private Context context;
