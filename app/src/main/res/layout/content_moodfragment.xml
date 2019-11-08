@@ -6,10 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="80dp">
 
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/moodName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="2dp"
@@ -22,19 +22,19 @@
     </TextView>
 
     <TextView
-        android:id="@+id/placeholder1"
+        android:id="@+id/moodDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/placeholder1"
+        android:text="Description"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name">
+        app:layout_constraintTop_toBottomOf="@+id/moodName">
 
     </TextView>
 
     <TextView
-        android:id="@+id/placeholder2"
+        android:id="@+id/moodDate"
         android:layout_width="156dp"
         android:layout_height="19dp"
         android:text="@string/placeholder2"
@@ -42,23 +42,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placeholder1">
+        app:layout_constraintTop_toBottomOf="@+id/moodDescription">
 
     </TextView>
 
-    <Button
-        android:id="@+id/gotoMoodView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="113dp"
-        android:layout_marginLeft="113dp"
-        android:layout_marginEnd="54dp"
-        android:layout_marginRight="54dp"
-        android:text="FUCK"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/placeholder2"
-        app:layout_constraintTop_toBottomOf="@+id/placeholder1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

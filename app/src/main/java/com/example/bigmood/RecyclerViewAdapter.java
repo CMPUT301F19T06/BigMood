@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
@@ -53,18 +54,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //set up the connection to view here, TBA
 
-        //establish listener for each element
-        holder.activityButton.setOnClickListener(new View.OnClickListener(){
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //use interface to register input back in MainActivity
                 Log.d(TAG, "onClick: clicked on:" + moodIDs.get(position));
-                intentMoodView(moodIDs.get(position).getMoodID(), v);
+                intentMoodView(moodIDs.get(position), v);
             }
         });
+        //establish listener for each element
     }
 
-    public void intentMoodView(String moodID, View v){
+    public void intentMoodView(Mood moodID, View v){
         Intent intent = new Intent(v.getContext(), EditmoodActivity.class);
         intent.putExtra(MOOD_ID, moodID);
         mContext.startActivity(intent);
@@ -79,17 +79,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //constructor for ViewHolder object, which holds our xml components together
     public class ViewHolder extends RecyclerView.ViewHolder{
         // TextView text;
-        CoordinatorLayout parentLayout;
-        Button activityButton;
+        TextView moodTitle, moodDescription, moodDate;
+        ConstraintLayout linearLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            //establish views here
-            activityButton = itemView.findViewById(R.id.placeholder1);
-            // date = itemView.findViewById(R.id.dateView);
-            // time  = itemView.findViewById(R.id.timeView);
-            // distance = itemView.findViewById(R.id.distanceView);
-            // parentLayout = itemView.findViewById(R.id.C);
+            // establish views here
+            moodTitle = itemView.findViewById(R.id.moodName);
+            moodDate = itemView.findViewById(R.id.moodDate);
+            moodDescription = itemView.findViewById(R.id.moodDescription);
+            linearLayout = itemView.findViewById(R.id.linearLayout);
         }
     }
 }

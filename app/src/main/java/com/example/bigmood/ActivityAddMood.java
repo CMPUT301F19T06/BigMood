@@ -11,18 +11,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -33,6 +38,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import static com.example.bigmood.ActivityMoodView.CAMERA_ACCESS;
@@ -44,14 +50,17 @@ import static com.example.bigmood.testActivity.moods;
 /**
  * todo: Edit mood is using activity_add_mood as a layout
  */
-public class EditmoodActivity extends AppCompatActivity {
+public class ActivityAddMood extends AppCompatActivity {
     private Context context;
     TextView dateText, moodType, description;
     Button saveButton;
     LinearLayout profileBackground;
     ImageView profilePic;
-    Mood mood;
-    Mood new_mood;
+    EditText moodTitle;
+
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
+    Date date = Calendar.getInstance().getTime();
+    String dayString = dateFormat.format(date);
 
     /**
      * firebase stuff here
@@ -64,117 +73,93 @@ public class EditmoodActivity extends AppCompatActivity {
     private static final String USER_EXISTS_TAG = "Current mood check";
     private static final String REGISTER_USER_TAG = "Registering new mood";
 
-    public EditmoodActivity() {
+    public ActivityAddMood() {
         this.db = FirebaseFirestore.getInstance();
         // collection reference for moods
         this.moodCollectionReference = db.collection("Moods");
     }
 
 
-    public String date;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_mood);
+        setContentView(R.layout.activity_add_mood);
         profilePic = findViewById(R.id.Profile_image);
         saveButton = findViewById(R.id.save_button);
         dateText = findViewById(R.id.currentDate);
         moodType = findViewById(R.id.currentMood);
         description = findViewById(R.id.moodDescription);
+        moodTitle = findViewById(R.id.moodTitle);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        dateText.setText(dateFormat.format(date));
+        // object added to moods array adapter
+        final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
+
+        final CollectionReference collectionReference = db.collection("Moods");
 
 
         /**
          * todo: No error checks are done here, need to be done if a new mood is added
          */
+        final String TAG = "Sample";
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
-                try{
-                    mood = new Mood(moodType.getText().toString(),description.getText().toString(),"#FFFF00",
-                            dateFormat.parse(dateText.getText().toString()));
-                }
-                catch (ParseException e){
-                    e.printStackTrace();
-                }
+                mood.setMoodTitle(moodTitle.getText().toString());
+                mood.setMoodDescription(description.getText().toString());
+                mood.setMoodColor("#FFFF00");
+                HashMap<String, String> data = new HashMap<>();
 
+                try{
+                    mood.setMoodDate((dateFormat.parse(dateText.getText().toString())));
+
+                }catch (ParseException e){
+                    e.getStackTrace();
+                }
+                moodArrayAdapter.notifyDataSetChanged();
+                moodArrayAdapter.add(mood);
+                data.put("moodTitle",mood.getMoodTitle());
+                data.put("moodDescription",mood.getMoodDescription());
+                data.put("moodColor",mood.getMoodColor());
+                collectionReference
+                        .document(mood.getMoodTitle())
+                        .set(data)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG,"Data addition successful");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Data addition failed" + e.toString());
+                            }
+                        });
+                finish();
             }
         });
 
         /**
          * save button
          */
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 OpenCamera(view);
             }
         });
-
-        /**
-         * Setting up everything for edit mood when index != -1 after long click
-         */
-        if (testActivity.index != -1 ){
-            dateText.setText(moods.get(testActivity.index).getMoodDate().toString());
-            moodType.setText(moods.get(testActivity.index).getMoodType());
-            description.setText(moods.get(testActivity.index).getMoodDescription());
-            String stringHEX = moods.get(index).getMoodColor();
-            try {
-                profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
-            }catch (Throwable e){
-                e.printStackTrace();
-            }
-
-            //todo: String to bitmap
-            try{
-                byte [] encodeByte=Base64.decode(moods.get(index).getMoodPhoto(),Base64.DEFAULT);
-                Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                profilePic.setImageBitmap(bitmap);
-            }catch (Exception e){
-                e.getMessage();
-            }
-
-        }
-
         //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
-
-        // todo: if not edited or a new mood object us added
-        else{
-            HashMap<String,String> data= new HashMap<>();
-
-            new_mood = new Mood();
-            //todo: mood object gives a null object reference to be fixed
-            // todo: I will probably need to separate add and edit to make things simpler
-
-            try{
-                if (!new_mood.getMoodTitle().isEmpty()){
-                    data.put("MoodType",moodType.getText().toString());
-                    new_mood.setMoodTitle(moodType.getText().toString());
-                    new_mood.setMoodDate(dateFormat.parse(dateText.getText().toString()));
-                    new_mood.setMoodColor("#00acee");
-
-                }
-                if (!new_mood.getMoodDescription().isEmpty()){
-                    new_mood.setMoodDescription(description.getText().toString());
-                }
+        //todo: mood object gives a null object reference to be fixed
+        // todo: I will probably need to separate add and edit to make things simpler
 
 
-            } catch (ParseException e){
-                e.printStackTrace();
-            }
-            moods.add(new_mood);
-            moodArrayAdapter.notifyDataSetChanged();
-        }
 
         /**
          * date picker
@@ -187,7 +172,7 @@ public class EditmoodActivity extends AppCompatActivity {
                 int month = cal.get(Calendar.MONTH);
                 int day = cal.get(Calendar.DAY_OF_MONTH);
                 DatePickerDialog dialog = new DatePickerDialog(
-                        EditmoodActivity.this,android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        ActivityAddMood.this,android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                         mDateSetListener,
                         year,month,day);
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -200,7 +185,12 @@ public class EditmoodActivity extends AppCompatActivity {
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
                 dateText.setText(String.format("yyyy-mm-dd",year,month,day));
-                date = dateText.getText().toString();
+                try{
+                    date = dateFormat.parse(dateText.getText().toString());
+
+                }catch (ParseException e){
+                    e.getStackTrace();
+                }
             }
         };
     }
@@ -229,7 +219,7 @@ public class EditmoodActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
-            moods.get(index).setMoodPhoto(temp);
+            //moods.get(moods.size()).setMoodPhoto(temp);
             profilePic.setImageBitmap(bitmap);
         }
 
