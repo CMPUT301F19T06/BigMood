@@ -1,3 +1,7 @@
+/*
+* This Activity is the layout of the whole app.
+* In the center is a FrameLayout that inflates each Activity when it is pressed on the sidebar.
+* */
 package com.example.bigmood;
 
 import android.content.Intent;
@@ -41,6 +45,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
 
         frameLayout = findViewById(R.id.content_frame);
 
+        //Build the navigation drawer
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -50,6 +55,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Start the app inflating the DashboardActivity
         if(this.getApplicationContext() instanceof DashboardActivity){} else {
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
@@ -58,6 +64,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         }
     }
 
+    //Handles what happens when a certain MenuItem is pressed
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
@@ -85,6 +92,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         return true;
     }
 
+    //Handles when the back button is pressed
     @Override
     public void onBackPressed(){
         if (drawer.isDrawerOpen(GravityCompat.START)){
@@ -94,17 +102,18 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         }
     }
 
+    //Creates the overflow menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
+    //Handles the input to the Overflow menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
                 return true;
 
             default:
