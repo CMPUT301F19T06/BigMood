@@ -56,7 +56,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         navigationView.setNavigationItemSelectedListener(this);
 
         //Start the app inflating the DashboardActivity
-        if(this.getApplicationContext() instanceof DashboardActivity){} else {
+        if(toolbar.getTitle().toString() == getString(R.string.app_name)){
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
