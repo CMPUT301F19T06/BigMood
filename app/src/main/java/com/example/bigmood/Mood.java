@@ -2,6 +2,8 @@ package com.example.bigmood;
 
 import android.app.Activity;
 
+import com.google.firebase.Timestamp;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -10,7 +12,7 @@ public class Mood implements Serializable {
 
     private String moodDescription;
     private String moodColor;
-    private Date moodDate;
+    private Timestamp moodDate;
     private String moodID;
     private String moodTitle;
     private String moodPhoto;
@@ -22,7 +24,7 @@ public class Mood implements Serializable {
         this.moodTitle = mood;
     }
 
-    public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
+    public Mood (String moodTitle, String moodDescription, String moodColor, Timestamp moodDate){
         this.moodTitle = moodTitle;
         this.moodDescription = moodDescription;
         this.moodColor = moodColor;
@@ -80,10 +82,10 @@ public class Mood implements Serializable {
         this.moodColor = moodColor;
     }
 
-    public Date getMoodDate() {
+    public Timestamp getMoodDate() {
         return moodDate;
     }
-    public void setMoodDate(Date moodDate) {
+    public void setMoodDate(Timestamp moodDate) {
         this.moodDate = moodDate;
     }
 }
