@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,6 +27,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -55,6 +58,7 @@ public class ActivityAddMood extends AppCompatActivity {
     private Context context;
     TextView dateText , description;
     Button saveButton;
+    Button addLoc;
     LinearLayout profileBackground;
     ImageView profilePic;
     EditText moodTitle; // moodTitle and moodType is the same here for now
@@ -62,6 +66,8 @@ public class ActivityAddMood extends AppCompatActivity {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
     String dayString = dateFormat.format(date);
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     /**
      * firebase stuff here
@@ -90,12 +96,16 @@ public class ActivityAddMood extends AppCompatActivity {
         setContentView(R.layout.activity_add_mood);
         profilePic = findViewById(R.id.Profile_image);
         saveButton = findViewById(R.id.save_button);
-
+        addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.moodTitle);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+
+        dateText.setText(dateFormat.format(date));
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        // object added to moods array adapter
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
 
@@ -172,6 +182,27 @@ public class ActivityAddMood extends AppCompatActivity {
         /**
          * setting image on profile picture
          */
+
+
+        /**
+         * add location to mood
+         */
+        addLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null){
+                            mood.setLongitude(location.getLongitude());
+                            mood.setLatitude(location.getLatitude());
+                        } else {
+                            Toast.makeText(context, "Location error",Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
 
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
