@@ -190,7 +190,7 @@ public class ActivityAddMood extends AppCompatActivity {
         addLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null){

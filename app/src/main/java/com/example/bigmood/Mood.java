@@ -43,6 +43,16 @@ public class Mood implements Serializable {
      */
     private String moodEmoji;
 
+
+    /**
+     * Long and Lat for location
+     */
+    private double longitude;
+
+
+
+    private double latitude;
+
     /**
      * This is the empty constructor, this will represent the default Mood
      * TODO:Construct default
@@ -62,6 +72,7 @@ public class Mood implements Serializable {
         this.moodDescription = moodDescription;
         this.moodColor = moodColor;
         this.moodDate = moodDate;
+
     }
 
     /**
@@ -173,5 +184,21 @@ public class Mood implements Serializable {
      */
     public void setMoodDate(Timestamp moodDate) {
         this.moodDate = moodDate;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+    
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 }
