@@ -2,9 +2,11 @@ package com.example.bigmood;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -21,11 +23,14 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public DrawerLayout drawer;
     public Toolbar toolbar;
     public NavigationView navigationView;
+    private String userID;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_base_drawer);
+
+        this.userID = getIntent().getExtras().getString("USER_ID");
 
         //Starts the toolbar
         toolbar = findViewById(R.id.toolbar);
@@ -42,6 +47,14 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if(this.getApplicationContext() instanceof DashboardActivity){} else {
+            Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+            intent.putExtra("USER_ID", userID);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
+
     }
 
     @Override
@@ -56,9 +69,9 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
 
         if (id == R.id.nav_dashboard) {
             // Handle the camera action
-            String pass_id = getIntent().getExtras().getString("USER_ID");
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
-            intent.putExtra("USER_ID", pass_id);
+            intent.putExtra("USER_ID", userID);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_friends) {
         } else if (id == R.id.nav_moods){
