@@ -2,6 +2,8 @@ package com.example.bigmood;
 
 import android.app.Activity;
 
+import com.google.firebase.Timestamp;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -24,10 +26,10 @@ public class Mood implements Serializable {
      * The hex code for the color, as a string
      */
     private String moodColor;
-    /**
+     /**
      * The date of the mood event
      */
-    private Date moodDate;
+    private Timestamp moodDate;
     /**
      * The unique Identifier for the mood
      */
@@ -55,7 +57,7 @@ public class Mood implements Serializable {
      * @param moodDate
      */
 
-    public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
+    public Mood (String moodTitle, String moodDescription, String moodColor, Timestamp moodDate){
         this.moodTitle = moodTitle;
         this.moodDescription = moodDescription;
         this.moodColor = moodColor;
@@ -161,15 +163,15 @@ public class Mood implements Serializable {
         this.moodColor = moodColor;
     }
 
-    public Date getMoodDate() {
+    public Timestamp getMoodDate() {
         return moodDate;
     }
-    /**
+     /**
      * Set the mood Date
      * @param moodDate
      * The Date object to be set to
      */
-    public void setMoodDate(Date moodDate) {
+    public void setMoodDate(Timestamp moodDate) {
         this.moodDate = moodDate;
     }
 }

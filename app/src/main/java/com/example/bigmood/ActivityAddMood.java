@@ -52,16 +52,16 @@ import static com.example.bigmood.testActivity.moodArrayAdapter;
 import static com.example.bigmood.testActivity.moods;
 
 /**
- * todo: Edit mood is using activity_add_mood as a layout
+ * todo: Activity add mood does both edit and add
  */
 public class ActivityAddMood extends AppCompatActivity {
     private Context context;
-    TextView dateText, moodType, description;
+    TextView dateText , description;
     Button saveButton;
     Button addLoc;
     LinearLayout profileBackground;
     ImageView profilePic;
-    EditText moodTitle;
+    EditText moodTitle; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
@@ -98,24 +98,50 @@ public class ActivityAddMood extends AppCompatActivity {
         saveButton = findViewById(R.id.save_button);
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
-        moodType = findViewById(R.id.currentMood);
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.moodTitle);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+
         dateText.setText(dateFormat.format(date));
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
+
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
 
         final CollectionReference collectionReference = db.collection("Moods");
 
 
         /**
-         * todo: No error checks are done here, need to be done if a new mood is added
+         * todo: photo is not saved yet. Everything else shows
+         * using index for now if a mood object is clicked on list
          */
         final String TAG = "Sample";
+        // checking if it's an edit moof
+        if (testActivity.index != -1 ){
+            dateText.setText(mood.getMoodDate().toString());
+            moodTitle.setText(mood.getMoodTitle());
+            description.setText(mood.getMoodDescription());
+            String stringHEX = mood.getMoodColor();
+            try {
+                profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
+            }catch (Throwable e){
+                e.printStackTrace();
+            }
 
+            //todo: String to bitmap
+            try{
+                byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
+                Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                profilePic.setImageBitmap(bitmap);
+            }catch (Exception e){
+                e.getMessage();
+            }
+
+        }
+        /**
+         * Save button to save mood object with it's requirements
+         */
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +150,6 @@ public class ActivityAddMood extends AppCompatActivity {
                 mood.setMoodDescription(description.getText().toString());
                 mood.setMoodColor("#FFFF00");
                 mood.setMoodPhoto(image);
-                HashMap<String, String> data = new HashMap<>();
                 // date input given
                 try{
                     mood.setMoodDate((dateFormat.parse(dateText.getText().toString())));
@@ -155,7 +180,7 @@ public class ActivityAddMood extends AppCompatActivity {
         });
 
         /**
-         * save button
+         * setting image on profile picture
          */
 
 
@@ -185,12 +210,6 @@ public class ActivityAddMood extends AppCompatActivity {
                 OpenCamera(view);
             }
         });
-        //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
-        //todo: mood object gives a null object reference to be fixed
-        // todo: I will probably need to separate add and edit to make things simpler
-
-
-
         /**
          * date picker
          */
@@ -249,7 +268,7 @@ public class ActivityAddMood extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
-            //moods.get(moods.size()).setMoodPhoto(temp);
+            //moods.get(index).setMoodPhoto(temp);
             image = temp;
             profilePic.setImageBitmap(bitmap);
         }
