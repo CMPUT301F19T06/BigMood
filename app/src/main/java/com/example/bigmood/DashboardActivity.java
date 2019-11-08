@@ -58,6 +58,7 @@ public class DashboardActivity extends BaseDrawerActivity {
         });
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
 
+        /* TODO: Delete this
         moodViewButton = (Button) findViewById(R.id.button);
         moodViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +68,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                 startActivity(testView);
             }
         });
+         */
 
         initRecyclerView();
     }

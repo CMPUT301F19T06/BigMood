@@ -53,7 +53,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Mood> {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
 
-        moodTitle.setText(some_mood.getMoodType());
+        moodTitle.setText(some_mood.getMoodTitle());
         moodDate.setText(dateFormat.format(some_mood.getMoodDate()));
         moodDescription.setText(some_mood.getMoodDescription());
         String stringHEX = some_mood.getMoodColor();

@@ -8,13 +8,26 @@ import java.util.Date;
 
 public class Mood implements Serializable {
 
-    private String moodType; //The type of mood
-
     private String moodDescription;
     private String moodColor;
     private Date moodDate;
-
     private String moodID;
+    private String moodTitle;
+    private String moodPhoto;
+    private String moodEmoji;
+
+    public Mood(){}
+
+    public Mood (String mood) {
+        this.moodTitle = mood;
+    }
+
+    public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
+        this.moodTitle = moodTitle;
+        this.moodDescription = moodDescription;
+        this.moodColor = moodColor;
+        this.moodDate = moodDate;
+    }
 
     public String getMoodTitle() {
         return moodTitle;
@@ -22,14 +35,6 @@ public class Mood implements Serializable {
 
     public void setMoodTitle(String moodTitle) {
         this.moodTitle = moodTitle;
-    }
-
-    public String getMoodReason() {
-        return moodReason;
-    }
-
-    public void setMoodReason(String moodReason) {
-        this.moodReason = moodReason;
     }
 
     public String getMoodPhoto() {
@@ -48,19 +53,6 @@ public class Mood implements Serializable {
         this.moodEmoji = moodEmoji;
     }
 
-    private String moodTitle;
-    private String moodReason;
-    private String moodPhoto;
-    private String moodEmoji;
-
-    public Mood (String mood) {
-        this.moodType = mood;
-    }
-    public Mood(){}
-    public void setMoodType(String moodType) {
-        this.moodType = moodType;
-    }
-
     public String getMoodID() {
         return moodID;
     }
@@ -69,25 +61,29 @@ public class Mood implements Serializable {
         this.moodID = moodID;
     }
 
-    public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
-        this.moodType = moodType;
-        this.moodDescription = moodDescription;
-        this.moodColor = moodColor;
-        this.moodDate = moodDate;
+
+    public String getMoodDescription() {
+        return moodDescription;
     }
-
-    public String getMoodType(){ return this.moodType; }
-
-    public String getMoodDescription() { return moodDescription; }
-    public void setMoodDescription(String moodDescription) { this.moodDescription = moodDescription; }
+    public void setMoodDescription(String moodDescription) {
+        this.moodDescription = moodDescription;
+    }
 
     /**
      * Had to make this a string or else no use
      * @return
      */
-    public String getMoodColor() { return moodColor; }
-    public void setMoodColor(String moodColor) { this.moodColor = moodColor; }
+    public String getMoodColor() {
+        return moodColor;
+    }
+    public void setMoodColor(String moodColor) {
+        this.moodColor = moodColor;
+    }
 
-    public Date getMoodDate() { return moodDate; }
-    public void setMoodDate(Date moodDate) { this.moodDate = moodDate; }
+    public Date getMoodDate() {
+        return moodDate;
+    }
+    public void setMoodDate(Date moodDate) {
+        this.moodDate = moodDate;
+    }
 }

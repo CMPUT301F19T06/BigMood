@@ -89,7 +89,7 @@ public class testActivity extends BaseDrawerActivity{
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 moods.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                    //String moodType, String moodDescription, String moodColor, Date moodDate
+                    //String moodTitle, String moodDescription, String moodColor, Date moodDate
                     Log.d(TAG, String.valueOf(doc.getData().get("moodTitle")));
                     String moodTitle = doc.getId();
                     String moodDescription = (String) doc.getData().get("moodDescription");

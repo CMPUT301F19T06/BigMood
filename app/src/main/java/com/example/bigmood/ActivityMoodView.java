@@ -83,7 +83,7 @@ public class ActivityMoodView extends AppCompatActivity {
         // setting the stuff inside moodView from moodObject
         moodDescription.setText( String.valueOf(moods.get(0).getMoodDescription()));
         dateText.setText("Date: \n" + String.valueOf(moods.get(0).getMoodDate()));
-        moodType.setText( String.valueOf(moods.get(0).getMoodType()));
+        moodType.setText( String.valueOf(moods.get(0).getMoodTitle()));
         ProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

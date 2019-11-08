@@ -109,7 +109,7 @@ public class ActivityAddMood extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
+                //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
                 mood.setMoodTitle(moodTitle.getText().toString());
                 mood.setMoodDescription(description.getText().toString());
                 mood.setMoodColor("#FFFF00");
@@ -155,7 +155,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 OpenCamera(view);
             }
         });
-        //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
+        //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
         //todo: mood object gives a null object reference to be fixed
         // todo: I will probably need to separate add and edit to make things simpler
 

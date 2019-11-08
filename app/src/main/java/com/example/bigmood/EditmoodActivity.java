@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -46,7 +45,7 @@ import static com.example.bigmood.testActivity.moods;
  */
 public class EditmoodActivity extends AppCompatActivity {
     private Context context;
-    TextView dateText, moodType, description;
+    TextView dateText, moodTitle, description;
     Button saveButton;
     LinearLayout profileBackground;
     ImageView profilePic;
@@ -81,7 +80,7 @@ public class EditmoodActivity extends AppCompatActivity {
         profilePic = findViewById(R.id.Profile_image);
         saveButton = findViewById(R.id.save_button);
         dateText = findViewById(R.id.currentDate);
-        moodType = findViewById(R.id.currentMood);
+        moodTitle = findViewById(R.id.currentMood);
         description = findViewById(R.id.moodDescription);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
@@ -93,9 +92,9 @@ public class EditmoodActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
+                //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
                 try{
-                    mood = new Mood(moodType.getText().toString(),description.getText().toString(),"#FFFF00",
+                    mood = new Mood(moodTitle.getText().toString(),description.getText().toString(),"#FFFF00",
                             dateFormat.parse(dateText.getText().toString()));
                 }
                 catch (ParseException e){
@@ -126,7 +125,7 @@ public class EditmoodActivity extends AppCompatActivity {
          */
         if (testActivity.index != -1 ){
             dateText.setText(moods.get(testActivity.index).getMoodDate().toString());
-            moodType.setText(moods.get(testActivity.index).getMoodType());
+            moodTitle.setText(moods.get(testActivity.index).getMoodTitle());
             description.setText(moods.get(testActivity.index).getMoodDescription());
             String stringHEX = moods.get(index).getMoodColor();
             try {
@@ -146,7 +145,7 @@ public class EditmoodActivity extends AppCompatActivity {
 
         }
 
-        //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
+        //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
 
         // todo: if not edited or a new mood object us added
         else{
@@ -158,8 +157,8 @@ public class EditmoodActivity extends AppCompatActivity {
 
             try{
                 if (!new_mood.getMoodTitle().isEmpty()){
-                    data.put("MoodType",moodType.getText().toString());
-                    new_mood.setMoodTitle(moodType.getText().toString());
+                    data.put("MoodType", moodTitle.getText().toString());
+                    new_mood.setMoodTitle(moodTitle.getText().toString());
                     new_mood.setMoodDate(dateFormat.parse(dateText.getText().toString()));
                     new_mood.setMoodColor("#00acee");
 
