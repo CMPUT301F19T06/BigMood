@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -54,26 +56,29 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
-
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
 
-        //to prevent current item select over and over
+        //To prevent current item select over and over
         if (menuItem.isChecked()){
             drawer.closeDrawer(GravityCompat.START);
             return false;
         }
 
         if (id == R.id.nav_dashboard) {
-            // Handle the camera action
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
+        } else if (id == R.id.nav_profile) {
+            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Your profile", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_friends) {
+            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Friends List", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_map) {
+            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Map", Toast.LENGTH_SHORT).show();
         }
 
         drawer.closeDrawer(GravityCompat.START);
