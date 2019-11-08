@@ -56,22 +56,31 @@ public class testActivity extends BaseDrawerActivity{
         /**
          * Adding all the mood objects in the array adapter
          */
-        moods.add(happyMood);
-        moods.add(sadMood);
-        moods.add(fearMood);
-        moods.add(loveMood);
-        moods.add(angryMood);
+        // commenting hard codes out for now
+//        moods.add(happyMood);
+//        moods.add(sadMood);
+//        moods.add(fearMood);
+//        moods.add(loveMood);
+//        moods.add(angryMood);
         index = -1;
+        /**
+         * moodView is the list view and l
+         */
         final String TAG ="Sample";
         moodViews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(testActivity.this, EditmoodActivity.class);
+                Intent intent = new Intent(testActivity.this, ActivityAddMood.class);
+                intent.putExtra("Mood",moods.get(i));
                 startActivity(intent);
                 index = i;
                 return false;
             }
+
         });
+        /**
+         * Adding will put a new mood in the new activity
+         */
         addMood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

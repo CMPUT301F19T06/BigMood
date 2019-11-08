@@ -63,9 +63,6 @@ public class DashboardActivity extends BaseDrawerActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO:
-                //TODO:This doesn't work t start the next activity
-                //ToDO:
                 Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
                 Intent testActivity = new Intent(DashboardActivity.this, testActivity.class);
                 testActivity.putExtra("USER_ID", userId);
