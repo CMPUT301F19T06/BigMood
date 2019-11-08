@@ -24,4 +24,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nickname">Nickname</string>
     <string name="username">Username</string>
+    <string name="profile">My Profile</string>
+    <string name="map">Map</string>
 </resources>
