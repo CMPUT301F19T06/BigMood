@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.spec.ECField;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,7 +58,7 @@ public class ActivityAddMood extends AppCompatActivity {
     LinearLayout profileBackground;
     ImageView profilePic;
     EditText moodTitle;
-
+    String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
     String dayString = dateFormat.format(date);
@@ -85,6 +86,7 @@ public class ActivityAddMood extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        // all the stuff id's
         setContentView(R.layout.activity_add_mood);
         profilePic = findViewById(R.id.Profile_image);
         saveButton = findViewById(R.id.save_button);
@@ -109,12 +111,13 @@ public class ActivityAddMood extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
+                //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
                 mood.setMoodTitle(moodTitle.getText().toString());
                 mood.setMoodDescription(description.getText().toString());
                 mood.setMoodColor("#FFFF00");
+                mood.setMoodPhoto(image);
                 HashMap<String, String> data = new HashMap<>();
-
+                // date input given
                 try{
                     mood.setMoodDate((dateFormat.parse(dateText.getText().toString())));
 
@@ -123,12 +126,10 @@ public class ActivityAddMood extends AppCompatActivity {
                 }
                 moodArrayAdapter.notifyDataSetChanged();
                 moodArrayAdapter.add(mood);
-                data.put("moodTitle",mood.getMoodTitle());
-                data.put("moodDescription",mood.getMoodDescription());
-                data.put("moodColor",mood.getMoodColor());
+
                 collectionReference
                         .document(mood.getMoodTitle())
-                        .set(data)
+                        .set(mood)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -155,7 +156,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 OpenCamera(view);
             }
         });
-        //public Mood (String moodTitle, String moodDescription, String moodColor, Date moodDate){
+        //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
         //todo: mood object gives a null object reference to be fixed
         // todo: I will probably need to separate add and edit to make things simpler
 
@@ -220,6 +221,7 @@ public class ActivityAddMood extends AppCompatActivity {
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
             //moods.get(moods.size()).setMoodPhoto(temp);
+            image = temp;
             profilePic.setImageBitmap(bitmap);
         }
 
