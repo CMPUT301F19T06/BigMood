@@ -171,6 +171,8 @@ public class ActivityAddMood extends AppCompatActivity {
                         if (location != null){
                             mood.setLongitude(location.getLongitude());
                             mood.setLatitude(location.getLatitude());
+                        } else {
+                            Toast.makeText(context, "Location error",Toast.LENGTH_LONG).show();
                         }
                     }
                 });
