@@ -115,5 +115,6 @@ public class testActivity extends BaseDrawerActivity{
         super.onResume();
         // to check current activity in the navigation drawer
         navigationView.getMenu().getItem(2).setChecked(true);
+        index = -1;
     }
 }

@@ -149,23 +149,27 @@ public class ActivityAddMood extends AppCompatActivity {
                 }
                 moodArrayAdapter.notifyDataSetChanged();
                 moodArrayAdapter.add(mood);
+                try{
+                    collectionReference
+                            .document(mood.getMoodTitle())
+                            .set(mood)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG,"Data addition successful");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "Data addition failed" + e.toString());
+                                }
+                            });
+                    finish();
+                } catch (Exception e){
+                    Toast.makeText(context, "You haven't put a title for your mood",Toast.LENGTH_LONG).show();
+                }
 
-                collectionReference
-                        .document(mood.getMoodTitle())
-                        .set(mood)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG,"Data addition successful");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "Data addition failed" + e.toString());
-                            }
-                        });
-                finish();
             }
         });
 
@@ -202,13 +206,8 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                dateText.setText(String.format("yyyy-mm-dd",year,month,day));
-                try{
-                    date = dateFormat.parse(dateText.getText().toString());
+                dateText.setText(String.format("%02d-%02d-%02d",year,month,day));
 
-                }catch (ParseException e){
-                    e.getStackTrace();
-                }
             }
         };
     }
