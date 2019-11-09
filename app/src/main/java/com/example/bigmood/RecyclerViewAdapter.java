@@ -65,7 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void intentMoodView(Mood moodID, View v){
-        Intent intent = new Intent(v.getContext(), EditmoodActivity.class);
+        Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
         intent.putExtra(MOOD_ID, moodID);
         mContext.startActivity(intent);
     }

@@ -48,9 +48,6 @@ import java.util.HashMap;
 
 import static com.example.bigmood.ActivityMoodView.CAMERA_ACCESS;
 import static com.example.bigmood.ActivityMoodView.GALLERY_ACCESS;
-import static com.example.bigmood.testActivity.index;
-import static com.example.bigmood.testActivity.moodArrayAdapter;
-import static com.example.bigmood.testActivity.moods;
 
 /**
  * todo: Activity add mood does both edit and add
