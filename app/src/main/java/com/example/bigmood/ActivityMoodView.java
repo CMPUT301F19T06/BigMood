@@ -44,7 +44,8 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.bigmood.testActivity.moodObjects;
+import static com.example.bigmood.testActivity.moods;
+import static com.example.bigmood.testActivity.moods;
 
 public class ActivityMoodView extends AppCompatActivity {
     TextView dateText, moodType;
@@ -80,9 +81,9 @@ public class ActivityMoodView extends AppCompatActivity {
         // Firebase
 
         // setting the stuff inside moodView from moodObject
-        moodDescription.setText( String.valueOf(moodObjects.get(0).getMoodDescription()));
-        dateText.setText("Date: \n" + String.valueOf(moodObjects.get(0).getMoodDate()));
-        moodType.setText( String.valueOf(moodObjects.get(0).getMoodType()));
+        moodDescription.setText( String.valueOf(moods.get(0).getMoodDescription()));
+        dateText.setText("Date: \n" + String.valueOf(moods.get(0).getMoodDate()));
+        moodType.setText( String.valueOf(moods.get(0).getMoodTitle()));
         ProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

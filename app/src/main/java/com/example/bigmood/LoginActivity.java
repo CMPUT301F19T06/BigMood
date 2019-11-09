@@ -181,6 +181,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void startDashboard(String id) {
         Intent intent = new Intent(this, BaseDrawerActivity.class);
         intent.putExtra("USER_ID", id);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 }

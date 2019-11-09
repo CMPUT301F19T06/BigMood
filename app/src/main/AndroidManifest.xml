@@ -9,7 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".testActivity"></activity>
+        <activity android:name=".ActivityAddMood"></activity>
+        <activity android:name=".testActivity"
+            android:label="Test Activity"/>
+        <activity android:name=".EditmoodActivity" />
         <activity android:name=".ActivityMoodView" />
         <activity
             android:name=".LoginActivity"
@@ -23,13 +26,14 @@
         </activity>
         <activity
             android:name=".BaseDrawerActivity"
-            android:label="BigMood"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".DashboardActivity"
-            android:label="BigMood"
+            android:label="@string/dashboard"
             android:theme="@style/AppTheme" />
     </application>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
 
 </manifest>
