@@ -98,7 +98,7 @@ public class ActivityAddMood extends AppCompatActivity {
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
-        moodTitle = findViewById(R.id.moodTitle);
+        moodTitle = findViewById(R.id.currentMood);
         profileBackground = findViewById(R.id.background_pic);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
         this.userId = getIntent().getExtras().getString("USER_ID");
@@ -107,6 +107,8 @@ public class ActivityAddMood extends AppCompatActivity {
         // object added to moods array adapter
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
+        // TODO: hardcoded color
+        mood.setMoodColor("#FFFF00");
 
         final CollectionReference collectionReference = db.collection("Moods");
 

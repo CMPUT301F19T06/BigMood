@@ -33,11 +33,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     //set up interface components to measure input from clicks
     private Context mContext;
+    private String userId;
     ImageView deleteMood;
     //constructor
-    public RecyclerViewAdapter(ArrayList moodIDs, Context mContext) {
+    public RecyclerViewAdapter(ArrayList moodIDs, String userId, Context mContext) {
         this.moodIDs = moodIDs;
         this.mContext = mContext;
+        this.userId = userId;
     }
 
     //set up a new viewholder to mount onto main activity
@@ -81,6 +83,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void intentMoodView(Mood moodID, View v){
         Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
         intent.putExtra("Mood", moodID);
+        intent.putExtra("USER_ID", this.userId);
         mContext.startActivity(intent);
     }
 

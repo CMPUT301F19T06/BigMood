@@ -89,25 +89,25 @@ public class DashboardActivity extends BaseDrawerActivity {
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 moodObjects.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.contains("moodCreator")){
+                    if (doc.get("moodCreator") != null){
 
-                    // todo: if (doc.getString("moodCreator").compareTo(userId) == 0) doesn't work
-
+                        if (doc.getString("moodCreator").compareTo(userId) == 0) {
                             Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
                             String moodId = doc.getId();
                             String moodDescription = doc.getString("moodDescription");
                             String moodTitle = doc.getString("moodTitle");
                             Timestamp moodDate = doc.getTimestamp("moodDate");
-                            //String moodColor = (String) doc.getData().get("moodColor").toString();
+                            String moodColor = doc.getString("moodColor");
                             String moodPhoto = (String) doc.getData().get("moodPhoto");
                             Mood mood = new Mood();
                             mood.setMoodID(moodId);
                             mood.setMoodTitle(moodTitle);
                             mood.setMoodDescription(moodDescription);
                             mood.setMoodDate(moodDate);
-                            mood.setMoodColor("#FFFF00");
+                            mood.setMoodColor(moodColor);
                             mood.setMoodPhoto(moodPhoto);
                             moodObjects.add(mood);
+                        }
 
                     }
 
@@ -135,7 +135,7 @@ public class DashboardActivity extends BaseDrawerActivity {
 
         Log.d(TAG, "initRecyclerView: init recyclerview");
         recyclerView = findViewById(R.id.dashboard_recyclerview);
-        adapter = new RecyclerViewAdapter(moodObjects, this);
+        adapter = new RecyclerViewAdapter(moodObjects, this.userId, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
