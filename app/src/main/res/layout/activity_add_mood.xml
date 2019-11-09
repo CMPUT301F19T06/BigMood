@@ -68,8 +68,6 @@
             android:text="Date:"
             android:textSize="15sp">
 
-
-
         </TextView>
 
 
@@ -106,20 +104,20 @@
             android:layout_gravity="center"
             android:layout_marginTop="@android:dimen/app_icon_size"
             android:text="Add Location" />
-
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/Profile_image"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="148dp"
+        android:layout_height="153dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="56dp"
-        android:src ="@drawable/camera_info"
+        android:layout_marginTop="59dp"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/camera_info"
         app:civ_border_color="#00000000"
-        app:civ_circle_background_color="@color/colorWhite"
-        >
+        app:civ_circle_background_color="@color/colorWhite">
 
     </de.hdodenhof.circleimageview.CircleImageView>
+
 
 </RelativeLayout>

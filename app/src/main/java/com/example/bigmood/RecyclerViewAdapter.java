@@ -2,6 +2,7 @@ package com.example.bigmood;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,10 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -30,7 +33,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     //set up interface components to measure input from clicks
     private Context mContext;
-
+    ImageView deleteMood;
     //constructor
     public RecyclerViewAdapter(ArrayList moodIDs, Context mContext) {
         this.moodIDs = moodIDs;
@@ -50,13 +53,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, final int position) {
         //prepare display variables for list
         Log.d(TAG, "onBindViewHolder: called.");
-
+        DashboardActivity.index = position;
 
         //set up the connection to view here, TBA
         //temporary placeholder for date
         holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
         holder.moodDescription.setText(moodIDs.get(position).getMoodDescription());
         holder.moodTitle.setText(moodIDs.get(position).getMoodTitle());
+        String stringHEX = moodIDs.get(position).getMoodColor();
+        try {
+            holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
+        }catch (Throwable e){
+            e.printStackTrace();
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
         });
         //establish listener for each element
+
     }
 
     public void intentMoodView(Mood moodID, View v){

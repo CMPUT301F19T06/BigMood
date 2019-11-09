@@ -27,9 +27,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class testActivity extends BaseDrawerActivity{
-
-
-    Button moodViewButton;
     public static ArrayList<Mood> moods;
     public static ArrayAdapter<Mood> moodArrayAdapter;
     ListView moodViews;
@@ -48,20 +45,7 @@ public class testActivity extends BaseDrawerActivity{
         moodContent = findViewById(R.id.linearLayout);
         addMood = findViewById(R.id.addMood);
 
-        //Mood happyMood = new Mood("Happy","Feeling good today","#ff0000",date);
-        //Mood sadMood = new Mood("Sad","Feeling sad today","#0054ff",date);
-        //Mood fearMood = new Mood("Afraid","Feeling afraid today","#1AFF00",date);
-        //Mood  loveMood= new Mood("Love","Feeling loved today","#FFFF00",date);
-        //Mood angryMood = new Mood("Angry","Feeling angry today","#CC00FF",date);
-        /**
-         * Adding all the mood objects in the array adapter
-         */
-        // commenting hard codes out for now
-//        moods.add(happyMood);
-//        moods.add(sadMood);
-//        moods.add(fearMood);
-//        moods.add(loveMood);
-//        moods.add(angryMood);
+
         index = -1;
         /**
          * moodView is the list view and l
@@ -98,7 +82,6 @@ public class testActivity extends BaseDrawerActivity{
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 moods.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots){
-                    //String moodTitle, String moodDescription, String moodColor, Date moodDate
                     Log.d(TAG, String.valueOf(doc.getData().get("moodTitle")));
                     String moodTitle = doc.getId();
                     String moodDescription = (String) doc.getData().get("moodDescription");

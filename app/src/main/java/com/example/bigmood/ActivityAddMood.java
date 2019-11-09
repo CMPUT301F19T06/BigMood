@@ -120,7 +120,7 @@ public class ActivityAddMood extends AppCompatActivity {
          */
         final String TAG = "Sample";
         // checking if it's an edit moof
-        if (testActivity.index != -1 ){
+        if (DashboardActivity.index != -1 ){
             dateText.setText(mood.getMoodDate().toString());
             moodTitle.setText(mood.getMoodTitle());
             description.setText(mood.getMoodDescription());
@@ -150,7 +150,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
                 mood.setMoodTitle(moodTitle.getText().toString());
                 mood.setMoodDescription(description.getText().toString());
-                mood.setMoodColor("#FFFF00");
+                mood.setMoodColor(mood.getMoodColor());
                 mood.setMoodPhoto(image);
                 // date input given
                 try{
@@ -198,14 +198,7 @@ public class ActivityAddMood extends AppCompatActivity {
             }
         });
 
-        /**
-         * setting image on profile picture
-         */
 
-
-        /**
-         * add location to mood
-         */
         addLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

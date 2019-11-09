@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.DateFormat;
 import java.util.ArrayList;
 
+import static java.sql.Types.NULL;
+
 public class DashboardActivity extends BaseDrawerActivity {
     private static final String TAG = "DASHBOARDACTIVITY";
     private FirebaseFirestore db;
@@ -45,8 +48,9 @@ public class DashboardActivity extends BaseDrawerActivity {
     private String userId;
     private int startingIndex = 0;
     final private int queryLimit = 25;
+    ImageView deleteMood;
     FloatingActionButton fab;
-    Button moodViewButton;
+    public static int index;
 
     public DashboardActivity() {
         this.db = FirebaseFirestore.getInstance();
@@ -76,6 +80,9 @@ public class DashboardActivity extends BaseDrawerActivity {
                 startActivity(intent);
             }
         });
+
+
+
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
         this.moodCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -83,19 +90,25 @@ public class DashboardActivity extends BaseDrawerActivity {
                 moodObjects.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (doc.contains("moodCreator")){
-                        if (doc.getString("moodCreator").compareTo(userId) == 0){
+
+                    // todo: if (doc.getString("moodCreator").compareTo(userId) == 0) doesn't work
+
                             Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
                             String moodId = doc.getId();
                             String moodDescription = doc.getString("moodDescription");
                             String moodTitle = doc.getString("moodTitle");
                             Timestamp moodDate = doc.getTimestamp("moodDate");
+                            String moodColor = (String) doc.getData().get("moodColor").toString();
+                            String moodPhoto = (String) doc.getData().get("moodPhoto");
                             Mood mood = new Mood();
                             mood.setMoodID(moodId);
                             mood.setMoodTitle(moodTitle);
                             mood.setMoodDescription(moodDescription);
                             mood.setMoodDate(moodDate);
+                            mood.setMoodColor(moodColor);
+                            mood.setMoodPhoto(moodPhoto);
                             moodObjects.add(mood);
-                        }
+
                     }
 
 
@@ -105,23 +118,14 @@ public class DashboardActivity extends BaseDrawerActivity {
         });
 
 
-        /* TODO: Delete this
-        moodViewButton = (Button) findViewById(R.id.button);
-        moodViewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
-                Intent testView = new Intent(DashboardActivity.this, testActivity.class);
-                startActivity(testView);
-            }
-        });
-         */
+
 
         initRecyclerView();
     }
 
     @Override
     protected void onResume() {
+        index = -1;
         super.onResume();
         navigationView.getMenu().getItem(0).setChecked(true);
     }
