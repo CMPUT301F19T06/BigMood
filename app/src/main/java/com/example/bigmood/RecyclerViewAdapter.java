@@ -53,6 +53,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
         //set up the connection to view here, TBA
+        //temporary placeholder for date
+        holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
+        holder.moodDescription.setText(moodIDs.get(position).getMoodDescription());
+        holder.moodTitle.setText(moodIDs.get(position).getMoodTitle());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public void intentMoodView(Mood moodID, View v){
         Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
-        intent.putExtra(MOOD_ID, moodID);
+        intent.putExtra("Mood", moodID);
         mContext.startActivity(intent);
     }
 

@@ -29,7 +29,7 @@ public class Mood implements Serializable {
      /**
      * The date of the mood event
      */
-    private Timestamp moodDate;
+    private transient Timestamp moodDate;
     /**
      * The unique Identifier for the mood
      */
