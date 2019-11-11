@@ -43,8 +43,8 @@ public class DashboardActivity extends BaseDrawerActivity {
     private CollectionReference userCollectionReference;
     private CollectionReference moodCollectionReference;
     private RecyclerView recyclerView;
-    private RecyclerViewAdapter adapter;
-    private ArrayList<Mood> moodObjects = new ArrayList<>();
+    public static RecyclerViewAdapter adapter;
+    public static ArrayList<Mood> moodObjects = new ArrayList<>();
     private String userId;
     private int startingIndex = 0;
     final private int queryLimit = 25;
@@ -90,7 +90,6 @@ public class DashboardActivity extends BaseDrawerActivity {
                 moodObjects.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (doc.get("moodCreator") != null){
-
                         if (doc.getString("moodCreator").compareTo(userId) == 0) {
                             Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
                             String moodId = doc.getId();
@@ -110,8 +109,6 @@ public class DashboardActivity extends BaseDrawerActivity {
                         }
 
                     }
-
-
                 }
                 adapter.notifyDataSetChanged();
             }

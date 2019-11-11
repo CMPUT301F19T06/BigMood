@@ -58,7 +58,7 @@
         app:layout_constraintBottom_toTopOf="@+id/moodDate"
         app:layout_constraintEnd_toEndOf="@+id/moodDescription"
         app:layout_constraintTop_toBottomOf="@+id/moodName"
-        app:srcCompat="@drawable/ic_delete" />
+        app:srcCompat="@mipmap/emoji_angry" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

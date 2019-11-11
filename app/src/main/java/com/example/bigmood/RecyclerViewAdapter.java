@@ -29,7 +29,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String MOOD_ID = "com.example.bigmood.RecycleViewAdapter";
 
     //set up local arraylist to store rides
-    private ArrayList<Mood> moodIDs = new ArrayList<>();
+    //private ArrayList<Mood> moodIDs = new ArrayList<>();
 
     //set up interface components to measure input from clicks
     private Context mContext;
@@ -37,7 +37,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     ImageView deleteMood;
     //constructor
     public RecyclerViewAdapter(ArrayList moodIDs, String userId, Context mContext) {
-        this.moodIDs = moodIDs;
+        DashboardActivity.moodObjects = moodIDs;
         this.mContext = mContext;
         this.userId = userId;
     }
@@ -59,10 +59,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //set up the connection to view here, TBA
         //temporary placeholder for date
-        holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
-        holder.moodDescription.setText(moodIDs.get(position).getMoodDescription());
-        holder.moodTitle.setText(moodIDs.get(position).getMoodTitle());
-        String stringHEX = moodIDs.get(position).getMoodColor();
+        holder.moodDate.setText(DashboardActivity.moodObjects.get(position).getMoodDate().toDate().toString());
+        holder.moodDescription.setText(DashboardActivity.moodObjects.get(position).getMoodDescription());
+        holder.moodTitle.setText(DashboardActivity.moodObjects.get(position).getMoodTitle());
+        String stringHEX = DashboardActivity.moodObjects.get(position).getMoodColor();
         try {
             holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
         }catch (Throwable e){
@@ -72,8 +72,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on:" + moodIDs.get(position));
-                intentMoodView(moodIDs.get(position), v);
+                Log.d(TAG, "onClick: clicked on:" + DashboardActivity.moodObjects.get(position));
+                intentMoodView(DashboardActivity.moodObjects.get(position), v);
             }
         });
         //establish listener for each element
@@ -90,7 +90,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //item count for parsing through
     @Override
     public int getItemCount() {
-        return moodIDs.size();
+        return DashboardActivity.moodObjects.size();
     }
 
     //constructor for ViewHolder object, which holds our xml components together

@@ -48,6 +48,8 @@ import java.util.HashMap;
 
 import static com.example.bigmood.ActivityMoodView.CAMERA_ACCESS;
 import static com.example.bigmood.ActivityMoodView.GALLERY_ACCESS;
+import static com.example.bigmood.DashboardActivity.adapter;
+import static com.example.bigmood.DashboardActivity.moodObjects;
 
 /**
  * todo: Activity add mood does both edit and add
@@ -58,7 +60,7 @@ public class ActivityAddMood extends AppCompatActivity {
     Button saveButton;
     Button addLoc;
     LinearLayout profileBackground;
-    ImageView profilePic;
+    ImageView profilePic, deleteMood;
     EditText moodTitle; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
@@ -100,9 +102,9 @@ public class ActivityAddMood extends AppCompatActivity {
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMood);
         profileBackground = findViewById(R.id.background_pic);
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+        deleteMood = findViewById(R.id.deleteMood);
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         this.userId = getIntent().getExtras().getString("USER_ID");
-        dateText.setText(dateFormat.format(date));
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
 
@@ -121,13 +123,15 @@ public class ActivityAddMood extends AppCompatActivity {
          * using index for now if a mood object is clicked on list
          */
         final String TAG = "Sample";
-        // checking if it's an edit moof
+        // checking if it's an edit mood
         if (DashboardActivity.index != -1 ){
-            dateText.setText(mood.getMoodDate().toString());
+
             moodTitle.setText(mood.getMoodTitle());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
+
             try {
+
                 profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
             }catch (Throwable e){
                 e.printStackTrace();
@@ -138,6 +142,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
                 Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
                 profilePic.setImageBitmap(bitmap);
+
             }catch (Exception e){
                 e.getMessage();
             }
@@ -200,6 +205,35 @@ public class ActivityAddMood extends AppCompatActivity {
             }
         });
 
+        // todo: implementing delete mood
+        deleteMood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (moodObjects.size() > 0){
+                    collectionReference.document(mood.getMoodID())
+                            .delete()
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "Mood successfully deleted!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Error deleting mood", e);
+                                }
+                            });
+                    moodObjects.remove(mood);
+                    adapter.notifyDataSetChanged();
+                }else{
+                    Toast.makeText(ActivityAddMood.this, "No mood posted",Toast.LENGTH_LONG).show();
+
+                }
+
+                finish();
+            }
+        });
 
         addLoc.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,7 +281,7 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                dateText.setText(String.format("%02d-%02d-%02d",year,month,day));
+                dateText.setText(String.format("%04d-%02d-%02d",year,month,day));
 
             }
         };
@@ -299,3 +333,7 @@ public class ActivityAddMood extends AppCompatActivity {
         }
     }
 }
+/*
+
+
+*/
