@@ -15,11 +15,13 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +63,7 @@ public class ActivityAddMood extends AppCompatActivity {
     Button addLoc;
     LinearLayout profileBackground;
     ImageView profilePic, deleteMood;
-    EditText moodTitle; // moodTitle and moodType is the same here for now
+    Spinner moodTitle; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
@@ -100,7 +102,7 @@ public class ActivityAddMood extends AppCompatActivity {
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
-        moodTitle = findViewById(R.id.currentMood);
+        moodTitle = findViewById(R.id.currentMoodSpinner);
         profileBackground = findViewById(R.id.background_pic);
         deleteMood = findViewById(R.id.deleteMood);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -108,25 +110,23 @@ public class ActivityAddMood extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
 
+        final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_spinner_item);
+        moodTitle.setAdapter(titleAdapter);
+
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
         // TODO: hardcoded color
         mood.setMoodColor("#FFFF00");
 
         final CollectionReference collectionReference = db.collection("Moods");
-
         if (mood.getMoodDate() == null) {
             mood.setMoodDate(Timestamp.now());
         }
 
-        /**
-         * todo: photo is not saved yet. Everything else shows
-         * using index for now if a mood object is clicked on list
-         */
         final String TAG = "Sample";
         // checking if it's an edit mood
         if (DashboardActivity.index != -1 ){
 
-            moodTitle.setText(mood.getMoodTitle());
+            moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
 
@@ -155,7 +155,7 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
-                mood.setMoodTitle(moodTitle.getText().toString());
+                mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 mood.setMoodDescription(description.getText().toString());
                 mood.setMoodColor(mood.getMoodColor());
                 mood.setMoodPhoto(image);

@@ -48,7 +48,6 @@
     </TextView>
 
     <ImageView
-        android:id="@+id/deleteMood"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginTop="1dp"
@@ -58,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@+id/moodDate"
         app:layout_constraintEnd_toEndOf="@+id/moodDescription"
         app:layout_constraintTop_toBottomOf="@+id/moodName"
-        app:srcCompat="@mipmap/emoji_angry" />
+        android:src="@mipmap/emoji_angry" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,7 +34,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //set up interface components to measure input from clicks
     private Context mContext;
     private String userId;
-    ImageView deleteMood;
     //constructor
     public RecyclerViewAdapter(ArrayList moodIDs, String userId, Context mContext) {
         DashboardActivity.moodObjects = moodIDs;
