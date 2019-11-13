@@ -54,6 +54,7 @@ public class ActivityMoodView extends AppCompatActivity {
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
     private ImageView imageView;
+    private ImageView imageViewFull;
     private Button cancelButton;
     private Context context;
     private CircleImageView ProfileImage;
@@ -77,6 +78,8 @@ public class ActivityMoodView extends AppCompatActivity {
         ProfileImage = findViewById(R.id.Profile_image);
         TextView moodDescription = findViewById(R.id.moodDescription);
         moodType = findViewById(R.id.currentMood);
+        imageView = findViewById(R.id.background_pic);
+        imageViewFull = findViewById(R.id.background_pic_full);
 
         // Firebase
 
@@ -88,6 +91,22 @@ public class ActivityMoodView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 OpenAlbum(view);
+            }
+        });
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageViewFull.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.GONE);
+            }
+        });
+
+        imageViewFull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                imageView.setVisibility(View.VISIBLE);
+                imageViewFull.setVisibility(View.GONE);
             }
         });
     }
