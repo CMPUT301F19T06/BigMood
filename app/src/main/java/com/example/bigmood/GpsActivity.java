@@ -1,7 +1,12 @@
 package com.example.bigmood;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +21,8 @@ import java.util.ArrayList;
  * This activity is called from the sidebar and from the userview to display mood locations dependent
  * on the mode of operation.
  *
+ * It also implements OnMneuItemClickListener for interacting with the mode popupmenu.
+ *
  * Passed in through intent:
  *
  * "USER_ID" :  the id of the current user
@@ -25,7 +32,7 @@ import java.util.ArrayList;
  *  - "FOLLOW": Show the moods of those that the user is following
  */
 
-public class GpsActivity extends AppCompatActivity {
+public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     String userId; //The Current user's id
     String mode; // The mode of operation
@@ -57,7 +64,7 @@ public class GpsActivity extends AppCompatActivity {
             retrieveFollowedMoods();
         }
 
-        FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
+        final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
         FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
         FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
 
@@ -65,6 +72,10 @@ public class GpsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //TODO: When the mode button is pressed
+                PopupMenu modemenu = new PopupMenu(getApplicationContext(), modeButton);
+                modemenu.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) getParent());
+                modemenu.inflate(R.menu.gps_mode_menu);
+                modemenu.show();
             }
         });
 
@@ -82,6 +93,28 @@ public class GpsActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.gps_mode_menu_user:
+                if(userMoods == null){
+                    retrieveUserMoods();
+                }
+                //TODO: change display to user moods
+                Toast.makeText(this, "Display Users", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.gps_mode_menu_followed:
+                retrieveFollowedMoods();
+                //TODO: change display to followed moods
+                Toast.makeText(this, "Display Followed", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return false;
+
+        }
 
     }
 
