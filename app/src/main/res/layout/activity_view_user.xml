@@ -16,7 +16,7 @@
         app:layout_constraintBottom_toTopOf="@+id/user_view_username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/user_view_prof_pic"
-        app:layout_constraintTop_toTopOf="@+id/user_view_prof_pic">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/user_view_location_pic"
@@ -30,13 +30,14 @@
             app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/user_view_add_friend"
             android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:clickable="true"
-            app:srcCompat="@mipmap/icon_addFriend" />
+            app:srcCompat="@mipmap/icon_addfriend"
+            android:visibility="visible"/>
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -62,10 +63,35 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:text="@string/username"
+        app:layout_constraintBottom_toTopOf="@id/user_view_spinner_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Profile_image"
-        app:layout_constraintBottom_toTopOf="@id/user_view_recycler"/>
+        app:layout_constraintTop_toBottomOf="@+id/Profile_image" />
+
+    <LinearLayout
+        android:id="@+id/user_view_spinner_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/user_view_username">
+
+        <Spinner
+            android:id="@+id/user_view_filter_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical" />
+
+        <Spinner
+            android:id="@+id/user_view_sort_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/user_view_recycler"
@@ -74,5 +100,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_view_username" />
+        app:layout_constraintTop_toBottomOf="@id/user_view_username" />
 </androidx.constraintlayout.widget.ConstraintLayout>

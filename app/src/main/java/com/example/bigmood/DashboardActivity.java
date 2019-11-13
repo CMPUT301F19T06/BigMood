@@ -139,9 +139,4 @@ public class DashboardActivity extends BaseDrawerActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
-
-    // TODO: TEMP, move to user when user view is implemented
-    private void queryUserData() {
-
-    }
 }
