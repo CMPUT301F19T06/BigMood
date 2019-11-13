@@ -1,45 +1,25 @@
 package com.example.bigmood;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 
-import static java.sql.Types.NULL;
-
-public class FriendsActivity extends BaseDrawerActivity {
+public class FriendRequestActivity extends BaseDrawerActivity {
     //TODO: clean up imports and variables
-    private static final String TAG = "FRIENDSACTIVITY";
+    private static final String TAG = "FRIENDREQUESTACTIVITY";
     private FirebaseFirestore db;
     private CollectionReference userCollectionReference;
     private CollectionReference friendsCollectionReference;
@@ -50,9 +30,10 @@ public class FriendsActivity extends BaseDrawerActivity {
     private int startingIndex = 0;
     final private int queryLimit = 25;
     ImageView deleteMood;
+    FloatingActionButton fab;
     public static int index;
 
-    public FriendsActivity() {
+    public FriendRequestActivity() {
         this.db = FirebaseFirestore.getInstance();
         this.userCollectionReference = db.collection("Users");
     }
@@ -61,7 +42,7 @@ public class FriendsActivity extends BaseDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_friends, frameLayout);
-        toolbar.setTitle("Friends");
+        toolbar.setTitle("Follow Requests");
 
         this.userId = getIntent().getExtras().getString("USER_ID");
 
@@ -70,7 +51,7 @@ public class FriendsActivity extends BaseDrawerActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 friendObjects.clear();
-                //TODO: implement friends from firebase
+                //TODO: implement follow requests from firebase
                 adapter.notifyDataSetChanged();
             }
         });
@@ -87,7 +68,7 @@ public class FriendsActivity extends BaseDrawerActivity {
     }
 
     private void initRecyclerView() {
-        //TODO: Load in Friends from Online.
+        //TODO: Load in Follow requests from Online.
 
         Log.d(TAG, "initRecyclerView: init recyclerview");
         recyclerView = findViewById(R.id.dashboard_recyclerview);

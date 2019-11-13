@@ -32,6 +32,10 @@
             android:name=".DashboardActivity"
             android:label="@string/dashboard"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".FriendsActivity"
+            android:label="@string/friends"
+            android:theme="@style/AppTheme" />
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
