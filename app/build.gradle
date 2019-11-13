@@ -11,12 +11,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         android.defaultConfig.vectorDrawables.useSupportLibrary = "true"
+        //ARCgis
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
+        //###
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    //for ARCgis
+    packagingOptions {
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+}
+
+//for ARCgis
+repositories {
+    jcenter()
+    // Add the following ArcGIS repository
+    maven {
+        url 'https://esri.bintray.com/arcgis'
     }
 }
 
@@ -47,6 +66,9 @@ dependencies {
     implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+    implementation 'com.esri.arcgis.android:arcgis-android:10.2.9'
+    implementation 'com.esri.arcgisruntime:arcgis-android:100.6.0'
 
 }
 

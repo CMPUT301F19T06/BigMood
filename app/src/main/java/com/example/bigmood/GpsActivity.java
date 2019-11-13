@@ -13,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import com.esri.arcgisruntime.mapping.view.MapView;
+import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.Basemap;
+
 import java.util.ArrayList;
 
 /**
@@ -48,6 +52,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     that "FOLLOW" mode is selected.
      */
     ArrayList<Mood> followedMoods;
+
+    //using esri mapView
+    private MapView mMapView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
