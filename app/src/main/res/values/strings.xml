@@ -36,4 +36,6 @@
     <string name="username">Username</string>
     <string name="profile">My Profile</string>
     <string name="map">Map</string>
+    <string name="gpsModeMenuUser">My Mood Locations</string>
+    <string name="gpsModeMenuFollowed">My Friends Mood Locations</string>
 </resources>

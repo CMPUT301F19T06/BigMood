@@ -83,9 +83,15 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         } else if (id == R.id.nav_profile) {
             Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Your profile", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_friends) {
-            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Friends List", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
+            intent.putExtra("USER_ID", userID);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
         } else if (id == R.id.nav_map) {
-            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Map", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), GpsActivity.class);
+            intent.putExtra("USER_ID", userID);
+            intent.putExtra("MODE", "USER");
+            startActivity(intent);
         }
 
         drawer.closeDrawer(GravityCompat.START);

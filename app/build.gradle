@@ -11,12 +11,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         android.defaultConfig.vectorDrawables.useSupportLibrary = "true"
+        //ARCgis
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
+        //###
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    //for ARCgis
+    packagingOptions {
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
+}
+
+//for ARCgis
+repositories {
+    jcenter()
+    // Add the following ArcGIS repository
+    maven {
+        url 'https://esri.bintray.com/arcgis'
     }
 }
 
@@ -39,13 +58,16 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.firebase:firebase-firestore:21.2.1'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.google.firebase:firebase-auth:18.0.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
 
     implementation 'com.google.firebase:firebase-database:19.2.0'
     implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+    implementation 'com.esri.arcgisruntime:arcgis-android:100.6.0'
 
 }
 

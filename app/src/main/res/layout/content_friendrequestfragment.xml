@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="80dp">
+
+    <TextView
+        android:id="@+id/friendName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:padding="2dp"
+        android:text="FRIEND"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/acceptButton"
+        app:layout_constraintStart_toEndOf="@+id/pfpImage"
+        app:layout_constraintTop_toTopOf="parent"></TextView>
+
+    <ImageView
+        android:id="@+id/pfpImage"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="1dp"
+        android:layout_weight="2"
+        android:adjustViewBounds="true"
+        android:foregroundGravity="center"
+        android:maxWidth="20sp"
+        android:maxHeight="20sp"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/emoji_angry" />
+
+    <Button
+        android:id="@+id/acceptButton"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:text="slid into DMs"
+        app:layout_constraintEnd_toStartOf="@+id/rejectButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/rejectButton"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:text="fuck off"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
