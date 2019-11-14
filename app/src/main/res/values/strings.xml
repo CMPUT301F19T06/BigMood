@@ -5,14 +5,24 @@
     <string name="string_login_error">We couldn\'t log you in, please try again</string>
     <string name="editmood_image_description">Displays either the color of the mood of the mood or a picture uploaded by the user.</string>
     <string-array name="editmood_moodspinner">
+        <item>Happy</item>
         <item>Anger</item>
-        <item>Anticipation</item>
-        <item>Joy</item>
-        <item>Trust</item>
         <item>Fear</item>
+        <item>Sad</item>
         <item>Surprise</item>
-        <item>Sadness</item>
         <item>Disgust</item>
+        <item>Bored</item>
+        <item>Love</item>
+    </string-array>
+    <string-array name="editmood_moodcolor_spinner">
+        <item name="Anger">#FF0101</item>
+        <item name="Bored">#FE6301</item>
+        <item name="Happy">#FFFF00</item>
+        <item name="Love">#AEFF00</item>
+        <item name="Fear">#1AFF00</item>
+        <item name="Surprise">#00B7FF</item>
+        <item name="Sad">#0054FF</item>
+        <item name="Disgust">#CC00FF</item>
     </string-array>
     <string name="moodName">Mood</string>
     <string name="placeholder1">placeholder1</string>

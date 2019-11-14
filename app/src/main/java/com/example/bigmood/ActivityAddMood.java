@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ import java.security.spec.ECField;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,6 +54,7 @@ import java.util.HashMap;
 import static com.example.bigmood.ActivityMoodView.CAMERA_ACCESS;
 import static com.example.bigmood.ActivityMoodView.GALLERY_ACCESS;
 import static com.example.bigmood.DashboardActivity.adapter;
+import static com.example.bigmood.DashboardActivity.index;
 import static com.example.bigmood.DashboardActivity.moodObjects;
 
 /**
@@ -62,8 +66,8 @@ public class ActivityAddMood extends AppCompatActivity {
     Button saveButton;
     Button addLoc;
     LinearLayout profileBackground;
-    ImageView profilePic, deleteMood;
-    Spinner moodTitle; // moodTitle and moodType is the same here for now
+    ImageView profilePic, deleteMood, emojiPic;
+    Spinner moodTitle, moodColor; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
@@ -79,9 +83,6 @@ public class ActivityAddMood extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private CollectionReference moodCollectionReference;
-    private static final String AUTH_TAG = "Google auth failure";
-    private static final String USER_EXISTS_TAG = "Current mood check";
-    private static final String REGISTER_USER_TAG = "Registering new mood";
 
     public ActivityAddMood() {
         this.db = FirebaseFirestore.getInstance();
@@ -103,19 +104,42 @@ public class ActivityAddMood extends AppCompatActivity {
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMoodSpinner);
+        moodColor = findViewById(R.id.currentMoodColorSpinner);
         profileBackground = findViewById(R.id.background_pic);
         deleteMood = findViewById(R.id.deleteMood);
+        emojiPic = findViewById(R.id.currentMoodImage);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         this.userId = getIntent().getExtras().getString("USER_ID");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
-
+        final ArrayAdapter<CharSequence> colorAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodcolor_spinner, android.R.layout.simple_expandable_list_item_1);
         final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_spinner_item);
         moodTitle.setAdapter(titleAdapter);
+        moodColor.setAdapter(colorAdapter);
+
+
+        /**
+         * HashMap for each mood Colors
+         * todo: change the color here according to the necessity
+         */
+        final HashMap<String,String> colorHash = new HashMap<String, String>(){{
+            put("Set Color", "#FFFFFF");
+            put("Happy", "#FFFF00");
+            put("Fear", "#1AFF00");
+            put("Surprise", "#00B7FF");
+            put("Disgust", "#CC00FF");
+            put("Anger", "#AEFF00");
+            put("Bored", "#FE6301");
+            put("Sad", "#0054FF");
+            put("Love","#EDC0E1");
+        }};
+
+
+
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
         // TODO: hardcoded color
-        mood.setMoodColor("#FFFF00");
+        //mood.setMoodColor("#FFFF00");
 
         final CollectionReference collectionReference = db.collection("Moods");
         if (mood.getMoodDate() == null) {
@@ -127,6 +151,9 @@ public class ActivityAddMood extends AppCompatActivity {
         if (DashboardActivity.index != -1 ){
 
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
+            moodColor.setSelection(titleAdapter.getPosition(colorHash.get(mood.getMoodTitle())));
+            setMoodEmoji(mood.getMoodTitle());
+            mood.setMoodEmoji(getMoodEmoji());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
 
@@ -146,8 +173,9 @@ public class ActivityAddMood extends AppCompatActivity {
             }catch (Exception e){
                 e.getMessage();
             }
-
         }
+
+
         /**
          * Save button to save mood object with it's requirements
          */
@@ -156,8 +184,10 @@ public class ActivityAddMood extends AppCompatActivity {
             public void onClick(View view) {
                 //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
+                mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodDescription(description.getText().toString());
                 mood.setMoodColor(mood.getMoodColor());
+
                 mood.setMoodPhoto(image);
                 // date input given
                 try{
@@ -182,6 +212,12 @@ public class ActivityAddMood extends AppCompatActivity {
                 data.put("longitude", mood.getLongitude());
                 data.put("latitude", mood.getLatitude());
                 try{
+                    if (index != -1){
+                        moodObjects.remove(moodObjects.get(index));
+                        adapter.notifyDataSetChanged();
+                        collectionReference.document(mood.getMoodID()).delete();
+                    }
+
                     collectionReference
                             .document(mood.getMoodID())
                             .set(data)
@@ -197,7 +233,9 @@ public class ActivityAddMood extends AppCompatActivity {
                                     Log.d(TAG, "Data addition failed" + e.toString());
                                 }
                             });
+
                     finish();
+
                 } catch (Exception e){
                     Toast.makeText(context, "You haven't put a title for your mood",Toast.LENGTH_LONG).show();
                 }
@@ -286,6 +324,47 @@ public class ActivityAddMood extends AppCompatActivity {
             }
         };
     }
+
+    // todo: set emoji according to hashmap of mood type
+    public void setMoodEmoji(String emotion){
+        switch (emotion){
+            case "Happy":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
+                break;
+            case "Sad":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));
+                break;
+            case "Fear":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_fear));
+                break;
+            case "Surprise":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_surprised));
+                break;
+            case "Anger":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_angry));
+                break;
+            case "Bored":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_bored));
+                break;
+            case "Disgust":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_disgust));
+                break;
+            case "Love":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_love));
+                break;
+        }
+    }
+
+    public String getMoodEmoji(){
+        Drawable drawable= emojiPic.getDrawable();
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
+        Bitmap bitmap = bitmapDrawable.getBitmap();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b =baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
     /**
      * working on the open camera and open album functionality
      */
@@ -333,7 +412,3 @@ public class ActivityAddMood extends AppCompatActivity {
         }
     }
 }
-/*
-
-
-*/
