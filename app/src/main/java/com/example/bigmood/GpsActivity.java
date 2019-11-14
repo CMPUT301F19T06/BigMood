@@ -1,5 +1,7 @@
 package com.example.bigmood;
 
+import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,6 +11,16 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.esri.arcgisruntime.geometry.SpatialReference;
+import com.esri.arcgisruntime.geometry.SpatialReferences;
+import com.esri.arcgisruntime.mapping.ArcGISMap;
+import com.esri.arcgisruntime.mapping.Basemap;
+import com.esri.arcgisruntime.mapping.view.Graphic;
+import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
+import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -37,6 +49,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
+    //used to get last known location for now
+    private FusedLocationProviderClient fusedLocationClient;
+    private double lastLong;
+    private double lastLat;
+    private SpatialReference wgs84 = SpatialReferences.getWgs84();
+    ///////////////////
+
+
     private String userId; //The Current user's id
     private String mode; // The mode of operation
 
@@ -62,6 +82,21 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gps);
+        //get last location
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            lastLong = location.getLongitude();
+                            lastLat = location.getLatitude();
+                        }
+                    }
+                });
+        ////////////////////////////////
+
 
         this.userId = getIntent().getExtras().getString("USER_ID");
         this.mode = getIntent().getExtras().getString("MODE");
@@ -91,6 +126,22 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 modemenu.show();
             }
         });
+
+        //map implementation
+        mMapView = findViewById(R.id.mapView);
+        ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
+        mMapView.setMap(map);
+
+        GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
+        Point point = new Point(lastLong, lastLat, wgs84);
+        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+
+        Graphic graphic = new Graphic(point, symbol);
+        graphicsOverlay.getGraphics().add(graphic);
+
+        /////////////////////////////
 
         zoominButton.setOnClickListener(new View.OnClickListener() {
             @Override
