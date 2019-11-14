@@ -97,14 +97,14 @@ public class DashboardActivity extends BaseDrawerActivity {
                             String moodDescription = doc.getString("moodDescription");
                             String moodTitle = doc.getString("moodTitle");
                             Timestamp moodDate = doc.getTimestamp("moodDate");
-                            String moodColor = doc.getString("moodColor");
+                            //String moodColor = doc.getString("moodColor");
                             String moodPhoto = (String) doc.getData().get("moodPhoto");
                             Mood mood = new Mood();
                             mood.setMoodID(moodId);
                             mood.setMoodTitle(moodTitle);
                             mood.setMoodDescription(moodDescription);
                             mood.setMoodDate(moodDate);
-                            mood.setMoodColor(moodColor);
+                            //mood.setMoodColor(moodColor);
                             mood.setMoodPhoto(moodPhoto);
                             moodObjects.add(mood);
                         }
