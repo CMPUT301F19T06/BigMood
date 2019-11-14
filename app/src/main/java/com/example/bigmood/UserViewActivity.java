@@ -30,6 +30,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /*  This activity displays a user who's id is passed to it in an intent.
@@ -61,6 +62,7 @@ public class UserViewActivity extends BaseDrawerActivity
     final static public int SORT_DATEDESC = 1;
     final static public int SORT_DATEASC = 2;
     ArrayList<String> moodFiltersToApply = new ArrayList<>();
+    final static protected int MAX_FILTERS = 8;
 
     public UserViewActivity() {
         this.db = FirebaseFirestore.getInstance();
@@ -170,8 +172,6 @@ public class UserViewActivity extends BaseDrawerActivity
     }
 
     protected void initFilterSpinner() {
-        // TODO: implement
-        //MultiSpinner multiSpinner = (MultiSpinner) findViewById(R.id.multi_spinner);
         List<String> items = new ArrayList<String>();
         items.add("Happy");
         items.add("Angry");
@@ -183,6 +183,7 @@ public class UserViewActivity extends BaseDrawerActivity
         items.add("Touched");
         this.filterSpinner = findViewById(R.id.user_view_filter_spinner);
         this.filterSpinner.setItems(items);
+        this.filterSpinner.setSelection(new int[]{0, 1, 2, 3, 4, 5, 6, 7});
         this.filterSpinner.setListener(this);
     }
 
@@ -215,13 +216,16 @@ public class UserViewActivity extends BaseDrawerActivity
     }
 
     protected void updateSortAndFilter() {
-        // TODO: sorting doesn't work
+
         Query query = moodCollectionReference;
+
+        /* TODO: sorting through query doesn't work
         if (mode == UserViewActivity.SORT_DATEDESC) {
             query.orderBy("moodDate", Query.Direction.DESCENDING);
         } else if (mode == UserViewActivity.SORT_DATEASC){
             query.orderBy("moodDate", Query.Direction.ASCENDING);
         }
+        */
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -229,25 +233,49 @@ public class UserViewActivity extends BaseDrawerActivity
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (filterDoc(doc, moodFiltersToApply)) {
                         Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
-                        String moodId = doc.getId();
-                        String moodDescription = doc.getString("moodDescription");
-                        String moodTitle = doc.getString("moodTitle");
-                        Timestamp moodDate = doc.getTimestamp("moodDate");
-                        String moodColor = doc.getString("moodColor");
-                        String moodPhoto = (String) doc.getData().get("moodPhoto");
-                        Mood mood = new Mood();
-                        mood.setMoodID(moodId);
-                        mood.setMoodTitle(moodTitle);
-                        mood.setMoodDescription(moodDescription);
-                        mood.setMoodDate(moodDate);
-                        mood.setMoodColor(moodColor);
-                        mood.setMoodPhoto(moodPhoto);
-                        moodObjects.add(mood);
+                        moodObjects.add(assembleMood(doc));
                     }
                 }
+                sortMoods();
                 recyclerAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    protected Mood assembleMood(DocumentSnapshot doc) {
+        String moodId = doc.getId();
+        String moodDescription = doc.getString("moodDescription");
+        String moodTitle = doc.getString("moodTitle");
+        Timestamp moodDate = doc.getTimestamp("moodDate");
+        String moodColor = doc.getString("moodColor");
+        String moodPhoto = (String) doc.getData().get("moodPhoto");
+        Mood mood = new Mood();
+        mood.setMoodID(moodId);
+        mood.setMoodTitle(moodTitle);
+        mood.setMoodDescription(moodDescription);
+        mood.setMoodDate(moodDate);
+        mood.setMoodColor(moodColor);
+        mood.setMoodPhoto(moodPhoto);
+        return mood;
+    }
+
+    protected void sortMoods() {
+        // Sort
+        if (mode == UserViewActivity.SORT_DATEDESC) {
+            moodObjects.sort(new Comparator<Mood>() {
+                @Override
+                public int compare(Mood mood1, Mood mood2) {
+                    return mood2.getMoodDate().compareTo(mood1.getMoodDate());
+                }
+            });
+        } else if (mode == UserViewActivity.SORT_DATEASC){
+            moodObjects.sort(new Comparator<Mood>() {
+                @Override
+                public int compare(Mood mood1, Mood mood2) {
+                    return mood1.getMoodDate().compareTo(mood2.getMoodDate());
+                }
+            });
+        }
     }
 
     @Override
@@ -258,5 +286,13 @@ public class UserViewActivity extends BaseDrawerActivity
     @Override
     public void selectedStrings(List<String> strings) {
         // TODO: implement
+        if(strings.size() >= 8) {
+            moodFiltersToApply.clear();
+        } else {
+            for (String string : strings) {
+                moodFiltersToApply.add(string);
+            }
+        }
+        updateSortAndFilter();
     }
 }

@@ -14,9 +14,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /*
-*   from https://github.com/GunaseelanArumaikkannu/MultiSpinner
+*   adapted from https://github.com/GunaseelanArumaikkannu/MultiSpinner
 *
-*
+*   modified to hard code the initial string
 * */
 @SuppressLint("AppCompatCustomView")
 public class MultiSelectionSpinner extends Spinner implements OnMultiChoiceClickListener {
@@ -69,7 +69,7 @@ public class MultiSelectionSpinner extends Spinner implements OnMultiChoiceClick
     @Override
     public boolean performClick() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Please select!!!");
+        builder.setTitle("Filter by...");
         builder.setMultiChoiceItems(_items, mSelection, this);
         _itemsAtStart = getSelectedItemsAsString();
         builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
@@ -221,7 +221,8 @@ public class MultiSelectionSpinner extends Spinner implements OnMultiChoiceClick
                 sb.append(_items[i]);
             }
         }
-        return sb.toString();
+        //return sb.toString();
+        return "Filter by...";
     }
 
     public String getSelectedItemsAsString() {
@@ -237,6 +238,7 @@ public class MultiSelectionSpinner extends Spinner implements OnMultiChoiceClick
                 sb.append(_items[i]);
             }
         }
-        return sb.toString();
+        //return sb.toString();
+        return "Filter by...";
     }
 }

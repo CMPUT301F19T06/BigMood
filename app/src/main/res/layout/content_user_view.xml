@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/user_view_spinner_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_weight="1"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -18,7 +18,7 @@
         <Spinner
             android:id="@+id/user_view_sort_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
             android:spinnerMode="dialog" />
@@ -26,7 +26,7 @@
         <com.example.bigmood.MultiSelectionSpinner
             android:id="@+id/user_view_filter_spinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1" />
     </LinearLayout>
