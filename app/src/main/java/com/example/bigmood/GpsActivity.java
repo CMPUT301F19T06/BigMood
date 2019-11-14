@@ -1,8 +1,6 @@
 package com.example.bigmood;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
@@ -15,15 +13,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-import android.graphics.Color;
 import com.esri.arcgisruntime.geometry.Point;
-import com.esri.arcgisruntime.geometry.SpatialReferences;
-import com.esri.arcgisruntime.mapping.ArcGISMap;
-import com.esri.arcgisruntime.mapping.Basemap;
-import com.esri.arcgisruntime.mapping.view.Graphic;
-import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.MapView;
-import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 /**
  * The GpsActivity
  *
@@ -43,20 +37,23 @@ import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    String userId; //The Current user's id
-    String mode; // The mode of operation
+    private String userId; //The Current user's id
+    private String mode; // The mode of operation
 
     /*
     The arraylist for the user's moods, initially null and only loaded from the database if
     the mode is set to "USER" and it is still null
      */
-    ArrayList<Mood> userMoods = null;
+    private ArrayList<Point> userPoints = null;
 
     /*
     The arraylist holding the followed moods, this will need to be refreshed every time
     that "FOLLOW" mode is selected.
      */
-    ArrayList<Mood> followedMoods;
+    private ArrayList<Point> followedPoints;
+
+    private FirebaseFirestore db;
+    private CollectionReference moodCollectionReference;
 
     //using esri mapView
     private MapView mMapView;
@@ -68,6 +65,10 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
         this.userId = getIntent().getExtras().getString("USER_ID");
         this.mode = getIntent().getExtras().getString("MODE");
+
+
+        this.db = FirebaseFirestore.getInstance();
+        this.moodCollectionReference = db.collection("Moods");
 
         if (this.mode.equals("USER")){
             retrieveUserMoods();
@@ -112,7 +113,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()){
             case R.id.gps_mode_menu_user:
-                if(userMoods == null){
+                if(userPoints == null){
                     retrieveUserMoods();
                 }
                 //TODO: change display to user moods
@@ -132,6 +133,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
+        // Point point = new Point(long, lat, SpatialReferences.getWgs84())
     }
 
     private void retrieveFollowedMoods(){
