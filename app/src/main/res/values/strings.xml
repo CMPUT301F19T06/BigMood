@@ -14,6 +14,11 @@
         <item>Sadness</item>
         <item>Disgust</item>
     </string-array>
+    <string-array name="userview_sortspinner">
+        <item>Date (Desc)</item>
+        <item>Date (Asc)</item>
+    </string-array>
+    <string name="user_view_filter_defaulttext">Filter by&#8230;</string>
     <string name="moodName">Mood</string>
     <string name="placeholder1">placeholder1</string>
     <string name="placeholder2">placeholder2</string>

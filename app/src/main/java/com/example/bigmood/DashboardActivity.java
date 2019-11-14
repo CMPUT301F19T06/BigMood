@@ -87,38 +87,9 @@ public class DashboardActivity extends BaseDrawerActivity {
         this.moodCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                moodObjects.clear();
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.get("moodCreator") != null){
-
-                        if (doc.getString("moodCreator").compareTo(userId) == 0) {
-                            Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
-                            String moodId = doc.getId();
-                            String moodDescription = doc.getString("moodDescription");
-                            String moodTitle = doc.getString("moodTitle");
-                            Timestamp moodDate = doc.getTimestamp("moodDate");
-                            String moodColor = doc.getString("moodColor");
-                            String moodPhoto = (String) doc.getData().get("moodPhoto");
-                            Mood mood = new Mood();
-                            mood.setMoodID(moodId);
-                            mood.setMoodTitle(moodTitle);
-                            mood.setMoodDescription(moodDescription);
-                            mood.setMoodDate(moodDate);
-                            mood.setMoodColor(moodColor);
-                            mood.setMoodPhoto(moodPhoto);
-                            moodObjects.add(mood);
-                        }
-
-                    }
-
-
-                }
-                adapter.notifyDataSetChanged();
+                // TODO: real dashboard stuff
             }
         });
-
-
-
 
         initRecyclerView();
     }

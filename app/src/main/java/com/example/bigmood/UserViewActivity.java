@@ -3,18 +3,20 @@ package com.example.bigmood;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
@@ -23,10 +25,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*  This activity displays a user who's id is passed to it in an intent.
  *  It also requires a permission flag to be passed to it since it is more
@@ -35,8 +39,10 @@ import java.util.ArrayList;
  *  If there is permission it displays the user's mood and hi
  */
 
-public class UserViewActivity extends BaseDrawerActivity{
-    protected String userId;
+public class UserViewActivity extends BaseDrawerActivity
+        implements AdapterView.OnItemSelectedListener, MultiSelectionSpinner.OnMultipleItemsSelectedListener {
+    protected String targetUser;
+    protected String currentUser;
     protected static final String TAG = "USER_VIEW_ACTIVITY";
     protected boolean hasViewPermission = false;
     protected TextView userName;
@@ -46,11 +52,15 @@ public class UserViewActivity extends BaseDrawerActivity{
     protected CollectionReference moodCollectionReference;
     // for recyclerView stuff
     protected RecyclerView recyclerView;
-    protected RecyclerViewAdapter adapter;
+    protected RecyclerViewAdapter recyclerAdapter;
     protected ArrayList<Mood> moodObjects = new ArrayList<>();
     // for filters and sorts
-    protected Spinner filterSpinner;
+    protected MultiSelectionSpinner filterSpinner;
     protected Spinner sortSpinner;
+    protected int mode = 1;
+    final static public int SORT_DATEDESC = 1;
+    final static public int SORT_DATEASC = 2;
+    ArrayList<String> moodFiltersToApply = new ArrayList<>();
 
     public UserViewActivity() {
         this.db = FirebaseFirestore.getInstance();
@@ -64,24 +74,34 @@ public class UserViewActivity extends BaseDrawerActivity{
         getLayoutInflater().inflate(R.layout.activity_view_user, frameLayout);
         toolbar.setTitle("UserView");
 
-        this.userId = getIntent().getExtras().getString("TARGET_ID");
-        this.hasViewPermission = getIntent().getExtras().getBoolean("HAS_VIEW_PERMISSON");
+        try {
+            this.currentUser = getIntent().getExtras().getString("USER_ID");
+            this.targetUser = getIntent().getExtras().getString("TARGET_ID");
+            this.hasViewPermission = getIntent().getExtras().getBoolean("HAS_VIEW_PERMISSION");
+        } catch (NullPointerException e) {
+            Log.d(TAG, "Could not acquire initial data");
+            super.finish();
+        }
 
         this.userName = findViewById(R.id.user_view_username);
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
 
         this.getUserName();
         this.initAddFriend();
+        this.initSortSpinner();
+        this.initFilterSpinner();
         this.initStartGpsView();
-        if(hasViewPermission) {
+
+        if (hasViewPermission) {
             findViewById(R.id.user_view_add_friend).setVisibility(View.GONE);
+            findViewById(R.id.user_view_recycler).setVisibility(View.VISIBLE);
             setMoodListener();
             initRecyclerView();
         }
     }
 
     protected void getUserName() {
-        DocumentReference docRef = this.userCollectionReference.document(this.userId);
+        DocumentReference docRef = this.userCollectionReference.document(this.targetUser);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -104,57 +124,139 @@ public class UserViewActivity extends BaseDrawerActivity{
         this.moodCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                moodObjects.clear();
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.get("moodCreator") != null){
-
-                        if (doc.getString("moodCreator").compareTo(userId) == 0) {
-                            Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
-                            String moodId = doc.getId();
-                            String moodDescription = doc.getString("moodDescription");
-                            String moodTitle = doc.getString("moodTitle");
-                            Timestamp moodDate = doc.getTimestamp("moodDate");
-                            String moodColor = doc.getString("moodColor");
-                            String moodPhoto = (String) doc.getData().get("moodPhoto");
-                            Mood mood = new Mood();
-                            mood.setMoodID(moodId);
-                            mood.setMoodTitle(moodTitle);
-                            mood.setMoodDescription(moodDescription);
-                            mood.setMoodDate(moodDate);
-                            mood.setMoodColor(moodColor);
-                            mood.setMoodPhoto(moodPhoto);
-                            moodObjects.add(mood);
-                        }
-                    }
-                }
-                adapter.notifyDataSetChanged();
+                updateSortAndFilter();
             }
         });
     }
 
     protected void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview");
-        recyclerView = findViewById(R.id.dashboard_recyclerview);
-        adapter = new RecyclerViewAdapter(moodObjects, this.userId, this);
-        recyclerView.setAdapter(adapter);
+        recyclerView = findViewById(R.id.user_view_recycler);
+        recyclerAdapter = new RecyclerViewAdapter(moodObjects, this.targetUser, this);
+        recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     protected void initStartGpsView() {
-        findViewById(R.id.user_view_location_pic).setOnClickListener(new View.OnClickListener() {
+        ImageView imageView = findViewById(R.id.user_view_location_pic);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: start gps activity
+                // TODO: start gps
+                Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     protected void initAddFriend() {
-        findViewById(R.id.user_view_add_friend).setOnClickListener(new View.OnClickListener() {
+        ImageView imageView = findViewById(R.id.user_view_add_friend);
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: add a friend
+                Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    protected void initSortSpinner() {
+        // adapted from developer docs
+        this.sortSpinner = findViewById(R.id.user_view_sort_spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(UserViewActivity.this,
+                R.array.userview_sortspinner, android.R.layout.simple_spinner_item);
+        // Apply the adapter to the spinner
+        this.sortSpinner.setAdapter(adapter);
+        this.sortSpinner.setOnItemSelectedListener(this);
+    }
+
+    protected void initFilterSpinner() {
+        // TODO: implement
+        //MultiSpinner multiSpinner = (MultiSpinner) findViewById(R.id.multi_spinner);
+        List<String> items = new ArrayList<String>();
+        items.add("Happy");
+        items.add("Angry");
+        items.add("Scared");
+        items.add("Surprised");
+        items.add("Sad");
+        items.add("Disgusted");
+        items.add("Bored");
+        items.add("Touched");
+        this.filterSpinner = findViewById(R.id.user_view_filter_spinner);
+        this.filterSpinner.setItems(items);
+        this.filterSpinner.setListener(this);
+    }
+
+    protected boolean filterDoc(DocumentSnapshot doc, ArrayList<String> filters) {
+        if (!doc.contains("moodCreator")) {return false;}
+        if (doc.getString("moodCreator").compareTo(targetUser) != 0) {return false;}
+        if (filters.isEmpty()) {return true;}
+        if (filters.contains(doc.getString("moodTitle"))) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String spinnerResult = (String) parent.getItemAtPosition(position);
+        Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+        if (spinnerResult.compareTo("Date (Asc)") == 0) {
+            mode = UserViewActivity.SORT_DATEASC;
+        } else {
+            mode = UserViewActivity.SORT_DATEDESC;
+        }
+
+        updateSortAndFilter();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Do nothing
+    }
+
+    protected void updateSortAndFilter() {
+        // TODO: sorting doesn't work
+        Query query = moodCollectionReference;
+        if (mode == UserViewActivity.SORT_DATEDESC) {
+            query.orderBy("moodDate", Query.Direction.DESCENDING);
+        } else if (mode == UserViewActivity.SORT_DATEASC){
+            query.orderBy("moodDate", Query.Direction.ASCENDING);
+        }
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                moodObjects.clear();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (filterDoc(doc, moodFiltersToApply)) {
+                        Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
+                        String moodId = doc.getId();
+                        String moodDescription = doc.getString("moodDescription");
+                        String moodTitle = doc.getString("moodTitle");
+                        Timestamp moodDate = doc.getTimestamp("moodDate");
+                        String moodColor = doc.getString("moodColor");
+                        String moodPhoto = (String) doc.getData().get("moodPhoto");
+                        Mood mood = new Mood();
+                        mood.setMoodID(moodId);
+                        mood.setMoodTitle(moodTitle);
+                        mood.setMoodDescription(moodDescription);
+                        mood.setMoodDate(moodDate);
+                        mood.setMoodColor(moodColor);
+                        mood.setMoodPhoto(moodPhoto);
+                        moodObjects.add(mood);
+                    }
+                }
+                recyclerAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void selectedIndices(List<Integer> indices) {
+        // do nothing
+    }
+
+    @Override
+    public void selectedStrings(List<String> strings) {
+        // TODO: implement
     }
 }

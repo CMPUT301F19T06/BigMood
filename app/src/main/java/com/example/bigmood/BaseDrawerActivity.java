@@ -82,6 +82,11 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
             Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Your profile", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+            intent.putExtra("TARGET_ID", userID);
+            intent.putExtra("HAS_VIEW_PERMISSION", true);
+            startActivity(intent);
+
         } else if (id == R.id.nav_friends) {
             Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Friends List", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_map) {

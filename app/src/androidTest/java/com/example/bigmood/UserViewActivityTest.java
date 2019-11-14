@@ -24,7 +24,7 @@ public class UserViewActivityTest {
             getLayoutInflater().inflate(R.layout.activity_view_user, frameLayout);
             toolbar.setTitle("UserView");
 
-            this.userId = "109926616595958819946";
+            this.targetUser = "109926616595958819946";
             this.hasViewPermission = true;
 
             this.userName = findViewById(R.id.user_view_username);
