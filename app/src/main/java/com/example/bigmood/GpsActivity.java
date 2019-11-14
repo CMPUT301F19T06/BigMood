@@ -53,7 +53,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private ArrayList<Point> followedPoints;
 
     private FirebaseFirestore db;
-    private CollectionReference moodCollectionReference;
+    private CollectionReference moodCollection;
 
     //using esri mapView
     private MapView mMapView;
@@ -68,7 +68,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
 
         this.db = FirebaseFirestore.getInstance();
-        this.moodCollectionReference = db.collection("Moods");
+        this.moodCollection = db.collection("Moods");
 
         if (this.mode.equals("USER")){
             retrieveUserMoods();
