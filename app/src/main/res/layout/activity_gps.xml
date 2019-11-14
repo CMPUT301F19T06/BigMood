@@ -6,14 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/gps_mapview"
+    <com.esri.arcgisruntime.mapping.view.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+    </com.esri.arcgisruntime.mapping.view.MapView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/gps_button_zoomin"
