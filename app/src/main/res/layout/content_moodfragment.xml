@@ -9,12 +9,12 @@
 
     <TextView
 
-        android:id="@+id/moodName"
+        android:id="@+id/moodUserName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:text="@string/moodName"
-        android:textSize="20sp"
+        android:text="@string/mood_user_name"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,11 +26,11 @@
         android:id="@+id/moodDescription"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Description"
-        android:textSize="16sp"
+        android:text="@string/description"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/moodName">
+        app:layout_constraintTop_toBottomOf="@+id/moodUserName">
 
     </TextView>
 
@@ -38,7 +38,7 @@
         android:id="@+id/moodDate"
         android:layout_width="156dp"
         android:layout_height="19dp"
-        android:text="@string/placeholder2"
+        android:text="@string/mood_date"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -52,13 +52,14 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginRight="48dp"
+        android:contentDescription="TODO"
         android:foregroundGravity="right"
+        android:src="@mipmap/emoji_angry"
         app:layout_constraintBottom_toTopOf="@+id/moodDate"
         app:layout_constraintEnd_toEndOf="@+id/moodDescription"
-        app:layout_constraintTop_toBottomOf="@+id/moodName"
-        android:src="@mipmap/emoji_angry" />
+        app:layout_constraintTop_toBottomOf="@+id/moodUserName" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

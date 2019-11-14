@@ -24,9 +24,9 @@
         <item name="Sad">#0054FF</item>
         <item name="Disgust">#CC00FF</item>
     </string-array>
-    <string name="moodName">Mood</string>
-    <string name="placeholder1">placeholder1</string>
-    <string name="placeholder2">placeholder2</string>
+    <string name="mood_user_name">mood_user_name</string>
+    <string name="mood_date">mood_date</string>
+
     <string name="dashboard">Dashboard</string>
     <string name="search">Search</string>
     <string name="friends">Friends</string>
@@ -38,4 +38,5 @@
     <string name="map">Map</string>
     <string name="gpsModeMenuUser">My Mood Locations</string>
     <string name="gpsModeMenuFollowed">My Friends Mood Locations</string>
+    <string name="description">Description</string>
 </resources>
