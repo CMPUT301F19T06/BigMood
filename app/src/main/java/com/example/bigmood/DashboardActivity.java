@@ -48,7 +48,6 @@ public class DashboardActivity extends BaseDrawerActivity {
     private String userId;
     private int startingIndex = 0;
     final private int queryLimit = 25;
-    ImageView emoji;
     FloatingActionButton fab;
     public static int index;
 
@@ -62,8 +61,6 @@ public class DashboardActivity extends BaseDrawerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_dashboard, frameLayout);
-        emoji = findViewById(R.id.moodEmoji);
-
         toolbar.setTitle("Dashboard");
 
         this.userId = getIntent().getExtras().getString("USER_ID");

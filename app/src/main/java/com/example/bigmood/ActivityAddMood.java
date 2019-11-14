@@ -179,6 +179,7 @@ public class ActivityAddMood extends AppCompatActivity {
         /**
          * Save button to save mood object with it's requirements
          */
+        //todo:  each user will have the moodiD's in their user profile as a reference
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -186,9 +187,9 @@ public class ActivityAddMood extends AppCompatActivity {
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodDescription(description.getText().toString());
-                mood.setMoodColor(mood.getMoodColor());
-
                 mood.setMoodPhoto(image);
+                mood.setMoodEmoji(getMoodEmoji());
+
                 // date input given
                 try{
                     mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
@@ -211,6 +212,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 data.put("moodSituation", 0);
                 data.put("longitude", mood.getLongitude());
                 data.put("latitude", mood.getLatitude());
+                data.put("moodEmoji", mood.getMoodEmoji());
                 try{
                     if (index != -1){
                         moodObjects.remove(moodObjects.get(index));
@@ -325,6 +327,10 @@ public class ActivityAddMood extends AppCompatActivity {
         };
     }
 
+    /**
+     * Set emoji according to mood type
+     * @param emotion
+     */
     // todo: set emoji according to hashmap of mood type
     public void setMoodEmoji(String emotion){
         switch (emotion){

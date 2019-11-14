@@ -36,7 +36,7 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:clickable="true"
-            app:srcCompat="@mipmap/icon_addFriend" />
+            app:srcCompat="@mipmap/icon_addfriend" />
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView

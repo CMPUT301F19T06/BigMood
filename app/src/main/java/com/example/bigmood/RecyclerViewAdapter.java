@@ -2,7 +2,10 @@ package com.example.bigmood;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,7 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";
     private static final String MOOD_ID = "com.example.bigmood.RecycleViewAdapter";
+    ImageView emoji;
 
     //set up local arraylist to store rides
     //private ArrayList<Mood> moodIDs = new ArrayList<>();
@@ -61,6 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.moodDate.setText(DashboardActivity.moodObjects.get(position).getMoodDate().toDate().toString());
         holder.moodDescription.setText(DashboardActivity.moodObjects.get(position).getMoodDescription());
         holder.moodTitle.setText(DashboardActivity.moodObjects.get(position).getMoodTitle());
+        holder.emoji.setImageBitmap(StringToBitMap(DashboardActivity.moodObjects.get(position).getMoodEmoji()));
         String stringHEX = DashboardActivity.moodObjects.get(position).getMoodColor();
         try {
             holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
@@ -77,6 +82,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         });
         //establish listener for each element
 
+    }
+
+    /**
+     * function for turning string to bitmap
+     * usage: for emoji
+     * @param encodedString
+     * @return
+     */
+    public Bitmap StringToBitMap(String encodedString){
+        try{
+            byte [] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }
+        catch(Exception e){
+            e.getMessage();
+            return null;
+        }
     }
 
     public void intentMoodView(Mood moodID, View v){
@@ -97,6 +120,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         // TextView text;
         TextView moodTitle, moodDescription, moodDate;
         ConstraintLayout linearLayout;
+        ImageView emoji;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -105,6 +129,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             moodDate = itemView.findViewById(R.id.moodDate);
             moodDescription = itemView.findViewById(R.id.moodDescription);
             linearLayout = itemView.findViewById(R.id.linearLayout);
+            emoji = itemView.findViewById(R.id.moodEmoji);
         }
     }
 }
