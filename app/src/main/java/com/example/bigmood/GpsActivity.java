@@ -15,6 +15,7 @@ import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.Basemap;
+import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
@@ -127,21 +128,45 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
         });
 
-        //map implementation
+        //map implementation//////////////
+        //inflate map
         mMapView = findViewById(R.id.mapView);
         ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
         mMapView.setMap(map);
 
+        //set center of map
+        mMapView.setViewpoint(new Viewpoint(new Point(lastLong, lastLat, wgs84), 3000));
+
+        //init graphics overlay
         GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
-        Point point = new Point(lastLong, lastLat, wgs84);
+        //symbol type for map marker
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+
+        /*
+        Point point = new Point(lastLong, lastLat, wgs84);
+
 
         Graphic graphic = new Graphic(point, symbol);
         graphicsOverlay.getGraphics().add(graphic);
 
-        /////////////////////////////
+        */
+
+        //show all pins on map
+        if (this.mode.equals("USER")){
+            for (Point i : userPoints){
+                Graphic graphic = new Graphic(i, symbol);
+                graphicsOverlay.getGraphics().add(graphic);
+            }
+        } else {
+            for (Point i : followedPoints){
+                Graphic graphic = new Graphic(i, symbol);
+                graphicsOverlay.getGraphics().add(graphic);
+            }
+        }
+
+        ///////////////////////////////////
 
         zoominButton.setOnClickListener(new View.OnClickListener() {
             @Override
