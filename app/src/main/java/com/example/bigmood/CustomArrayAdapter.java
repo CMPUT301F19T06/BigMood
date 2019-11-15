@@ -45,7 +45,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Mood> {
             view = LayoutInflater.from(context).inflate(R.layout.content_moodfragment, parent, false);
         }
         Mood some_mood =  moodArrayList.get(position);
-        moodTitle = view.findViewById(R.id.moodName);
+        moodTitle = view.findViewById(R.id.moodUserName);
         moodDate = view.findViewById(R.id.moodDate);
         moodDescription = view.findViewById(R.id.moodDescription);
         linearLayout = view.findViewById(R.id.linearLayout);

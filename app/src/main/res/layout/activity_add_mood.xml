@@ -73,7 +73,7 @@
                 android:foregroundGravity="center"
                 android:maxWidth="20sp"
                 android:maxHeight="20sp"
-                android:scaleType="centerInside"
+                android:scaleType="fitCenter"
 
                 app:srcCompat="@mipmap/emoji_happy"></ImageView>
         </LinearLayout>

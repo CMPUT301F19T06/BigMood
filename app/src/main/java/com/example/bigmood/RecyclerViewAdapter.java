@@ -134,7 +134,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public ViewHolder(View itemView) {
             super(itemView);
             // establish views here
-            moodTitle = itemView.findViewById(R.id.moodName);
+            moodTitle = itemView.findViewById(R.id.moodUserName);
             moodDate = itemView.findViewById(R.id.moodDate);
             moodDescription = itemView.findViewById(R.id.moodDescription);
             linearLayout = itemView.findViewById(R.id.linearLayout);

@@ -184,7 +184,9 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
+
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
+                setMoodEmoji(mood.getMoodTitle());
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodDescription(description.getText().toString());
                 mood.setMoodPhoto(image);
