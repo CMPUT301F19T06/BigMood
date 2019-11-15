@@ -37,7 +37,13 @@ import java.util.List;
  *  It also requires a permission flag to be passed to it since it is more
  *  convenient to acquire the flag from outside the activity.
  *
- *  If there is permission it displays the user's mood and hi
+ *  If there is permission it displays the user's mood
+ *
+ *  Requires 3 fields in the intent: USER_ID, TARGET_ID, HAS_VIEW_PERMISSION
+ *
+ *  USER_ID: The user id of the current app user
+ *  TARGET_ID: The user id of the user that will be viewed
+ *  HAS_VIEW_PERMISSION: true if the TARGET_ID is a friend of, or is, USER_ID, false otherwise
  */
 
 public class UserViewActivity extends BaseDrawerActivity
@@ -200,7 +206,6 @@ public class UserViewActivity extends BaseDrawerActivity
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String spinnerResult = (String) parent.getItemAtPosition(position);
-        Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
         if (spinnerResult.compareTo("Date (Asc)") == 0) {
             mode = UserViewActivity.SORT_DATEASC;
         } else {
@@ -285,7 +290,6 @@ public class UserViewActivity extends BaseDrawerActivity
 
     @Override
     public void selectedStrings(List<String> strings) {
-        // TODO: implement
         if(strings.size() >= 8) {
             moodFiltersToApply.clear();
         } else {
