@@ -54,6 +54,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private FusedLocationProviderClient fusedLocationClient;
     private double lastLong;
     private double lastLat;
+    //spatial reference for map points
     private SpatialReference wgs84 = SpatialReferences.getWgs84();
     ///////////////////
 
@@ -209,7 +210,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
-        // Point point = new Point(long, lat, SpatialReferences.getWgs84())
+        // Point point = new Point(long, lat, wgs84)
     }
 
     private void retrieveFollowedMoods(){
