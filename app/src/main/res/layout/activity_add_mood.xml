@@ -81,13 +81,21 @@
         <TextView
             android:id="@+id/currentDate"
             android:layout_width="match_parent"
-            android:layout_height="84dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="200dp"
             android:text="SELECT DATE"
             android:textColor="@color/colorBlue"
             android:textSize="18sp">
 
         </TextView>
+
+        <Spinner
+            android:id="@+id/moodSituationSpinner"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_weight="0"
+            android:autofillHints="New Mood"
+            android:textSize="20sp"></Spinner>
 
 
         <TextView
@@ -150,6 +158,17 @@
         app:civ_circle_background_color="@color/colorWhite">
 
     </de.hdodenhof.circleimageview.CircleImageView>
+    <TextView
+        android:id="@+id/moodUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="210dp"
+        android:layout_marginLeft="40dp"
+        android:text="username"
+        android:textSize="20dp"
+        android:gravity="center">
+
+    </TextView>
 
 
 </RelativeLayout>

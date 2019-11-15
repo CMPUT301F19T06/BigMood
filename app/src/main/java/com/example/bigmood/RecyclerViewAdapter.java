@@ -61,10 +61,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //set up the connection to view here, TBA
         //temporary placeholder for date
+        // todo: mood username as mood situation currently
         holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
-        holder.moodDescription.setText(moodIDs.get(position).getMoodDescription());
+        holder.moodDescription.setText(moodIDs.get(position).getMoodTitle());
 
-        holder.moodTitle.setText(moodIDs.get(position).getMoodTitle());
+        holder.moodUsername.setText(moodIDs.get(position).getMoodSituation());
 
         //emoji
         Log.d("Emoji and position",moodIDs.get(position).getMoodEmoji() + position);
@@ -127,14 +128,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //constructor for ViewHolder object, which holds our xml components together
     public class ViewHolder extends RecyclerView.ViewHolder{
         // TextView text;
-        TextView moodTitle, moodDescription, moodDate;
+        TextView moodUsername, moodDescription, moodDate;
         ImageView emoji;
         ConstraintLayout linearLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             // establish views here
-            moodTitle = itemView.findViewById(R.id.moodUserName);
+            moodUsername = itemView.findViewById(R.id.moodUserName);
             moodDate = itemView.findViewById(R.id.moodDate);
             moodDescription = itemView.findViewById(R.id.moodDescription);
             linearLayout = itemView.findViewById(R.id.linearLayout);

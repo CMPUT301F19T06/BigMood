@@ -51,8 +51,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import static com.example.bigmood.ActivityMoodView.CAMERA_ACCESS;
-import static com.example.bigmood.ActivityMoodView.GALLERY_ACCESS;
 import static com.example.bigmood.DashboardActivity.adapter;
 import static com.example.bigmood.DashboardActivity.index;
 import static com.example.bigmood.DashboardActivity.moodObjects;
@@ -61,13 +59,15 @@ import static com.example.bigmood.DashboardActivity.moodObjects;
  * todo: Activity add mood does both edit and add
  */
 public class ActivityAddMood extends AppCompatActivity {
+    public static final int CAMERA_ACCESS = 1001;
+    public static final int GALLERY_ACCESS = 9999;
     private Context context;
-    TextView dateText , description;
+    TextView dateText , description, moodUserName;
     Button saveButton;
     Button addLoc;
     LinearLayout profileBackground;
     ImageView profilePic, deleteMood, emojiPic;
-    Spinner moodTitle, moodColor; // moodTitle and moodType is the same here for now
+    Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
@@ -104,7 +104,11 @@ public class ActivityAddMood extends AppCompatActivity {
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMoodSpinner);
+        moodUserName = findViewById(R.id.moodUserName);
+        //todo: mood username
+        moodUserName.setText("MoodUserName");
         moodColor = findViewById(R.id.currentMoodColorSpinner);
+        moodSituation = findViewById(R.id.moodSituationSpinner);
         profileBackground = findViewById(R.id.background_pic);
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
@@ -112,10 +116,16 @@ public class ActivityAddMood extends AppCompatActivity {
         this.userId = getIntent().getExtras().getString("USER_ID");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
-        final ArrayAdapter<CharSequence> colorAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodcolor_spinner, android.R.layout.simple_expandable_list_item_1);
-        final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<CharSequence> colorAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodcolor_spinner, android.R.layout.simple_list_item_1);
+        final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_list_item_1);
+        final ArrayAdapter<CharSequence> situations = ArrayAdapter.createFromResource(this, R.array.editmood_moodsituation_spinner, android.R.layout.simple_list_item_1);
+
+        /**
+         * Set up the spinner adapters accordingly
+         */
         moodTitle.setAdapter(titleAdapter);
         moodColor.setAdapter(colorAdapter);
+        moodSituation.setAdapter(situations);
 
 
         /**
@@ -140,19 +150,25 @@ public class ActivityAddMood extends AppCompatActivity {
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
         Log.d("oKAY","Mood Id from Add Mood" + mood.getMoodID());
 
-        // TODO: hardcoded color
         final CollectionReference collectionReference = db.collection("Moods");
-
+        final CollectionReference userCollectionReference = db.collection("Users");
         if (mood.getMoodDate() == null) {
             mood.setMoodDate(Timestamp.now());
         }
-
+        /**
+         * set the mood user name according to the username on database
+         */
         final String TAG = "Sample";
-        // checking if it's an edit mood
+
+        /**
+         * If the index is not -1 or it's in edit mood situation
+         */
         if (DashboardActivity.index != -1 ){
 
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
+            moodUserName.setText(mood.getMoodUsername());
             moodColor.setSelection(titleAdapter.getPosition(colorHash.get(mood.getMoodTitle())));
+            moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
             setMoodEmoji(mood.getMoodTitle());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
@@ -183,12 +199,14 @@ public class ActivityAddMood extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //public Mood (String moodType, String moodDescription, String moodColor, Date moodDate){
 
+                // todo: set Mood user name here (hardcoded here)
+                mood.setMoodUsername("Nasif Hossain");
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 setMoodEmoji(mood.getMoodTitle());
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodDescription(description.getText().toString());
+                mood.setMoodSituation(situations.getItem(moodSituation.getSelectedItemPosition()).toString());
                 mood.setMoodPhoto(image);
                 mood.setMoodEmoji(getMoodEmoji());
 
@@ -210,7 +228,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
                 data.put("moodCreator", userId);
                 //TODO: replace with enum for social situation
-                data.put("moodSituation", 0);
+                data.put("moodSituation", mood.getMoodSituation());
                 data.put("longitude", mood.getLongitude());
                 data.put("latitude", mood.getLatitude());
                 data.put("moodEmoji", mood.getMoodEmoji());

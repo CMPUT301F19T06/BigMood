@@ -22,8 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import static com.example.bigmood.testActivity.moodArrayAdapter;
-import static com.example.bigmood.testActivity.moods;
+
 
 /**
  * This is an array adapter created only for the purpose of demonstration for project part 2

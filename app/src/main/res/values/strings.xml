@@ -24,6 +24,11 @@
         <item name="Sad">#0054FF</item>
         <item name="Disgust">#CC00FF</item>
     </string-array>
+    <string-array name="editmood_moodsituation_spinner">
+        <item>in a group</item>
+        <item>alone</item>
+        <item>with family</item>
+    </string-array>
     <string name="mood_user_name">mood_user_name</string>
     <string name="mood_date">mood_date</string>
 

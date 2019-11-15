@@ -50,7 +50,7 @@
                 android:maxWidth="20sp"
                 android:maxHeight="20sp"
                 android:scaleType="centerInside"
-                android:src="@mipmap/emoji_angry" />
+                />
         </LinearLayout>
 
         <TextView
