@@ -138,10 +138,11 @@ public class ActivityAddMood extends AppCompatActivity {
 
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
-        // TODO: hardcoded color
-        //mood.setMoodColor("#FFFF00");
+        Log.d("oKAY","Mood Id from Add Mood" + mood.getMoodID());
 
+        // TODO: hardcoded color
         final CollectionReference collectionReference = db.collection("Moods");
+
         if (mood.getMoodDate() == null) {
             mood.setMoodDate(Timestamp.now());
         }
@@ -153,7 +154,6 @@ public class ActivityAddMood extends AppCompatActivity {
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
             moodColor.setSelection(titleAdapter.getPosition(colorHash.get(mood.getMoodTitle())));
             setMoodEmoji(mood.getMoodTitle());
-            mood.setMoodEmoji(getMoodEmoji());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
 
@@ -197,7 +197,6 @@ public class ActivityAddMood extends AppCompatActivity {
                 }catch (ParseException e){
                     e.getStackTrace();
                 }
-                mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
                 HashMap<String, Object> data = new HashMap<>();
                 data.put("moodTitle", mood.getMoodTitle());
                 data.put("moodDescription", mood.getMoodDescription());
@@ -206,37 +205,58 @@ public class ActivityAddMood extends AppCompatActivity {
                 data.put("moodDate", mood.getMoodDate());
                 data.put("dateCreated", Timestamp.now());
                 data.put("dateUpdated", Timestamp.now());
-                data.put("moodId", mood.getMoodID());
+
                 data.put("moodCreator", userId);
                 //TODO: replace with enum for social situation
                 data.put("moodSituation", 0);
                 data.put("longitude", mood.getLongitude());
                 data.put("latitude", mood.getLatitude());
                 data.put("moodEmoji", mood.getMoodEmoji());
+                Log.d("Index: ",String.valueOf(index));
                 try{
                     if (index != -1){
-                        moodObjects.remove(moodObjects.get(index));
+                        data.put("moodId", mood.getMoodID());
                         adapter.notifyDataSetChanged();
-                        collectionReference.document(mood.getMoodID()).delete();
+                        collectionReference
+                                .document(mood.getMoodID())
+                                .update(data)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG,"Data addition successful");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "Data addition failed" + e.toString());
+                                    }
+                                });
+                        index = -1;
+                        finish();
+
                     }
-
-                    collectionReference
-                            .document(mood.getMoodID())
-                            .set(data)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d(TAG,"Data addition successful");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d(TAG, "Data addition failed" + e.toString());
-                                }
-                            });
-
-                    finish();
+                    else{
+                        mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
+                        data.put("moodId", mood.getMoodID());
+                        collectionReference
+                                .document(mood.getMoodID())
+                                .set(data)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG,"Data addition successful");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "Data addition failed" + e.toString());
+                                    }
+                                });
+                        index = -1;
+                        finish();
+                    }
 
                 } catch (Exception e){
                     Toast.makeText(context, "You haven't put a title for your mood",Toast.LENGTH_LONG).show();

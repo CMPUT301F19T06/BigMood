@@ -74,6 +74,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                 Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
                 intent.putExtra("USER_ID", userId);
+                index = -1;
                 Mood mood = new Mood();
                 intent.putExtra("Mood",mood);
                 startActivity(intent);
@@ -97,12 +98,14 @@ public class DashboardActivity extends BaseDrawerActivity {
                             Timestamp moodDate = doc.getTimestamp("moodDate");
                             String moodColor = doc.getString("moodColor");
                             String moodPhoto = (String) doc.getData().get("moodPhoto");
+                            String moodEmoji = (String) doc.getData().get("moodEmoji");
                             Mood mood = new Mood();
                             mood.setMoodID(moodId);
                             mood.setMoodTitle(moodTitle);
                             mood.setMoodDescription(moodDescription);
                             mood.setMoodDate(moodDate);
                             mood.setMoodColor(moodColor);
+                            mood.setMoodEmoji(moodEmoji);
                             mood.setMoodPhoto(moodPhoto);
                             moodObjects.add(mood);
                         }
@@ -111,9 +114,6 @@ public class DashboardActivity extends BaseDrawerActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-
-
-
 
         initRecyclerView();
     }
