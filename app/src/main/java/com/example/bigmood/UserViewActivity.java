@@ -254,10 +254,14 @@ public class UserViewActivity extends BaseDrawerActivity
         Timestamp moodDate = doc.getTimestamp("moodDate");
         String moodColor = doc.getString("moodColor");
         String moodPhoto = (String) doc.getData().get("moodPhoto");
+        String moodEmoji = doc.getString("moodEmoji");
+        String moodSituation = doc.getString("moodSituation");
         Mood mood = new Mood();
         mood.setMoodID(moodId);
         mood.setMoodTitle(moodTitle);
         mood.setMoodDescription(moodDescription);
+        mood.setMoodSituation(moodSituation);
+        mood.setMoodEmoji(moodEmoji)
         mood.setMoodDate(moodDate);
         mood.setMoodColor(moodColor);
         mood.setMoodPhoto(moodPhoto);
