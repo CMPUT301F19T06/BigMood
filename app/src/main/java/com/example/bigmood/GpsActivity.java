@@ -63,8 +63,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
-    String userId; //The Current user's id
-    String mode; // The mode of operation
+    private String userId; //The Current user's id
+    private String mode; // The mode of operation
     //used to get last known location for now
     private FusedLocationProviderClient fusedLocationClient;
     private double lastLong;
@@ -73,10 +73,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private SpatialReference wgs84 = SpatialReferences.getWgs84();
     ///////////////////
     private String TAG = "GpsActivity";
-
-
-    private String userId; //The Current user's id
-    private String mode; // The mode of operation
 
     /*
     The arraylist for the user's moods, initially null and only loaded from the database if
@@ -155,21 +151,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         else{
             retrieveFollowedMoods();
         }
-
-        final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
-        FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
-        FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
-
-        modeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: When the mode button is pressed
-                PopupMenu modemenu = new PopupMenu(getApplicationContext(), modeButton);
-                modemenu.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) getParent());
-                modemenu.inflate(R.menu.gps_mode_menu);
-                modemenu.show();
-            }
-        });
 
         mMapView = findViewById(R.id.mapView);
         ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
