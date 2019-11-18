@@ -187,7 +187,8 @@ public class DashboardActivity extends BaseDrawerActivity {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 ArrayList<Mood> temp = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    temp.add(assembleMood(doc));
+                    Mood mood = assembleMood(doc);
+                    temp.add(mood);
                 }
                 moodObjects.add(getTopOne(temp));
                 adapter.notifyDataSetChanged();
@@ -205,11 +206,13 @@ public class DashboardActivity extends BaseDrawerActivity {
                 if (queryDocumentSnapshots.isEmpty()) {
                     emptyUser.setVisibility(View.VISIBLE);
                     recyclerViewUser.setVisibility(View.GONE);
+                    return;
                 } else {
                     emptyUser.setVisibility(View.GONE);
                     recyclerViewUser.setVisibility(View.VISIBLE);
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Mood mood = assembleMood(doc);
                     temp.add(assembleMood(doc));
                 }
                 moodObjectsUser.add(getTopOne(temp));

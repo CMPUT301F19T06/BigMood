@@ -30,6 +30,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -52,7 +53,10 @@ import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.spec.ECField;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -62,16 +66,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
-import static com.example.bigmood.DashboardActivity.adapter;
 import static com.example.bigmood.DashboardActivity.index;
-import static com.example.bigmood.DashboardActivity.moodObjects;
-import static com.google.firestore.v1.StructuredQuery.CompositeFilter.Operator.AND;
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
 /**
  * todo: Activity add mood does both edit and add
  */
 
 public class ActivityAddMood extends AppCompatActivity {
+
+    //todo: some new stuff
+    private ArrayList<String> mNames = new ArrayList<>();
+    private ArrayList<String> mImageUrls = new ArrayList<>();
+
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
     private Context context;
@@ -110,6 +117,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
+
         super.onCreate(savedInstanceState);
         // all the stuff id's
         setContentView(R.layout.activity_add_mood);
@@ -120,6 +128,7 @@ public class ActivityAddMood extends AppCompatActivity {
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMoodSpinner);
         moodUserName = findViewById(R.id.moodUserName);
+        //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
 
         moodColor = findViewById(R.id.currentMoodColorSpinner);
         moodSituation = findViewById(R.id.moodSituationSpinner);
@@ -206,7 +215,7 @@ public class ActivityAddMood extends AppCompatActivity {
             }
         }
 
-        DocumentSnapshot documentSnapshot;
+
 
         /**
          * Save button to save mood object with it's requirements
@@ -246,7 +255,6 @@ public class ActivityAddMood extends AppCompatActivity {
                 data.put("dateUpdated", Timestamp.now());
                 data.put("userName", mood.getMoodUsername());
                 data.put("moodCreator", userId);
-                //TODO: replace with enum for social situation
                 data.put("moodSituation", mood.getMoodSituation());
                 data.put("longitude", mood.getLongitude());
                 data.put("latitude", mood.getLatitude());
@@ -255,7 +263,6 @@ public class ActivityAddMood extends AppCompatActivity {
                 try{
                     if (index != -1){
                         data.put("moodId", mood.getMoodID());
-                        adapter.notifyDataSetChanged();
                         collectionReference
                                 .document(mood.getMoodID())
                                 .update(data)
@@ -273,7 +280,6 @@ public class ActivityAddMood extends AppCompatActivity {
                                 });
                         index = -1;
                         finish();
-
                     }
                     else{
                         mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
@@ -308,7 +314,7 @@ public class ActivityAddMood extends AppCompatActivity {
         deleteMood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (moodObjects.size() > 0){
+                if (mood.getMoodID() != NULL){
                     collectionReference.document(mood.getMoodID())
                             .delete()
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -323,8 +329,7 @@ public class ActivityAddMood extends AppCompatActivity {
                                     Log.w(TAG, "Error deleting mood", e);
                                 }
                             });
-                    moodObjects.remove(mood);
-                    adapter.notifyDataSetChanged();
+
                 }else{
                     Toast.makeText(ActivityAddMood.this, "No mood posted",Toast.LENGTH_LONG).show();
 
@@ -357,6 +362,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 OpenCamera(view);
             }
         });
+
         /**
          * date picker
          */
@@ -386,6 +392,70 @@ public class ActivityAddMood extends AppCompatActivity {
         };
     }
 
+    /**
+     * Some new stuff
+     * todo: finish this task
+     */
+    private void getImages(){
+        Log.d("Bomb", "initImageBitmaps: preparing bitmaps.");
+
+        mImageUrls.add("https://drive.google.com/open?id=1YOIVRtEo1jOg9Q5TOYJJvLiXv_j_y8wQ");
+        mNames.add("Bored");
+
+        mImageUrls.add("https://drive.google.com/open?id=1v9CFZFzLqlFXkV2Oum6mKuzoAK3C9Fj9");
+        mNames.add("Angry");
+
+        mImageUrls.add("https://drive.google.com/open?id=1lHlkIzHNgvZ5rNKiGGBwtE2jhEl_-MCR");
+        mNames.add("Disgust");
+
+        mImageUrls.add("https://drive.google.com/open?id=1y8dg1_srfSdExr6d75WpL2dvPO9PByY4");
+        mNames.add("Fear");
+
+
+        mImageUrls.add("https://drive.google.com/open?id=1mSv_ywdMi0m1gS9X1SyTO2T4yMqR8bND");
+        mNames.add("Happy");
+
+        mImageUrls.add("https://drive.google.com/open?id=1GV9j63lW0P4qA2E6944cGwHSVM7CCPJ6");
+        mNames.add("Love");
+
+
+        mImageUrls.add("https://drive.google.com/open?id=17tPsqGny-S03sOk5Z0zaj7P3GRlEf6ll");
+        mNames.add("Sad");
+
+        mImageUrls.add("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle");
+        mNames.add("Surprised");
+
+        mImageUrls.add("https://i.imgur.com/ZcLLrkY.jpg");
+        mNames.add("Washington");
+
+        //initRecyclerView();
+
+    }
+
+//    public static Bitmap getBitmapFromURL(String src) {
+//        try {
+//            URL url = new URL(src);
+//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//            connection.setDoInput(true);
+//            connection.connect();
+//            InputStream input = connection.getInputStream();
+//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+//            return myBitmap;
+//        } catch (IOException e) {
+//            // Log exception
+//            return null;
+//        }
+//    }
+
+//    private void initRecyclerView(){
+//        Log.d("Bomb", "initRecyclerView: init recyclerview");
+//
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+//        MoodAdapter recyclerView = findViewById(R.id.mood_recycler_view);
+//        recyclerView.setLayoutManager(recyclerView);
+//        RecyclerViewAdapter adapter = new MoodAdapter(this, mNames, mImageUrls);
+//        recyclerView.setAdapter(adapter);
+//    }
     /**
      * Set emoji according to mood type
      * @param emotion

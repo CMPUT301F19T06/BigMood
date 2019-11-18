@@ -1,213 +1,292 @@
 package com.example.bigmood;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.spec.ECField;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.UUID;
+import java.util.HashMap;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import static com.example.bigmood.DashboardActivity.index;
+import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
+/**
+ * todo: Activity add mood does both edit and add
+ */
 
 public class ActivityMoodView extends AppCompatActivity {
-    TextView dateText, moodType;
-    String dayString;
-    MenuInflater menuInflater;
+
+    //todo: some new stuff
+    private ArrayList<String> mNames = new ArrayList<>();
+    private ArrayList<String> mImageUrls = new ArrayList<>();
+
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
-    private ImageView imageView;
-    private ImageView imageViewFull;
-    private Button cancelButton;
     private Context context;
-    private CircleImageView ProfileImage;
-    private final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    TextView dateText, description, moodUserName;
+    Button editButton;
+    Button addLoc;
+    LinearLayout profileBackground;
+    ImageView profilePic, deleteMood, emojiPic;
+    TextView moodTitle, moodSituation; // moodTitle and moodType is the same here for now
+    String image;
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
+    Date date = Calendar.getInstance().getTime();
+    String dayString = dateFormat.format(date);
+    private FusedLocationProviderClient fusedLocationClient;
+    private String userId, username;
 
-    private FirebaseDatabase Fd;
-    private FirebaseStorage firebaseStorage;
+
+    /**
+     * firebase stuff here
+     * todo: putting mood objects in firebase and generating them
+     */
+
+    private FirebaseFirestore db;
+    private CollectionReference moodCollectionReference;
+    private CollectionReference userCollectionReference;
+
+    public ActivityMoodView() {
+        this.db = FirebaseFirestore.getInstance();
+        // collection reference for moods
+        this.moodCollectionReference = db.collection("Moods");
+        this.userCollectionReference = db.collection("Users");
+    }
 
 
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
 
         super.onCreate(savedInstanceState);
+        // all the stuff id's
         setContentView(R.layout.activity_mood_view);
-        dateText = (TextView)findViewById(R.id.currentDate);
-        Date date = Calendar.getInstance().getTime();
-        dayString = dateFormat.format(date);
-        dateText.setText(dayString);
-        ProfileImage = findViewById(R.id.Profile_image);
-        TextView moodDescription = findViewById(R.id.moodDescription);
-        moodType = findViewById(R.id.currentMood);
-        imageView = findViewById(R.id.background_pic);
-        imageViewFull = findViewById(R.id.background_pic_full);
+        profilePic = findViewById(R.id.Profile_image);
+        editButton = findViewById(R.id.edit_button);
+        addLoc = findViewById(R.id.add_loc);
+        dateText = findViewById(R.id.currentDate);
+        description = findViewById(R.id.moodDescription);
+        moodTitle = findViewById(R.id.currentMood);
+        moodUserName = findViewById(R.id.moodUserName);
+        // todo: set image from URL
+        //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
 
-        // Firebase
+        moodSituation = findViewById(R.id.moodSituationSpinner);
+        profileBackground = findViewById(R.id.background_pic);
+        emojiPic = findViewById(R.id.currentMoodImage);
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        this.userId = getIntent().getExtras().getString("USER_ID");
 
-        // setting the stuff inside moodView from moodObject
-        moodDescription.setText( String.valueOf(moods.get(0).getMoodDescription()));
-        dateText.setText("Date: \n" + String.valueOf(moods.get(0).getMoodDate()));
-        moodType.setText( String.valueOf(moods.get(0).getMoodTitle()));
-        ProfileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                OpenAlbum(view);
-            }
-        });
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                imageViewFull.setVisibility(View.VISIBLE);
-                imageView.setVisibility(View.GONE);
-            }
-        });
+        final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
 
-        imageViewFull.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                imageView.setVisibility(View.VISIBLE);
-                imageViewFull.setVisibility(View.GONE);
-            }
-        });
-    }
+        moodUserName.setText(mood.getMoodUsername());
+        moodSituation.setText(mood.getMoodSituation());
+        moodTitle.setText(mood.getMoodTitle());
+        // todo: moodDate does not work
+        if (mood.getMoodDate() == null) {
+            mood.setMoodDate(Timestamp.now());
+        }
+        dateText.setText(mood.getMoodDate().toDate().toString());
+        description.setText(mood.getMoodDescription());
+        //todo: String to bitmap: done!
+        try {
+            byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            profilePic.setImageBitmap(bitmap);
 
-    /**
-     * Open camera functionality
-     * @param view
-     */
-    public void OpenCamera(View view){
-        Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,CAMERA_ACCESS);
-    }
-
-    /**
-     * Open Gallery/ Album functionality
-     * @param view
-     */
-    public void OpenAlbum(View view){
-        Intent intent =  new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent,GALLERY_ACCESS);
-
-    }
-
-    /**
-     * Menu stuff: inflates menu
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.mood_view_menu, menu);
-        return true;
-
-    }
-    public boolean onOptionsItemSelected(MenuItem item){
-        return true;
-
-    }
-
-    /**
-     * On activity result
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        context = getApplicationContext();
-        super.onActivityResult(requestCode, resultCode, data);
-
-        /**
-         * firebase stuff to do:
-         * todo: storing image to firebase if request code is camera
-         */
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        String path = "firememes/" + UUID.randomUUID() + ".png";
-        byte[] somedata = byteArrayOutputStream.toByteArray();
-
-        /**
-         * camera request
-         */
-        if(requestCode==CAMERA_ACCESS && resultCode == RESULT_OK)    {
-            // todo: adding this image in firabase
-            Bitmap bitmap= (Bitmap) data.getExtras().get("data");
-            final Uri imageUri = data.getData();
-
-
-            ProfileImage.setImageURI(imageUri);
-
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
-            //ProfileImage.setImageBitmap(bitmap);
-            StorageReference firememesRef = firebaseStorage.getInstance().getReference().child("Profile").child(imageUri.getLastPathSegment());
-
-            firememesRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getApplicationContext(),"Uploaded...", Toast.LENGTH_SHORT);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(),"Not uploaded", Toast.LENGTH_SHORT);
-                }
-            });
+        } catch (Exception e) {
+            e.getMessage();
         }
 
 
-        else if(requestCode==GALLERY_ACCESS){
-            try {
-                final Uri imageUri = data.getData();
-                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                ProfileImage.setImageBitmap(selectedImage);
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show();
+
+
+        /**
+         * Save button to save mood object with it's requirements
+         */
+        //todo:  take the mood Object to edit mood activity here
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent editMood = new Intent(ActivityMoodView.this, ActivityAddMood.class);
+                editMood.putExtra("USER_ID", userId);
+                editMood.putExtra("Mood",mood);
+                startActivity(editMood);
             }
+        });
 
-        }else {
-            Toast.makeText(context, "You haven't picked Image",Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Some new stuff
+     * todo: finish this task
+     */
+    private void getImages(){
+        Log.d("Bomb", "initImageBitmaps: preparing bitmaps.");
+
+        mImageUrls.add("https://drive.google.com/open?id=1YOIVRtEo1jOg9Q5TOYJJvLiXv_j_y8wQ");
+        mNames.add("Bored");
+
+        mImageUrls.add("https://drive.google.com/open?id=1v9CFZFzLqlFXkV2Oum6mKuzoAK3C9Fj9");
+        mNames.add("Angry");
+
+        mImageUrls.add("https://drive.google.com/open?id=1lHlkIzHNgvZ5rNKiGGBwtE2jhEl_-MCR");
+        mNames.add("Disgust");
+
+        mImageUrls.add("https://drive.google.com/open?id=1y8dg1_srfSdExr6d75WpL2dvPO9PByY4");
+        mNames.add("Fear");
+
+
+        mImageUrls.add("https://drive.google.com/open?id=1mSv_ywdMi0m1gS9X1SyTO2T4yMqR8bND");
+        mNames.add("Happy");
+
+        mImageUrls.add("https://drive.google.com/open?id=1GV9j63lW0P4qA2E6944cGwHSVM7CCPJ6");
+        mNames.add("Love");
+
+
+        mImageUrls.add("https://drive.google.com/open?id=17tPsqGny-S03sOk5Z0zaj7P3GRlEf6ll");
+        mNames.add("Sad");
+
+        mImageUrls.add("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle");
+        mNames.add("Surprised");
+
+        mImageUrls.add("https://i.imgur.com/ZcLLrkY.jpg");
+        mNames.add("Washington");
+
+        //initRecyclerView();
+
+    }
+
+    // todo: get emoji from URL
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
         }
     }
+
+
+    /**
+     * Set emoji according to mood type
+     * @param emotion
+     */
+    // todo: set emoji according to hashmap of mood type
+    public void setMoodEmoji(String emotion){
+        switch (emotion){
+            case "Happy":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
+                break;
+            case "Sad":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));
+                break;
+            case "Fear":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_fear));
+                break;
+            case "Surprise":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_surprised));
+                break;
+            case "Anger":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_angry));
+                break;
+            case "Bored":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_bored));
+                break;
+            case "Disgust":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_disgust));
+                break;
+            case "Love":
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_love));
+                break;
+        }
+    }
+
+    public String getMoodEmoji(){
+        Drawable drawable= emojiPic.getDrawable();
+        ByteArrayOutputStream baos=new ByteArrayOutputStream();
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
+        Bitmap bitmap = bitmapDrawable.getBitmap();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b =baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+    /**
+     * working on the open camera and open album functionality
+     */
+
+
 }

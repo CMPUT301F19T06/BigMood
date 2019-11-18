@@ -261,7 +261,7 @@ public class UserViewActivity extends BaseDrawerActivity
         mood.setMoodTitle(moodTitle);
         mood.setMoodDescription(moodDescription);
         mood.setMoodSituation(moodSituation);
-        mood.setMoodEmoji(moodEmoji)
+        mood.setMoodEmoji(moodEmoji);
         mood.setMoodDate(moodDate);
         mood.setMoodColor(moodColor);
         mood.setMoodPhoto(moodPhoto);
