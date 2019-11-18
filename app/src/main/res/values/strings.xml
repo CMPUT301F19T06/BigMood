@@ -35,4 +35,5 @@
     <string name="username">Username</string>
     <string name="profile">My Profile</string>
     <string name="map">Map</string>
+    <string name="search_hint">Search User</string>
 </resources>
