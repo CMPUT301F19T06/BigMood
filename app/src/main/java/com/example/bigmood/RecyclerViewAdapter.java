@@ -110,7 +110,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void intentMoodView(Mood moodID, View v){
-        Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
+        Intent intent = new Intent(v.getContext(), ActivityMoodView.class);
         intent.putExtra("Mood", moodID);
         Log.d(TAG,"Mood Id from recyclerView" + moodID.getMoodID());
 

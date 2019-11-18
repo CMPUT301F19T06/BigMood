@@ -77,7 +77,7 @@ public class DashboardActivity extends BaseDrawerActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
+                Intent intent = new Intent(DashboardActivity.this, ActivityMoodView.class);
                 intent.putExtra("USER_ID", userId);
                 Mood mood = new Mood();
                 mood.setMoodUsername(getUsername());
@@ -187,7 +187,8 @@ public class DashboardActivity extends BaseDrawerActivity {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 ArrayList<Mood> temp = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    temp.add(assembleMood(doc));
+                    Mood mood = assembleMood(doc);
+                    temp.add(mood);
                 }
                 moodObjects.add(getTopOne(temp));
                 adapter.notifyDataSetChanged();
@@ -210,6 +211,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                     recyclerViewUser.setVisibility(View.VISIBLE);
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Mood mood = assembleMood(doc);
                     temp.add(assembleMood(doc));
                 }
                 moodObjectsUser.add(getTopOne(temp));
