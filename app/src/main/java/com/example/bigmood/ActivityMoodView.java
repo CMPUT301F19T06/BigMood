@@ -144,7 +144,7 @@ public class ActivityMoodView extends AppCompatActivity {
 
         moodUserName.setText(mood.getMoodUsername());
         moodSituation.setText(mood.getMoodSituation());
-
+        moodTitle.setText(mood.getMoodTitle());
         // todo: moodDate does not work
         if (mood.getMoodDate() == null) {
             mood.setMoodDate(Timestamp.now());

@@ -77,7 +77,7 @@ public class DashboardActivity extends BaseDrawerActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(DashboardActivity.this, ActivityMoodView.class);
+                Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
                 intent.putExtra("USER_ID", userId);
                 Mood mood = new Mood();
                 mood.setMoodUsername(getUsername());
@@ -206,6 +206,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                 if (queryDocumentSnapshots.isEmpty()) {
                     emptyUser.setVisibility(View.VISIBLE);
                     recyclerViewUser.setVisibility(View.GONE);
+                    return;
                 } else {
                     emptyUser.setVisibility(View.GONE);
                     recyclerViewUser.setVisibility(View.VISIBLE);
