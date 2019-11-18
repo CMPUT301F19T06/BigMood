@@ -1,17 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="100dp"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".DashboardActivity"
     tools:showIn="@layout/activity_dashboard">
 
+    <TextView
+        android:id="@+id/dashboard_recyclerViewUserHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard_recyclerUser_header"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/dashboard_recyclerViewHeader" />
+
+    <TextView
+        android:id="@+id/dashboard_textView_emptyUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard_emptyUser_header"
+        android:visibility="gone" />
+
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dashboard_recyclerviewUser"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
-        android:id="@+id/dashboard_recyclerview"/>
+        android:layout_weight="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dashboard_recyclerViewUserHeader">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/dashboard_recyclerViewHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard_recycler_header"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/dashboard_textView_emptyFriends"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard_empty_header"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dashboard_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteY="60dp">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>
