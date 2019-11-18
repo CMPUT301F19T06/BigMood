@@ -27,11 +27,14 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -78,6 +81,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     that "FOLLOW" mode is selected.
      */
     private ArrayList<Point> followedPoints;
+    private ArrayList<String> followedUsers;
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
@@ -111,6 +115,28 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
         this.db = FirebaseFirestore.getInstance();
         this.moodCollection = db.collection("Moods");
+
+        //Initialize the friend list
+        followedUsers = new ArrayList<>();
+        db.collection("Users").whereEqualTo("userId",this.userId)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (DocumentSnapshot Doc : (task.getResult().getDocuments())){
+                        if(Doc.get("userId").equals(userId)){
+                            for (String friend : ((ArrayList<String>) Doc.get("userFriends"))){
+                                followedUsers.add(friend);
+                                Log.d(TAG, friend);
+                            }
+                            break;
+                        }
+                    }
+                } else{
+                    Log.d(TAG, "Failed to get user friends");
+                }
+            }
+        });
 
         if (this.mode.equals("USER")){
             userPoints = new ArrayList<>();
@@ -198,8 +224,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
                     for (QueryDocumentSnapshot doc : task.getResult()){
-                        Mood tempmood = Mood.getFromDoc(doc);
-                        userPoints.add(new Point(tempmood.getLongitude(), tempmood.getLatitude(), wgs84));
+                        userPoints.add(new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
