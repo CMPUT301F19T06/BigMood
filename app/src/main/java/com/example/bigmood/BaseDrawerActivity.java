@@ -155,7 +155,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
 
     //Firebase Search
     private void firebaseSearch(String searchText){
-        Query firebaseSearchQuery = mRef.orderByChild("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
+        Query firebaseSearchQuery = mRef.child("Users").orderByChild("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
 
     }
 }
