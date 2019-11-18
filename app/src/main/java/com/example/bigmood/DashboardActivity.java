@@ -212,7 +212,6 @@ public class DashboardActivity extends BaseDrawerActivity {
                     recyclerViewUser.setVisibility(View.VISIBLE);
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Mood mood = assembleMood(doc);
                     temp.add(assembleMood(doc));
                 }
                 moodObjectsUser.add(getTopOne(temp));
