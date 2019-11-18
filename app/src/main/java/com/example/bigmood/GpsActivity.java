@@ -1,8 +1,11 @@
 package com.example.bigmood;
 
+
+import android.content.Context;
+import android.os.Bundle;
+import android.view.MenuInflater;
 import android.graphics.Color;
 import android.location.Location;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +43,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 /**
  * The GpsActivity
  *
@@ -59,6 +63,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
+    String userId; //The Current user's id
+    String mode; // The mode of operation
     //used to get last known location for now
     private FusedLocationProviderClient fusedLocationClient;
     private double lastLong;
@@ -82,6 +88,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     The arraylist holding the followed moods, this will need to be refreshed every time
     that "FOLLOW" mode is selected.
      */
+
     private ArrayList<Point> followedPoints;
     private ArrayList<String> followedUsers;
 
@@ -95,6 +102,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gps);
+
         //get last location
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.getLastLocation()
@@ -237,6 +245,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()){
             case R.id.gps_mode_menu_user:
+
                 if(userPoints == null){
                     retrieveUserMoods();
                 }

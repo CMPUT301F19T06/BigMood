@@ -28,6 +28,7 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
+
     compileOptions {
         sourceCompatibility 1.8
         targetCompatibility 1.8

@@ -52,7 +52,7 @@ public class DashboardActivity extends BaseDrawerActivity {
     private RecyclerView recyclerViewUser;
     private RecyclerViewAdapter adapterUser;
     private ArrayList<Mood> moodObjects = new ArrayList<>();
-    private ArrayList<Mood> moodObjectsUser = new ArrayList<>();;
+    private ArrayList<Mood> moodObjectsUser = new ArrayList<>();
     private String userId;
     private int startingIndex = 0;
     final private int queryLimit = 25;

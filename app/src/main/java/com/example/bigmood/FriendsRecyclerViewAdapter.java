@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 //Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
+public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";
-    private static final String MOOD_ID = "com.example.bigmood.RecycleViewAdapter";
+    private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
 
     //set up local arraylist to store rides
     //private ArrayList<Mood> moodIDs = new ArrayList<>();
@@ -36,8 +36,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private String userId;
     ImageView deleteMood;
     //constructor
-    public RecyclerViewAdapter(ArrayList moodIDs, String userId, Context mContext) {
-        DashboardActivity.moodObjects = moodIDs;
+    public FriendsRecyclerViewAdapter(ArrayList friendIDs, String userId, Context mContext) {
+        FriendsActivity.friendObjects = friendIDs;
         this.mContext = mContext;
         this.userId = userId;
     }
@@ -45,9 +45,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //set up a new viewholder to mount onto main activity
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_moodfragment, parent, false);
-       ViewHolder holder = new ViewHolder(view);
-       return holder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_friendfragment, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        return holder;
     }
 
     //bind viewholder to holder, process input here
@@ -55,25 +55,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, final int position) {
         //prepare display variables for list
         Log.d(TAG, "onBindViewHolder: called.");
-        DashboardActivity.index = position;
+        FriendsActivity.index = position;
 
         //set up the connection to view here, TBA
-        //temporary placeholder for date
-        holder.moodDate.setText(DashboardActivity.moodObjects.get(position).getMoodDate().toDate().toString());
-        holder.moodDescription.setText(DashboardActivity.moodObjects.get(position).getMoodDescription());
-        holder.moodTitle.setText(DashboardActivity.moodObjects.get(position).getMoodTitle());
-        String stringHEX = DashboardActivity.moodObjects.get(position).getMoodColor();
-        try {
-            holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
-        }catch (Throwable e){
-            e.printStackTrace();
-        }
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on:" + DashboardActivity.moodObjects.get(position));
-                intentMoodView(DashboardActivity.moodObjects.get(position), v);
+                Log.d(TAG, "onClick: clicked on:" + FriendsActivity.friendObjects.get(position));
+                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
             }
         });
         //establish listener for each element
@@ -81,31 +72,28 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void intentMoodView(Mood moodID, View v){
-        Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
-        intent.putExtra("Mood", moodID);
-        intent.putExtra("USER_ID", this.userId);
-        mContext.startActivity(intent);
+        //Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
+        //intent.putExtra("Mood", moodID);
+        //intent.putExtra("USER_ID", this.userId);
+        //mContext.startActivity(intent);
     }
 
     //item count for parsing through
     @Override
     public int getItemCount() {
-        return DashboardActivity.moodObjects.size();
+        return FriendsActivity.friendObjects.size();
     }
 
     //constructor for ViewHolder object, which holds our xml components together
     public class ViewHolder extends RecyclerView.ViewHolder{
         // TextView text;
-        TextView moodTitle, moodDescription, moodDate;
+        TextView friendName;
         ConstraintLayout linearLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             // establish views here
-            moodTitle = itemView.findViewById(R.id.moodName);
-            moodDate = itemView.findViewById(R.id.moodDate);
-            moodDescription = itemView.findViewById(R.id.moodDescription);
-            linearLayout = itemView.findViewById(R.id.linearLayout);
+            friendName = itemView.findViewById(R.id.friendName);
         }
     }
 }

@@ -11,10 +11,8 @@
         android:id="@+id/background_pic"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:orientation="horizontal"
-        android:background="@color/colorBlue"
-        >
-    </LinearLayout>
+        android:background="@color/Surprise"
+        android:orientation="horizontal"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,39 +31,43 @@
 
             <EditText
                 android:id="@+id/currentMood"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_width="189dp"
+                android:layout_height="67dp"
                 android:layout_weight="1"
-                android:text="New Mood"
+                android:hint="MOOD TITLE"
+                android:textColorHint="@color/colorBlue"
                 android:textSize="20sp"></EditText>
 
             <ImageView
                 android:id="@+id/currentMoodImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="160dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
                 android:layout_weight="2"
                 android:adjustViewBounds="true"
+                android:foregroundGravity="center"
                 android:maxWidth="20sp"
                 android:maxHeight="20sp"
                 android:scaleType="centerInside"
                 app:srcCompat="@mipmap/emoji_angry" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/currentDate"
-            android:layout_width="200dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="84dp"
             android:layout_marginLeft="200dp"
             android:text="Date:"
-            android:textSize="15sp">
+            android:textColor="@color/colorBlue"
+            android:textSize="18sp">
 
         </TextView>
 
 
         <TextView
             android:id="@+id/description"
-            android:layout_width="400dp"
-            android:layout_height="60dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Description"
             android:textSize="35sp">
 
@@ -74,7 +76,7 @@
         <EditText
             android:id="@+id/moodDescription"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="wrap_content">
 
         </EditText>
 
@@ -83,7 +85,6 @@
             android:layout_width="123dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginTop="@android:dimen/app_icon_size"
             android:text="SAVE">
 
         </Button>
@@ -91,10 +92,24 @@
         <Button
             android:id="@+id/add_loc"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="58dp"
             android:layout_gravity="center"
-            android:layout_marginTop="@android:dimen/app_icon_size"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:text="Add Location" />
+
+        <ImageView
+            android:id="@+id/deleteMood"
+            android:layout_width="78dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="@android:dimen/notification_large_icon_width"
+            android:src="@drawable/ic_delete">
+
+        </ImageView>
+
+
+
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView

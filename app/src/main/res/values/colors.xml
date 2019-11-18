@@ -8,10 +8,10 @@
     <color name="Joy">#FFFF00</color>
     <color name="Trust">#AEFF00</color>
     <color name="Fear">#1AFF00</color>
-    <color name="Surprise">#00FFFF</color>
+    <color name="Surprise">#00B7FF</color>
     <color name="Sadness">#0054FF</color>
     <color name="Disgust">#CC00FF</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name= "colorBlue">#00acee</color>
+    <color name= "colorBlue">#2400EE</color>
 
 </resources>

@@ -40,6 +40,10 @@
             android:label="@string/dashboard"
             android:theme="@style/AppTheme" />
         <activity
+            android:name=".FriendsActivity"
+            android:label="@string/friends"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".UserViewActivity"
             android:label="UserView"
             android:theme="@style/AppTheme"/>
