@@ -32,7 +32,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String MOOD_ID = "com.example.bigmood.RecycleViewAdapter";
 
     //set up local arraylist to store rides
-    private ArrayList<Mood> moodIDs = new ArrayList<>();
+    private ArrayList<Mood> moodIDs = new ArrayList<Mood>();
 
     //set up interface components to measure input from clicks
     private Context mContext;
@@ -61,18 +61,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //set up the connection to view here, TBA
         //temporary placeholder for date
-        // todo: mood username as mood situation currently
         holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
         holder.moodDescription.setText(moodIDs.get(position).getMoodTitle());
 
-        holder.moodUsername.setText(moodIDs.get(position).getMoodSituation());
-
+        holder.moodUsername.setText(moodIDs.get(position).getMoodUsername());
+        Log.d("SDA","Mood from rec: " + moodIDs.get(position).getMoodUsername());
         //emoji
-        Log.d("Emoji and position",moodIDs.get(position).getMoodEmoji() + position);
-
         byte [] encodeByte=Base64.decode(moodIDs.get(position).getMoodEmoji(),Base64.DEFAULT);
         Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
         holder.emoji.setImageBitmap(bitmap);
+
+
         String stringHEX = moodIDs.get(position).getMoodColor();
         try {
             holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));

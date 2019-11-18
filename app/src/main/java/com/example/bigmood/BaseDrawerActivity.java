@@ -29,7 +29,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public DrawerLayout drawer;
     public Toolbar toolbar;
     public NavigationView navigationView;
-    private String userID;
+    private String userID, username;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +37,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         super.setContentView(R.layout.activity_base_drawer);
 
         this.userID = getIntent().getExtras().getString("USER_ID");
-
+        this.username = getIntent().getExtras().getString("User_Name");
         //Starts the toolbar
         toolbar = findViewById(R.id.toolbar);
         toolbar.getTitle();
@@ -59,6 +59,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         if(toolbar.getTitle().toString() == getString(R.string.app_name)){
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
+            intent.putExtra("User_Name", username);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
@@ -78,6 +79,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         if (id == R.id.nav_dashboard) {
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
+            intent.putExtra("User_Name", username);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
@@ -85,11 +87,13 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         } else if (id == R.id.nav_friends) {
             Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
             intent.putExtra("USER_ID", userID);
+            intent.putExtra("User_Name", username);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_map) {
             Intent intent = new Intent(getApplicationContext(), GpsActivity.class);
             intent.putExtra("USER_ID", userID);
+            intent.putExtra("User_Name", username);
             intent.putExtra("MODE", "USER");
             startActivity(intent);
         }

@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     TextView welcomeMsg = findViewById(R.id.textView_login_welcome_msg);
                     welcomeMsg.setText(String.format("Welcome %s", account.getDisplayName()));
                     welcomeMsg.setVisibility(View.VISIBLE);
-                    startDashboard(account.getId());
+                    startDashboard(account.getId(), account.getDisplayName());
                 } else {
                     Log.d(USER_EXISTS_TAG, "get failed with ", task.getException());
                     //TODO: handle error
@@ -178,9 +178,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
-    protected void startDashboard(String id) {
+    protected void startDashboard(String id, String username) {
         Intent intent = new Intent(this, BaseDrawerActivity.class);
         intent.putExtra("USER_ID", id);
+        intent.putExtra("User_Name",username);
+        Log.d("User","Username from login: " + username);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }

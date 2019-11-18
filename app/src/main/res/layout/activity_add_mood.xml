@@ -82,35 +82,19 @@
             android:id="@+id/currentDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="200dp"
+            android:layout_marginLeft="185dp"
             android:text="SELECT DATE"
             android:textColor="@color/colorBlue"
             android:textSize="18sp">
 
         </TextView>
 
-        <Spinner
-            android:id="@+id/moodSituationSpinner"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:layout_weight="0"
-            android:autofillHints="New Mood"
-            android:textSize="20sp"></Spinner>
-
-
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textSize="35sp">
-
-        </TextView>
 
         <EditText
             android:id="@+id/moodDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="120dp">
 
         </EditText>
 
@@ -119,6 +103,7 @@
             android:layout_width="123dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:text="SAVE">
 
         </Button>
@@ -128,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="58dp"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:text="Add Location" />
 
@@ -137,6 +122,7 @@
             android:layout_width="78dp"
             android:layout_height="44dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="@android:dimen/notification_large_icon_width"
             android:src="@drawable/ic_delete">
 
@@ -158,17 +144,44 @@
         app:civ_circle_background_color="@color/colorWhite">
 
     </de.hdodenhof.circleimageview.CircleImageView>
-    <TextView
-        android:id="@+id/moodUserName"
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="210dp"
-        android:layout_marginLeft="40dp"
-        android:text="username"
-        android:textSize="20dp"
-        android:gravity="center">
+        android:orientation="vertical">
 
-    </TextView>
+        <TextView
+            android:id="@+id/moodUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:text="username"
+            android:textAllCaps="true"
+            android:textSize="20dp"></TextView>
+        <Spinner
+            android:id="@+id/moodSituationSpinner"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="40dp"
+            android:autofillHints="New Mood"
+            android:textSize="20sp"></Spinner>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/cardview_compat_inset_shadow"
+            android:layout_marginTop="10dp"
+            android:text="Description"
+            android:textSize="35sp">
+
+        </TextView>
+
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>

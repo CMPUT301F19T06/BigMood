@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">BigMood</string>
+    <string name="action_settings">Settings</string>
+    <string name="string_login_welcome">Welcome</string>
+    <string name="string_login_error">We couldn\'t log you in, please try again</string>
+    <string name="editmood_image_description">Displays either the color of the mood of the mood or a picture uploaded by the user.</string>
+    <string-array name="editmood_moodspinner">
+        <item>Happy</item>
+        <item>Anger</item>
+        <item>Fear</item>
+        <item>Sad</item>
+        <item>Surprise</item>
+        <item>Disgust</item>
+        <item>Bored</item>
+        <item>Love</item>
+    </string-array>
+
+    <string-array name="editmood_moodcolor_spinner">
+        <item name="Anger">#FF0101</item>
+        <item name="Bored">#FE6301</item>
+        <item name="Happy">#FFFF00</item>
+        <item name="Love">#AEFF00</item>
+        <item name="Fear">#1AFF00</item>
+        <item name="Surprise">#00B7FF</item>
+        <item name="Sad">#0054FF</item>
+        <item name="Disgust">#CC00FF</item>
+    </string-array>
+    <string-array name="editmood_moodsituation_spinner">
+        <item>in a group</item>
+        <item>alone</item>
+        <item>with family</item>
+    </string-array>
+    <string name="mood_user_name">mood_user_name</string>
+    <string name="mood_date">mood_date</string>
+
+    <string name="dashboard_recycler_header">What\s up?</string>
+    <string name="dashboard_recyclerUser_header">Your last post:</string>
+    <string name="dashboard_empty_header">Looks like there\'s no one you\'re following, you can track their recent moods here.</string>
+    <string name="dashboard_emptyUser_header">Looks like you haven\'t posted anything yet.</string>
+    <string name="moodName">Mood</string>
+    <string name="placeholder1">placeholder1</string>
+    <string name="placeholder2">placeholder2</string>
+
+    <string name="dashboard">Dashboard</string>
+    <string name="search">Search</string>
+    <string name="friends">Friends</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nickname">Nickname</string>
+    <string name="username">Username</string>
+    <string name="profile">My Profile</string>
+    <string name="map">Map</string>
+    <string name="gpsModeMenuUser">My Mood Locations</string>
+    <string name="gpsModeMenuFollowed">My Friends Mood Locations</string>
+    <string name="description">Description</string>
+</resources>
