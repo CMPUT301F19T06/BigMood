@@ -42,11 +42,11 @@ public class DashboardActivity extends BaseDrawerActivity {
     private CollectionReference userCollectionReference;
     private CollectionReference moodCollectionReference;
     private RecyclerView recyclerView;
-    public static RecyclerViewAdapter adapter;
+    private RecyclerViewAdapter adapter;
     private RecyclerView recyclerViewUser;
     private RecyclerViewAdapter adapterUser;
-    public static ArrayList<Mood> moodObjects = new ArrayList<>();
-    private ArrayList<Mood> moodObjectsUser = new ArrayList<>();;
+    private ArrayList<Mood> moodObjects = new ArrayList<>();
+    private ArrayList<Mood> moodObjectsUser = new ArrayList<>();
     private String userId, username;
     private int startingIndex = 0;
     final private int queryLimit = 25;
@@ -150,7 +150,6 @@ public class DashboardActivity extends BaseDrawerActivity {
         mood.setMoodUsername(moodUsername);
         return mood;
     }
-
     // step 1: get all friends of user
     // step 2: get most recent mood from user
     private void pullGetFriendMoods() {

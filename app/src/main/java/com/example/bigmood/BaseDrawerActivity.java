@@ -4,6 +4,7 @@
 * */
 package com.example.bigmood;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,11 +18,17 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 public class BaseDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -29,7 +36,11 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public DrawerLayout drawer;
     public Toolbar toolbar;
     public NavigationView navigationView;
+
     private String userID, username;
+    DatabaseReference mRef;
+    FirebaseDatabase mFirebaseDatabase;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +74,9 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
+
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRef = mFirebaseDatabase.getReference("Users");
     }
 
     //Handles what happens when a certain MenuItem is pressed
@@ -84,6 +98,11 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
             Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Your profile", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+            intent.putExtra("TARGET_ID", userID);
+            intent.putExtra("HAS_VIEW_PERMISSION", true);
+            startActivity(intent);
+
         } else if (id == R.id.nav_friends) {
             Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
             intent.putExtra("USER_ID", userID);
@@ -116,7 +135,25 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                firebaseSearch(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Filter as you type
+                firebaseSearch(newText);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     //Handles the input to the Overflow menu
@@ -131,5 +168,11 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    //Firebase Search
+    private void firebaseSearch(String searchText){
+        Query firebaseSearchQuery = mRef.child("Users").orderByChild("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
+
     }
 }

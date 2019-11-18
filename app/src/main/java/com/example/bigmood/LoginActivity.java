@@ -159,8 +159,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Timestamp timestamp = new Timestamp(new Date());
         HashMap<String, Object> data = new HashMap<>();
         data.put("dateCreated", timestamp);
-        data.put("userId", account.getId());
+        data.put("targetUser", account.getId());
         data.put("displayName", account.getDisplayName());
+        data.put("moods", null);
         userCollectionReference
                 .document(account.getId())
                 .set(data)
