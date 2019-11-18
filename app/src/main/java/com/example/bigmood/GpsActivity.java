@@ -3,11 +3,13 @@ package com.example.bigmood;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,15 +23,22 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * The GpsActivity
@@ -57,6 +66,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     //spatial reference for map points
     private SpatialReference wgs84 = SpatialReferences.getWgs84();
     ///////////////////
+    private String TAG = "GpsActivity";
 
 
     private String userId; //The Current user's id
@@ -73,6 +83,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     that "FOLLOW" mode is selected.
      */
     private ArrayList<Point> followedPoints;
+    private ArrayList<String> followedUsers;
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
@@ -107,7 +118,30 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         this.db = FirebaseFirestore.getInstance();
         this.moodCollection = db.collection("Moods");
 
+        //Initialize the friend list
+        followedUsers = new ArrayList<>();
+        db.collection("Users").whereEqualTo("userId",this.userId)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (DocumentSnapshot Doc : (task.getResult().getDocuments())){
+                        if(Doc.get("userId").equals(userId)){
+                            for (String friend : ((ArrayList<String>) Doc.get("userFriends"))){
+                                followedUsers.add(friend);
+                                Log.d(TAG, friend);
+                            }
+                            break;
+                        }
+                    }
+                } else{
+                    Log.d(TAG, "Failed to get user friends");
+                }
+            }
+        });
+
         if (this.mode.equals("USER")){
+            userPoints = new ArrayList<>();
             retrieveUserMoods();
         }
         else{
@@ -129,8 +163,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
         });
 
-        //map implementation//////////////
-        //inflate map
         mMapView = findViewById(R.id.mapView);
         ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
         mMapView.setMap(map);
@@ -168,6 +200,21 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         }
 
         ///////////////////////////////////
+
+        final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
+        FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
+        FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
+
+        modeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: When the mode button is pressed
+                PopupMenu modemenu = new PopupMenu(getApplicationContext(), modeButton);
+                modemenu.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) getParent());
+                modemenu.inflate(R.menu.gps_mode_menu);
+                modemenu.show();
+            }
+        });
 
         zoominButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,7 +257,20 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
-        // Point point = new Point(long, lat, wgs84)
+        moodCollection.whereEqualTo("moodCreator",userId)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    for (QueryDocumentSnapshot doc : task.getResult()){
+                        userPoints.add(new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                    }
+                } else{
+                    Log.d(TAG, "Failed to get user moods");
+                }
+            }
+        });
+        // Point point = new Point(long, lat, SpatialReferences.getWgs84())
     }
 
     private void retrieveFollowedMoods(){
