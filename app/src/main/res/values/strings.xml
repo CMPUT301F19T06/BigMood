@@ -14,6 +14,11 @@
         <item>Sadness</item>
         <item>Disgust</item>
     </string-array>
+    <string-array name="userview_sortspinner">
+        <item>Date (Desc)</item>
+        <item>Date (Asc)</item>
+    </string-array>
+    <string name="user_view_filter_defaulttext">Filter by&#8230;</string>
     <string name="dashboard_recycler_header">What\s up?</string>
     <string name="dashboard_recyclerUser_header">Your last post:</string>
     <string name="dashboard_empty_header">Looks like there\'s no one you\'re following, you can track their recent moods here.</string>

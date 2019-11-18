@@ -146,7 +146,6 @@ public class DashboardActivity extends BaseDrawerActivity {
         mood.setMoodPhoto(moodPhoto);
         return mood;
     }
-
     // step 1: get all friends of user
     // step 2: get most recent mood from user
     private void pullGetFriendMoods() {
