@@ -24,6 +24,17 @@ public class Mood implements Serializable {
      */
     private String moodDescription;
     /**
+     * The situation of the mood, a personal line
+     */
+    private String moodSituation;
+    /**
+     * mood username
+     */
+    private String moodUsername;
+
+
+
+    /**
      * The hex code for the color, as a string
      */
     private String moodColor;
@@ -98,6 +109,22 @@ public class Mood implements Serializable {
      * @return
      * The mood photo
      */
+    /**
+     * get the username
+     * @return
+     */
+
+    public String getMoodUsername() {
+        return moodUsername;
+    }
+
+    /**
+     * set the user name to a string
+     * @param moodUsername
+     */
+    public void setMoodUsername(String moodUsername) {
+        this.moodUsername = moodUsername;
+    }
     public String getMoodPhoto() {
         return moodPhoto;
     }
@@ -156,6 +183,22 @@ public class Mood implements Serializable {
      */
     public void setMoodDescription(String moodDescription) {
         this.moodDescription = moodDescription;
+    }
+
+    /**
+     * get the mood situation
+     * @return: moodSituation as a string
+     */
+    public String getMoodSituation() {
+        return moodSituation;
+    }
+
+    /**
+     * set the mood situation as a string
+     * @param moodSituation
+     */
+    public void setMoodSituation(String moodSituation) {
+        this.moodSituation = moodSituation;
     }
 
     /**

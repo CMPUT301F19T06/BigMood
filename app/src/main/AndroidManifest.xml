@@ -10,8 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ActivityAddMood"></activity>
-        <activity android:name=".testActivity"
-            android:label="Test Activity"/>
         <activity android:name=".EditmoodActivity" />
         <activity android:name=".ActivityMoodView" />
         <activity android:name=".GpsActivity" />

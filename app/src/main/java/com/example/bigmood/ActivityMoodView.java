@@ -44,8 +44,6 @@ import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.bigmood.testActivity.moods;
-import static com.example.bigmood.testActivity.moods;
 
 public class ActivityMoodView extends AppCompatActivity {
     TextView dateText, moodType;
@@ -213,4 +211,3 @@ public class ActivityMoodView extends AppCompatActivity {
         }
     }
 }
-

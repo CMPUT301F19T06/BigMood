@@ -2,7 +2,10 @@ package com.example.bigmood;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,15 +32,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private static final String MOOD_ID = "com.example.bigmood.RecycleViewAdapter";
 
     //set up local arraylist to store rides
-    //private ArrayList<Mood> moodIDs = new ArrayList<>();
+    private ArrayList<Mood> moodIDs = new ArrayList<Mood>();
 
     //set up interface components to measure input from clicks
     private Context mContext;
     private String userId;
-    ImageView deleteMood;
     //constructor
     public RecyclerViewAdapter(ArrayList moodIDs, String userId, Context mContext) {
-        DashboardActivity.moodObjects = moodIDs;
+        this.moodIDs = moodIDs;
         this.mContext = mContext;
         this.userId = userId;
     }
@@ -45,9 +47,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //set up a new viewholder to mount onto main activity
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_moodfragment, parent, false);
-       ViewHolder holder = new ViewHolder(view);
-       return holder;
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_moodfragment, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        return holder;
     }
 
     //bind viewholder to holder, process input here
@@ -55,14 +57,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void onBindViewHolder(ViewHolder holder, final int position) {
         //prepare display variables for list
         Log.d(TAG, "onBindViewHolder: called.");
-        DashboardActivity.index = position;
+
 
         //set up the connection to view here, TBA
         //temporary placeholder for date
-        holder.moodDate.setText(DashboardActivity.moodObjects.get(position).getMoodDate().toDate().toString());
-        holder.moodDescription.setText(DashboardActivity.moodObjects.get(position).getMoodDescription());
-        holder.moodTitle.setText(DashboardActivity.moodObjects.get(position).getMoodTitle());
-        String stringHEX = DashboardActivity.moodObjects.get(position).getMoodColor();
+        holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
+        holder.moodDescription.setText(moodIDs.get(position).getMoodTitle());
+
+        holder.moodUsername.setText(moodIDs.get(position).getMoodUsername());
+        Log.d("SDA","Mood from rec: " + moodIDs.get(position).getMoodUsername());
+        //emoji
+        byte [] encodeByte=Base64.decode(moodIDs.get(position).getMoodEmoji(),Base64.DEFAULT);
+        Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+        holder.emoji.setImageBitmap(bitmap);
+
+
+        String stringHEX = moodIDs.get(position).getMoodColor();
         try {
             holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
         }catch (Throwable e){
@@ -72,17 +82,38 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on:" + DashboardActivity.moodObjects.get(position));
-                intentMoodView(DashboardActivity.moodObjects.get(position), v);
+
+                DashboardActivity.index = position;
+                Log.d(TAG, "onClick: clicked on:" + String.valueOf(position));
+                intentMoodView(moodIDs.get(position), v);
             }
         });
         //establish listener for each element
 
     }
+    /**
+     * function for turning string to bitmap
+     * usage: for emoji
+     * @param encodedString
+     * @return
+     */
+    public Bitmap StringToBitMap(String encodedString){
+        try{
+            byte [] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        }
+        catch(Exception e){
+            e.getMessage();
+            return null;
+        }
+    }
 
     public void intentMoodView(Mood moodID, View v){
         Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
         intent.putExtra("Mood", moodID);
+        Log.d(TAG,"Mood Id from recyclerView" + moodID.getMoodID());
+
         intent.putExtra("USER_ID", this.userId);
         mContext.startActivity(intent);
     }
@@ -90,22 +121,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     //item count for parsing through
     @Override
     public int getItemCount() {
-        return DashboardActivity.moodObjects.size();
+        return moodIDs.size();
     }
 
     //constructor for ViewHolder object, which holds our xml components together
     public class ViewHolder extends RecyclerView.ViewHolder{
         // TextView text;
-        TextView moodTitle, moodDescription, moodDate;
+        TextView moodUsername, moodDescription, moodDate;
+        ImageView emoji;
         ConstraintLayout linearLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             // establish views here
-            moodTitle = itemView.findViewById(R.id.moodName);
+            moodUsername = itemView.findViewById(R.id.moodUserName);
             moodDate = itemView.findViewById(R.id.moodDate);
             moodDescription = itemView.findViewById(R.id.moodDescription);
             linearLayout = itemView.findViewById(R.id.linearLayout);
+            emoji = itemView.findViewById(R.id.moodEmoji);
         }
     }
 }

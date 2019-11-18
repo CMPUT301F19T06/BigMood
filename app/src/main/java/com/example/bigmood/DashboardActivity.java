@@ -12,13 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static java.sql.Types.NULL;
 
 public class DashboardActivity extends BaseDrawerActivity {
     private static final String TAG = "DASHBOARDACTIVITY";
@@ -53,7 +47,7 @@ public class DashboardActivity extends BaseDrawerActivity {
     private RecyclerViewAdapter adapterUser;
     private ArrayList<Mood> moodObjects = new ArrayList<>();
     private ArrayList<Mood> moodObjectsUser = new ArrayList<>();
-    private String userId;
+    private String userId, username;
     private int startingIndex = 0;
     final private int queryLimit = 25;
     ImageView deleteMood;
@@ -76,6 +70,7 @@ public class DashboardActivity extends BaseDrawerActivity {
         toolbar.setTitle("Dashboard");
 
         this.userId = getIntent().getExtras().getString("USER_ID");
+        this.username = getIntent().getExtras().getString("User_Name");
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,10 +80,12 @@ public class DashboardActivity extends BaseDrawerActivity {
                 Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
                 intent.putExtra("USER_ID", userId);
                 Mood mood = new Mood();
+                mood.setMoodUsername(getUsername());
                 intent.putExtra("Mood",mood);
                 startActivity(intent);
             }
         });
+
 
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
         this.moodCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -104,6 +101,11 @@ public class DashboardActivity extends BaseDrawerActivity {
         this.emptyFriends = findViewById(R.id.dashboard_textView_emptyFriends);
 
         initRecyclerView();
+    }
+
+
+    public String getUsername(){
+        return this.username;
     }
 
     @Override
@@ -135,15 +137,17 @@ public class DashboardActivity extends BaseDrawerActivity {
         String moodPhoto = (String) doc.getData().get("moodPhoto");
         String moodEmoji = doc.getString("moodEmoji");
         String moodSituation = doc.getString("moodSituation");
+        String moodUsername = doc.getString("userName");
         Mood mood = new Mood();
         mood.setMoodID(moodId);
         mood.setMoodTitle(moodTitle);
         mood.setMoodDescription(moodDescription);
         mood.setMoodSituation(moodSituation);
-        mood.setMoodEmoji(moodEmoji)
+        mood.setMoodEmoji(moodEmoji);
         mood.setMoodDate(moodDate);
         mood.setMoodColor(moodColor);
         mood.setMoodPhoto(moodPhoto);
+        mood.setMoodUsername(moodUsername);
         return mood;
     }
     // step 1: get all friends of user
