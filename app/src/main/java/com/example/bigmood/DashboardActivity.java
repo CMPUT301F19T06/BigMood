@@ -185,6 +185,9 @@ public class DashboardActivity extends BaseDrawerActivity {
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.isEmpty()){
+                    return;
+                }
                 ArrayList<Mood> temp = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     Mood mood = assembleMood(doc);
@@ -212,7 +215,6 @@ public class DashboardActivity extends BaseDrawerActivity {
                     recyclerViewUser.setVisibility(View.VISIBLE);
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Mood mood = assembleMood(doc);
                     temp.add(assembleMood(doc));
                 }
                 moodObjectsUser.add(getTopOne(temp));
