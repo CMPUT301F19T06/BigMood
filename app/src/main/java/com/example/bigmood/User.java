@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 /**
  * The data structure class for holding the users information, this class is not passed through the
- * intents but the userId is, the user object is then called from the database.
+ * intents but the targetUser is, the user object is then called from the database.
  */
 public class User {
     /**
-     * The unique userId
+     * The unique targetUser
      */
     private String userId;
     /**
