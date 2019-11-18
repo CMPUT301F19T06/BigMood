@@ -22,18 +22,23 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static java.sql.Types.NULL;
 
@@ -43,14 +48,20 @@ public class DashboardActivity extends BaseDrawerActivity {
     private CollectionReference userCollectionReference;
     private CollectionReference moodCollectionReference;
     private RecyclerView recyclerView;
-    public static RecyclerViewAdapter adapter;
-    public static ArrayList<Mood> moodObjects = new ArrayList<>();
+    private RecyclerViewAdapter adapter;
+    private RecyclerView recyclerViewUser;
+    private RecyclerViewAdapter adapterUser;
+    private ArrayList<Mood> moodObjects = new ArrayList<>();
+    private ArrayList<Mood> moodObjectsUser = new ArrayList<>();
     private String userId;
     private int startingIndex = 0;
     final private int queryLimit = 25;
     ImageView deleteMood;
     FloatingActionButton fab;
     public static int index;
+    private List userFriends;
+    private TextView emptyUser;
+    private TextView emptyFriends;
 
     public DashboardActivity() {
         this.db = FirebaseFirestore.getInstance();
@@ -66,8 +77,6 @@ public class DashboardActivity extends BaseDrawerActivity {
 
         this.userId = getIntent().getExtras().getString("USER_ID");
 
-        //TODO: get items from database using USER_ID
-
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,41 +90,18 @@ public class DashboardActivity extends BaseDrawerActivity {
             }
         });
 
-
-
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
         this.moodCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                moodObjects.clear();
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.get("moodCreator") != null){
-                        if (doc.getString("moodCreator").compareTo(userId) == 0) {
-                            Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
-                            String moodId = doc.getId();
-                            String moodDescription = doc.getString("moodDescription");
-                            String moodTitle = doc.getString("moodTitle");
-                            Timestamp moodDate = doc.getTimestamp("moodDate");
-                            String moodColor = doc.getString("moodColor");
-                            String moodPhoto = (String) doc.getData().get("moodPhoto");
-                            Mood mood = new Mood();
-                            mood.setMoodID(moodId);
-                            mood.setMoodTitle(moodTitle);
-                            mood.setMoodDescription(moodDescription);
-                            mood.setMoodDate(moodDate);
-                            mood.setMoodColor(moodColor);
-                            mood.setMoodPhoto(moodPhoto);
-                            moodObjects.add(mood);
-                        }
-
-                    }
-                }
-                adapter.notifyDataSetChanged();
+                pullCurrentUserTopMood();
+                pullGetFriendMoods();
             }
         });
 
-
-
+        this.recyclerViewUser = findViewById(R.id.dashboard_recyclerviewUser);
+        this.emptyUser = findViewById(R.id.dashboard_textView_emptyUser);
+        this.emptyFriends = findViewById(R.id.dashboard_textView_emptyFriends);
 
         initRecyclerView();
     }
@@ -128,17 +114,113 @@ public class DashboardActivity extends BaseDrawerActivity {
     }
 
     private void initRecyclerView() {
-        //TODO: Load in Moods from Online.
-
         Log.d(TAG, "initRecyclerView: init recyclerview");
         recyclerView = findViewById(R.id.dashboard_recyclerview);
         adapter = new RecyclerViewAdapter(moodObjects, this.userId, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        recyclerViewUser = findViewById(R.id.dashboard_recyclerviewUser);
+        adapterUser = new RecyclerViewAdapter(moodObjectsUser, this.userId, this);
+        recyclerViewUser.setAdapter(adapterUser);
+        recyclerViewUser.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    // TODO: TEMP, move to user when user view is implemented
-    private void queryUserData() {
+    protected Mood assembleMood(DocumentSnapshot doc) {
+        String moodId = doc.getId();
+        String moodDescription = doc.getString("moodDescription");
+        String moodTitle = doc.getString("moodTitle");
+        Timestamp moodDate = doc.getTimestamp("moodDate");
+        String moodColor = doc.getString("moodColor");
+        String moodPhoto = (String) doc.getData().get("moodPhoto");
+        String moodEmoji = doc.getString("moodEmoji");
+        String moodSituation = doc.getString("moodSituation");
+        Mood mood = new Mood();
+        mood.setMoodID(moodId);
+        mood.setMoodTitle(moodTitle);
+        mood.setMoodDescription(moodDescription);
+        mood.setMoodSituation(moodSituation);
+        mood.setMoodEmoji(moodEmoji)
+        mood.setMoodDate(moodDate);
+        mood.setMoodColor(moodColor);
+        mood.setMoodPhoto(moodPhoto);
+        return mood;
+    }
+    // step 1: get all friends of user
+    // step 2: get most recent mood from user
+    private void pullGetFriendMoods() {
+        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                moodObjects.clear();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("userFriends")) {
+                        // This line might explode
+                        userFriends = (List) doc.get("userFriends");
+                        emptyFriends.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        for (Object obj : userFriends) {
+                            // This line might explode
+                            String user = (String) obj;
+                            pullTopMood(user);
+                        }
+                    } else {
+                        emptyFriends.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    }
+                }
 
+            }
+        });
+    }
+
+    private void pullTopMood(String friendId) {
+        Query query = moodCollectionReference
+                .whereEqualTo("moodCreator", friendId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                ArrayList<Mood> temp = new ArrayList<>();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    temp.add(assembleMood(doc));
+                }
+                moodObjects.add(getTopOne(temp));
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void pullCurrentUserTopMood() {
+        Query query = moodCollectionReference.whereEqualTo("moodCreator", this.userId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                moodObjectsUser.clear();
+                ArrayList<Mood> temp = new ArrayList<>();
+                if (queryDocumentSnapshots.isEmpty()) {
+                    emptyUser.setVisibility(View.VISIBLE);
+                    recyclerViewUser.setVisibility(View.GONE);
+                } else {
+                    emptyUser.setVisibility(View.GONE);
+                    recyclerViewUser.setVisibility(View.VISIBLE);
+                }
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    temp.add(assembleMood(doc));
+                }
+                moodObjectsUser.add(getTopOne(temp));
+                adapterUser.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private Mood getTopOne(ArrayList<Mood> list) {
+        list.sort(new Comparator<Mood>() {
+            @Override
+            public int compare(Mood mood1, Mood mood2) {
+                return mood2.getMoodDate().compareTo(mood1.getMoodDate());
+            }
+        });
+        return list.get(0);
     }
 }

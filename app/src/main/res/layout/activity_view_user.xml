@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".UserViewActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_margin="30dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/user_view_username"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.57"
         app:layout_constraintStart_toEndOf="@+id/user_view_prof_pic"
-        app:layout_constraintTop_toTopOf="@+id/user_view_prof_pic">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/user_view_location_pic"
-            android:layout_width="40dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
 
@@ -30,14 +32,26 @@
             app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
         <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="40dp"
+            android:id="@+id/user_view_add_friend"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"
             android:clickable="true"
-            app:srcCompat="@mipmap/icon_addFriend" />
+            android:visibility="visible"
+            app:srcCompat="@drawable/ic_friends" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/user_view_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_view_prof_pic" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_view_prof_pic"
@@ -50,29 +64,22 @@
         app:civ_circle_background_color="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/user_view_username">
+        app:layout_constraintTop_toTopOf="parent">
 
     </de.hdodenhof.circleimageview.CircleImageView>
 
-    <TextView
-        android:id="@+id/user_view_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/username"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Profile_image"
-        app:layout_constraintBottom_toTopOf="@id/user_view_recycler"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/user_view_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <include
+        android:id="@+id/content_user_view"
+        layout="@layout/content_user_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_view_username" />
+        app:layout_constraintTop_toBottomOf="@id/user_view_username">
+
+    </include>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,7 +27,14 @@
         </activity>
         <activity
             android:name=".BaseDrawerActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:launchMode="singleTop">
+                <intent-filter>
+                    <action android:name="android.intent.action.SEARCH" />
+                </intent-filter>
+                <meta-data android:name="android.app.searchable"
+                    android:resource="@xml/searchable"/>
+        </activity>
         <activity
             android:name=".DashboardActivity"
             android:label="@string/dashboard"
@@ -36,6 +43,11 @@
             android:name=".FriendsActivity"
             android:label="@string/friends"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".UserViewActivity"
+            android:label="UserView"
+            android:theme="@style/AppTheme"/>
+
     </application>
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
