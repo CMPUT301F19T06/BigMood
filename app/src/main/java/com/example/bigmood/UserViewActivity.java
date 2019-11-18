@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /*  This activity displays a user who's id is passed to it in an intent.
@@ -156,16 +158,38 @@ public class UserViewActivity extends BaseDrawerActivity
         });
     }
 
+
     protected void initAddFriend() {
+        String targetUser = this.targetUser;
+        final DocumentReference docRef = this.userCollectionReference.document(targetUser);
+        final HashMap<String, Object> data = new HashMap<>();
+        data.put("targetUserId", this.currentUser);
         ImageView imageView = findViewById(R.id.user_view_add_friend);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: add a friend
-                Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+                //Create and send request
+                docRef
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot.contains("incomingReq")) {
+                                    List<String> temp = (ArrayList<String>) documentSnapshot.get("incomingReq");
+                                } else {
+                                    List<String> temp = new ArrayList<String>();
+                                }
+                                List<String> temp = (List<String>) documentSnapshot.get("incomingReq");
+                                temp.add(currentUser);
+                                docRef.set(temp);
+                            }
+                        });
+                Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 
     protected void initSortSpinner() {
         // adapted from developer docs
