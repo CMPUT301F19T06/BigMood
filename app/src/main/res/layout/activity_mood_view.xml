@@ -11,9 +11,8 @@
         android:id="@+id/background_pic"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@color/Surprise"
+        android:background="@color/cardview_dark_background"
         android:scaleType="fitXY"
-        android:src="@drawable/emoji_happy"
         android:orientation="horizontal"></ImageView>
 
     <LinearLayout
@@ -86,17 +85,17 @@
         </TextView>
 
 
-        <TextView
+        <EditText
             android:id="@+id/moodDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:textSize="20sp"
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
             android:layout_marginLeft="5dp"
             android:text="TEST"
             android:layout_marginTop="170dp">
 
-        </TextView>
+        </EditText>
 
         <Button
             android:id="@+id/edit_button"
@@ -161,7 +160,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/cardview_compat_inset_shadow"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="7dp"
             android:text="Description"
             android:textSize="35sp">
 

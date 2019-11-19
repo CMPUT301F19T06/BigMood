@@ -13,6 +13,8 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -69,7 +71,8 @@ public class ActivityMoodView extends AppCompatActivity {
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
     private Context context;
-    TextView dateText, description, moodUserName;
+    TextView dateText, moodUserName;
+    EditText description;
     Button editButton;
     Button addLoc;
     ImageView profileBackground;
@@ -133,6 +136,7 @@ public class ActivityMoodView extends AppCompatActivity {
             mood.setMoodDate(Timestamp.now());
         }
         dateText.setText(mood.getMoodDate().toDate().toString());
+        description.setEnabled(false);
         description.setText(mood.getMoodDescription());
         setMoodEmoji(mood.getMoodTitle());
 

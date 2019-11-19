@@ -30,6 +30,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -154,7 +155,6 @@ public class ActivityAddMood extends AppCompatActivity {
         moodColor.setAdapter(colorAdapter);
         moodSituation.setAdapter(situations);
 
-
         /**
          * HashMap for each mood Colors
          * changes the color according to moodtitle
@@ -173,6 +173,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
+        username = mood.getMoodUsername();
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
         final CollectionReference userCollectionReference = db.collection("Users");
@@ -348,7 +349,10 @@ public class ActivityAddMood extends AppCompatActivity {
                 }else{
                     Toast.makeText(ActivityAddMood.this, "No mood posted",Toast.LENGTH_LONG).show();
                 }
-                finish();
+                Intent intent = new Intent(ActivityAddMood.this, DashboardActivity.class);
+                intent.putExtra("USER_ID",userId);
+                intent.putExtra("User_Name",username);
+                startActivity(intent);
             }
         });
         /**
@@ -481,7 +485,7 @@ public class ActivityAddMood extends AppCompatActivity {
     public void setMoodEmoji(String emotion){
         switch (emotion){
             case "Happy":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(ResourcesCompat.getDrawable(getResources(), R.drawable.emoji_happy, null)));
                 break;
             case "Sad":
                 emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));

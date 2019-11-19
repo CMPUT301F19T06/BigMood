@@ -21,24 +21,21 @@
             android:layout_height="wrap_content">
 
         </ImageView>
-        <ImageView
-            android:id="@+id/add_background_image"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:layout_alignTop="@id/background_pic"
-            android:layout_alignBottom="@id/background_pic"
-            android:layout_alignLeft="@id/background_pic"
-            android:layout_alignRight="@id/background_pic"
-            android:layout_marginTop="100dp"
-            android:layout_marginLeft="360dp"
-            android:src="@drawable/camera_info"
-            >
 
-        </ImageView>
 
 
     </RelativeLayout>
+    <ImageView
+        android:id="@+id/add_background_image"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="360dp"
+        android:src="@drawable/camera_info"
+        >
+
+    </ImageView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -101,7 +98,7 @@
                 android:maxHeight="20sp"
                 android:scaleType="fitCenter"
 
-                app:srcCompat="@mipmap/emoji_happy"></ImageView>
+                android:src="@drawable/emoji_happy"></ImageView>
         </LinearLayout>
 
         <TextView
