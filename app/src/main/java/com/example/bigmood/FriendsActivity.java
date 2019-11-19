@@ -47,8 +47,8 @@ public class FriendsActivity extends BaseDrawerActivity {
     private CollectionReference userCollectionReference;
     private CollectionReference friendsCollectionReference;
     private RecyclerView recyclerView;
-    public static RecyclerViewAdapter adapter;
-    public static ArrayList<String> friendObjects = new ArrayList<>();
+    public FriendsRecyclerViewAdapter adapter;
+    public ArrayList<String> friendObjects = new ArrayList<>();
     private String userId;
     private List userFriends;
     private int startingIndex = 0;
@@ -68,16 +68,17 @@ public class FriendsActivity extends BaseDrawerActivity {
         toolbar.setTitle("Friends");
 
         this.userId = getIntent().getExtras().getString("USER_ID");
-
-        this.recyclerView = findViewById(R.id.friends_recyclerview);
         this.userCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                friendObjects.clear();
                 pullFriends();
                 adapter.notifyDataSetChanged();
             }
         });
+
+
+        this.recyclerView = findViewById(R.id.friends_recyclerview);
+
         initRecyclerView();
     }
 
@@ -86,16 +87,6 @@ public class FriendsActivity extends BaseDrawerActivity {
         index = -1;
         super.onResume();
         navigationView.getMenu().getItem(0).setChecked(true);
-    }
-
-    private void initRecyclerView() {
-        //TODO: Load in Friends from Online.
-
-        Log.d(TAG, "initRecyclerView: init recyclerview");
-        recyclerView = findViewById(R.id.friends_recyclerview);
-        adapter = new RecyclerViewAdapter(friendObjects, this.userId, this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     // step 1: get all friends and shunt them into a list
@@ -110,15 +101,29 @@ public class FriendsActivity extends BaseDrawerActivity {
                     if (doc.contains("userFriends")) {
                         // This line might explode
                         // slam in a try/catch
-                        Toast.makeText(FriendsActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FriendsActivity.this, "You have friends. Congrats.", Toast.LENGTH_SHORT).show();
                         userFriends = (List) doc.get("userFriends");
-                        friendObjects = new ArrayList<String>(userFriends);
+                        ArrayList<String> temp = new ArrayList<String>(userFriends);
+                        friendObjects.addAll(temp);
+                        Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendObjects.toString());
+                        adapter.notifyDataSetChanged();
                     } else {
                         // no friends, you fucking loser
+                        // todo: put in something for no friends
+                        Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
                         recyclerView.setVisibility(View.GONE);
                     }
                 }
             }
         });
+    }
+
+    private void initRecyclerView() {
+        //TODO: Load in Friends from Online.
+        Log.d(TAG, "initRecyclerViewFriends2: Vibe Check"+friendObjects.toString());
+        recyclerView = findViewById(R.id.friends_recyclerview);
+        adapter = new FriendsRecyclerViewAdapter(friendObjects, this.userId, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 }

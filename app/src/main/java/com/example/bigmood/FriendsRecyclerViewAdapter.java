@@ -29,7 +29,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
 
     //set up local arraylist to store rides
-    //private ArrayList<Mood> moodIDs = new ArrayList<>();
+    private ArrayList<String> friendObjects = new ArrayList<>();
 
     //set up interface components to measure input from clicks
     private Context mContext;
@@ -37,7 +37,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     ImageView deleteMood;
     //constructor
     public FriendsRecyclerViewAdapter(ArrayList friendIDs, String userId, Context mContext) {
-        FriendsActivity.friendObjects = friendIDs;
+        this.friendObjects = friendIDs;
         this.mContext = mContext;
         this.userId = userId;
     }
@@ -58,12 +58,13 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         FriendsActivity.index = position;
 
         //set up the connection to view here, TBA
-
-
+        holder.friendName.setText(this.friendObjects.get(position));
+        //todo: Find way to implement friend display names and profile pictures proper
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: clicked on:" + FriendsActivity.friendObjects.get(position));
+                FriendsActivity.index = position;
+                Log.d(TAG, "onClick: clicked on:" + String.valueOf(position));
                 //intentMoodView(FriendsActivity.moodObjects.get(position), v);
             }
         });
@@ -72,6 +73,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     }
 
     public void intentMoodView(Mood moodID, View v){
+        //todo: send user to UserViewActivity
         //Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
         //intent.putExtra("Mood", moodID);
         //intent.putExtra("USER_ID", this.userId);
@@ -81,7 +83,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     //item count for parsing through
     @Override
     public int getItemCount() {
-        return FriendsActivity.friendObjects.size();
+        return this.friendObjects.size();
     }
 
     //constructor for ViewHolder object, which holds our xml components together
