@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.esri.arcgisruntime.concurrent.ListenableFuture;
+import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
@@ -23,6 +25,9 @@ import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
+import com.esri.arcgisruntime.mapping.view.IdentifyGraphicsOverlayResult;
+import com.esri.arcgisruntime.mapping.view.ViewpointChangedEvent;
+import com.esri.arcgisruntime.mapping.view.ViewpointChangedListener;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -35,6 +40,7 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
@@ -43,6 +49,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.okhttp.internal.Platform;
 
 
 /**
@@ -102,6 +109,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     //using esri mapView
     private MapView mMapView;
+    private GraphicsOverlay graphicsOverlay;
+    private android.graphics.Point newPoint;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -272,18 +282,20 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void displayMap(){
         mMapView = findViewById(R.id.mapView);
-        ArcGISMap map =new ArcGISMap(Basemap.Type.STREETS, tempLat, tempLong, 30);
+        ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS, tempLat, tempLong, 30);
+        //inflate map
         mMapView.setMap(map);
 
         //set center of map
         mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
 
         //init graphics overlay
-        GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
+        graphicsOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
         //symbol type for map marker
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+
 
         /*
         Point point = new Point(lastLong, lastLat, wgs84);
@@ -293,6 +305,41 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         graphicsOverlay.getGraphics().add(graphic);
 
         */
+
+        mMapView.addViewpointChangedListener(new ViewpointChangedListener() {
+            @Override
+            public void viewpointChanged(ViewpointChangedEvent viewpointChangedEvent) {
+                //update screen center view point
+                float centreX = mMapView.getX() + mMapView.getWidth() / 2;
+                float centreY = mMapView.getY() + mMapView.getHeight() / 2;
+                android.graphics.Point screenPoint = new android.graphics.Point(Math.round(centreX), Math.round(centreY));
+                /*
+                Point mapPoint = mMapView.screenToLocation(screenPoint);
+                Point wgs = (Point) GeometryEngine.project(mapPoint, wgs84);
+                double newLong = wgs.getX();
+                double newLat = wgs.getY();
+                 */
+                newPoint = screenPoint;
+            }
+        });
+    }
+
+    private void identifyGraphics(){
+        ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
+                mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false);
+
+        identifyGraphic.addDoneListener(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    IdentifyGraphicsOverlayResult overlayResult = identifyGraphic.get();
+                    //get list of graphics
+                    List<Graphic> graphic = overlayResult.getGraphics();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
