@@ -70,6 +70,8 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private FusedLocationProviderClient fusedLocationClient;
     private double lastLong;
     private double lastLat;
+    private double tempLong = -113.52705;
+    private double tempLat = 53.52679;
     //spatial reference for map points
     private SpatialReference wgs84 = SpatialReferences.getWgs84();
     ///////////////////
@@ -270,11 +272,11 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void displayMap(){
         mMapView = findViewById(R.id.mapView);
-        ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
+        ArcGISMap map =new ArcGISMap(Basemap.Type.STREETS, tempLat, tempLong, 30);
         mMapView.setMap(map);
 
         //set center of map
-        mMapView.setViewpoint(new Viewpoint(new Point(lastLong, lastLat, wgs84), 3000));
+        mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
 
         //init graphics overlay
         GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
