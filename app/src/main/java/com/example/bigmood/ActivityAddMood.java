@@ -70,7 +70,7 @@ import static com.example.bigmood.DashboardActivity.index;
 import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
 /**
- * todo: Activity add mood does both edit and add
+ * This is a class for adding and editing mood events
  */
 
 public class ActivityAddMood extends AppCompatActivity {
@@ -157,7 +157,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
         /**
          * HashMap for each mood Colors
-         * todo: change the color here according to the necessity
+         * changes the color according to moodtitle
          */
         final HashMap<String,String> colorHash = new HashMap<String, String>(){{
             put("Set Color", "#FFFFFF");
@@ -199,14 +199,10 @@ public class ActivityAddMood extends AppCompatActivity {
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
             // todo: background image to a picture
-//            try {
-//
-//                profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
-//            }catch (Throwable e){
-//                e.printStackTrace();
-//            }
 
-            //todo: String to bitmap
+            /**
+             * conversion of string to bitmap for profile picture
+             */
             try{
                 byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
                 Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
@@ -238,9 +234,6 @@ public class ActivityAddMood extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-
-                // todo: set Mood user name here (hardcoded here)
-
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 setMoodEmoji(mood.getMoodTitle());
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
@@ -273,6 +266,9 @@ public class ActivityAddMood extends AppCompatActivity {
                 data.put("moodEmoji", mood.getMoodEmoji());
                 Log.d("Index: ",String.valueOf(index));
                 try{
+                    /**
+                     * update mood only if mood event already exists i.e. edit mood
+                     */
                     if (index != -1){
                         data.put("moodId", mood.getMoodID());
                         collectionReference
@@ -295,6 +291,9 @@ public class ActivityAddMood extends AppCompatActivity {
                         index = -1;
                     }
                     else{
+                        /**
+                         * else add a new mood if that mood event does not exist
+                         */
                         mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
                         data.put("moodId", mood.getMoodID());
                         collectionReference
@@ -324,7 +323,9 @@ public class ActivityAddMood extends AppCompatActivity {
             }
         });
 
-        // todo: implementing delete mood
+        /**
+         * delete mood removes a mood event
+         */
         deleteMood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -350,7 +351,9 @@ public class ActivityAddMood extends AppCompatActivity {
                 finish();
             }
         });
-
+        /**
+         * adding a location to a mood event
+         */
         addLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -367,7 +370,9 @@ public class ActivityAddMood extends AppCompatActivity {
                 });
             }
         });
-
+        /**
+         * changing the profile picture here
+         */
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -502,6 +507,10 @@ public class ActivityAddMood extends AppCompatActivity {
         }
     }
 
+    /**
+     * get the mood emoji from drawable
+     * @return : a string format for the emoji
+     */
     public String getMoodEmoji(){
         Drawable drawable= emojiPic.getDrawable();
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
@@ -512,20 +521,30 @@ public class ActivityAddMood extends AppCompatActivity {
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
     }
+
     /**
-     * working on the open camera and open album functionality
+     * Open camera
      */
 
     public void OpenCamera(View view){
         Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent,CAMERA_ACCESS);
     }
+    /**
+     * Open gallery
+     */
     public void OpenAlbum(View view){
         Intent intent =  new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent,GALLERY_ACCESS);
 
     }
+
+    /**
+     * Open mood View
+     * @param view
+     * @param mood
+     */
     public void OpenMoodView(View view, Mood mood){
         Intent intent = new Intent(ActivityAddMood.this,ActivityMoodView.class);
         // todo fix the stack trace
@@ -534,6 +553,13 @@ public class ActivityAddMood extends AppCompatActivity {
         intent.putExtra("Mood",mood);
         startActivityForResult(intent,MOODVIEW_ACCESS);
     }
+
+    /**
+     * On activity result takes care of the stack trace for each activity opening from edit mood
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         context = getApplicationContext();

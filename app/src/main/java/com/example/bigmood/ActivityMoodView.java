@@ -34,23 +34,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -58,25 +49,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.spec.ECField;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
-import static com.example.bigmood.DashboardActivity.index;
-import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
 /**
- * todo: Activity add mood does both edit and add
+ * This class takes care of displaying a mood event
  */
-
 public class ActivityMoodView extends AppCompatActivity {
-
-    //todo: some new stuff
+    /**
+     * todo: working on converting URL's to images
+     */
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
 
@@ -97,10 +83,7 @@ public class ActivityMoodView extends AppCompatActivity {
     private String userId, username;
 
 
-    /**
-     * firebase stuff here
-     * todo: putting mood objects in firebase and generating them
-     */
+
 
     private FirebaseFirestore db;
     private CollectionReference moodCollectionReference;
@@ -153,7 +136,6 @@ public class ActivityMoodView extends AppCompatActivity {
         description.setText(mood.getMoodDescription());
         setMoodEmoji(mood.getMoodTitle());
 
-        //todo: String to bitmap: done!
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
@@ -167,9 +149,8 @@ public class ActivityMoodView extends AppCompatActivity {
         }
 
         /**
-         * Save button to save mood object with it's requirements
+         * Edit button to edit mood object with it's requirements
          */
-        //todo:  take the mood Object to edit mood activity here
 
         editButton.setOnClickListener(new View.OnClickListener() {
 
