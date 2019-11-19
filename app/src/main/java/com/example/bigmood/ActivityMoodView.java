@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -166,8 +165,18 @@ public class ActivityMoodView extends AppCompatActivity {
                 startActivity(editMood);
             }
         });
-
+        /**
+         * get the background pic and set it to the mood Photo
+         */
         ImageView backgroundFull = findViewById(R.id.background_pic_Full);
+        try {
+            byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            backgroundFull.setImageBitmap(bitmap);
+
+        } catch (Exception e) {
+            e.getMessage();
+        }
 
         //Expands the background image by setting the fullscreen image of the background to VISIBLE
         profileBackground.setOnClickListener(new View.OnClickListener() {

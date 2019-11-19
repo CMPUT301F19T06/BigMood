@@ -73,6 +73,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
 
     implementation 'com.esri.arcgisruntime:arcgis-android:100.6.0'
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 
 }
 

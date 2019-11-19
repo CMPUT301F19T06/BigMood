@@ -49,6 +49,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Document;
 
@@ -129,7 +130,7 @@ public class ActivityAddMood extends AppCompatActivity {
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMoodSpinner);
         moodUserName = findViewById(R.id.moodUserName);
-        //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
+        //load("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
         moodColor = findViewById(R.id.currentMoodColorSpinner);
         moodSituation = findViewById(R.id.moodSituationSpinner);
 
@@ -207,7 +208,8 @@ public class ActivityAddMood extends AppCompatActivity {
             try{
                 byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
                 Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                profilePic.setImageBitmap(bitmap);
+                // todo: set image from google
+                //profilePic.setImageBitmap(bitmap);
                 byte [] bytes=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
                 Bitmap bitmap1=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
                 profileBackground.setImageBitmap(bitmap1);
@@ -453,20 +455,22 @@ public class ActivityAddMood extends AppCompatActivity {
 
     }
 
-//    public static Bitmap getBitmapFromURL(String src) {
-//        try {
-//            URL url = new URL(src);
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setDoInput(true);
-//            connection.connect();
-//            InputStream input = connection.getInputStream();
-//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-//            return myBitmap;
-//        } catch (IOException e) {
-//            // Log exception
-//            return null;
-//        }
-//    }
+    private void loadImageFromUrl(String Url){
+        Picasso.with(this).load(Url).placeholder(R.mipmap.emoji_happy)
+        .error(R.mipmap.ic_launcher)
+                .into(profilePic, new com.squareup.picasso.Callback(){
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+
+                });
+    }
 
 //    private void initRecyclerView(){
 //        Log.d("Bomb", "initRecyclerView: init recyclerview");
@@ -485,7 +489,7 @@ public class ActivityAddMood extends AppCompatActivity {
     public void setMoodEmoji(String emotion){
         switch (emotion){
             case "Happy":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(ResourcesCompat.getDrawable(getResources(), R.drawable.emoji_happy, null)));
+                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
                 break;
             case "Sad":
                 emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));
