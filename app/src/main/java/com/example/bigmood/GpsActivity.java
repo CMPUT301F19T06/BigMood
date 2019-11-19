@@ -34,6 +34,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
@@ -78,15 +79,20 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     The arraylist for the user's moods, initially null and only loaded from the database if
     the mode is set to "USER" and it is still null
      */
-    private ArrayList<Point> userPoints = null;
+    //private ArrayList<Point> userPoints = null;
+
+    //hashmap for mood ID and map points
+    private HashMap<String, Point> userPoints;
+
 
     /*
     The arraylist holding the followed moods, this will need to be refreshed every time
     that "FOLLOW" mode is selected.
      */
-
+    /*
     private ArrayList<Point> followedPoints;
     private ArrayList<String> followedUsers;
+     */
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
@@ -152,43 +158,10 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             retrieveFollowedMoods();
         }
 
-        mMapView = findViewById(R.id.mapView);
-        ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
-        mMapView.setMap(map);
+        //call to display map
+        displayMap();
+        /////////////////////
 
-        //set center of map
-        mMapView.setViewpoint(new Viewpoint(new Point(lastLong, lastLat, wgs84), 3000));
-
-        //init graphics overlay
-        GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
-        mMapView.getGraphicsOverlays().add(graphicsOverlay);
-
-        //symbol type for map marker
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-
-        /*
-        Point point = new Point(lastLong, lastLat, wgs84);
-
-
-        Graphic graphic = new Graphic(point, symbol);
-        graphicsOverlay.getGraphics().add(graphic);
-
-        */
-
-        //show all pins on map
-        if (this.mode.equals("USER")){
-            for (Point i : userPoints){
-                Graphic graphic = new Graphic(i, symbol);
-                graphicsOverlay.getGraphics().add(graphic);
-            }
-        } else {
-            for (Point i : followedPoints){
-                Graphic graphic = new Graphic(i, symbol);
-                graphicsOverlay.getGraphics().add(graphic);
-            }
-        }
-
-        ///////////////////////////////////
 
         final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
         FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
@@ -266,4 +239,31 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
     }
+
+
+    private void displayMap(){
+        mMapView = findViewById(R.id.mapView);
+        ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
+        mMapView.setMap(map);
+
+        //set center of map
+        mMapView.setViewpoint(new Viewpoint(new Point(lastLong, lastLat, wgs84), 3000));
+
+        //init graphics overlay
+        GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
+        //symbol type for map marker
+        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+
+        /*
+        Point point = new Point(lastLong, lastLat, wgs84);
+
+
+        Graphic graphic = new Graphic(point, symbol);
+        graphicsOverlay.getGraphics().add(graphic);
+
+        */
+    }
+
 }
