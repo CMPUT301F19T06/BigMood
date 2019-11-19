@@ -91,11 +91,12 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
      */
     /*
     private ArrayList<Point> followedPoints;
-    private ArrayList<String> followedUsers;
      */
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
+
+    private ArrayList<String> followedUsers;
 
     //using esri mapView
     private MapView mMapView;
@@ -128,6 +129,8 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         this.db = FirebaseFirestore.getInstance();
         this.moodCollection = db.collection("Moods");
 
+        this.userPoints = new HashMap<>();
+
         //Initialize the friend list
         followedUsers = new ArrayList<>();
         db.collection("Users").whereEqualTo("userId",this.userId)
@@ -151,7 +154,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         });
 
         if (this.mode.equals("USER")){
-            userPoints = new ArrayList<>();
             retrieveUserMoods();
         }
         else{
@@ -205,11 +207,13 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 }
                 //TODO: change display to user moods
                 Toast.makeText(this, "Display Users", Toast.LENGTH_SHORT).show();
+                displayMap();
                 return true;
             case R.id.gps_mode_menu_followed:
                 retrieveFollowedMoods();
                 //TODO: change display to followed moods
                 Toast.makeText(this, "Display Followed", Toast.LENGTH_SHORT).show();
+                displayMap();
                 return true;
             default:
                 return false;
@@ -220,13 +224,16 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
+        followedUsers.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot doc : task.getResult()){
-                        userPoints.add(new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                    if (!task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                        }
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
@@ -238,6 +245,26 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
+        followedUsers.clear();
+        if (!followedUsers.isEmpty()){
+            for (String user : followedUsers){
+                moodCollection.whereEqualTo("moodCreator",user)
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            if (!task.getResult().isEmpty()) {
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                                }
+                            }
+                        } else{
+                            Log.d(TAG, "Failed to get user moods");
+                        }
+                    }
+                });
+            }
+        }
     }
 
 
