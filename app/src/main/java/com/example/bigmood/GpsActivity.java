@@ -295,4 +295,12 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         */
     }
 
+    @Override
+    protected void onDestroy(){
+        if(mMapView != null){
+            mMapView.dispose();
+        }
+        super.onDestroy();
+    }
+
 }
