@@ -81,20 +81,20 @@ public class ActivityAddMood extends AppCompatActivity {
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
+    public static final int MOODVIEW_ACCESS = 5555;
     private Context context;
     TextView dateText , description, moodUserName;
     Button saveButton;
     Button addLoc;
-    LinearLayout profileBackground;
+    ImageView profileBackground, getProfileBackground;
     ImageView profilePic, deleteMood, emojiPic;
     Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
-    String dayString = dateFormat.format(date);
     private FusedLocationProviderClient fusedLocationClient;
     private String userId, username;
-
+    int imageTracker = 0;
 
     /**
      * firebase stuff here
@@ -129,10 +129,13 @@ public class ActivityAddMood extends AppCompatActivity {
         moodTitle = findViewById(R.id.currentMoodSpinner);
         moodUserName = findViewById(R.id.moodUserName);
         //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
-
         moodColor = findViewById(R.id.currentMoodColorSpinner);
         moodSituation = findViewById(R.id.moodSituationSpinner);
+
+        // profile pick and background pic
         profileBackground = findViewById(R.id.background_pic);
+        getProfileBackground = findViewById(R.id.add_background_image);
+
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -192,30 +195,39 @@ public class ActivityAddMood extends AppCompatActivity {
 
             //todo: mood username
             moodUserName.setText(mood.getMoodUsername());
-
             setMoodEmoji(mood.getMoodTitle());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
-
-            try {
-
-                profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
-            }catch (Throwable e){
-                e.printStackTrace();
-            }
+            // todo: background image to a picture
+//            try {
+//
+//                profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
+//            }catch (Throwable e){
+//                e.printStackTrace();
+//            }
 
             //todo: String to bitmap
             try{
                 byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
                 Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
                 profilePic.setImageBitmap(bitmap);
+                byte [] bytes=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
+                Bitmap bitmap1=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                profileBackground.setImageBitmap(bitmap1);
+
 
             }catch (Exception e){
                 e.getMessage();
             }
         }
 
-
+        getProfileBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenCamera(v);
+                imageTracker = 1;
+            }
+        });
 
         /**
          * Save button to save mood object with it's requirements
@@ -278,8 +290,9 @@ public class ActivityAddMood extends AppCompatActivity {
                                         Log.d(TAG, "Data addition failed" + e.toString());
                                     }
                                 });
+                        Toast.makeText(ActivityAddMood.this, "Cool!", Toast.LENGTH_SHORT).show();
+                        OpenMoodView(view, mood);
                         index = -1;
-                        finish();
                     }
                     else{
                         mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
@@ -300,7 +313,8 @@ public class ActivityAddMood extends AppCompatActivity {
                                     }
                                 });
                         index = -1;
-                        finish();
+                        Toast.makeText(ActivityAddMood.this, "Cool!", Toast.LENGTH_SHORT).show();
+                        OpenMoodView(view, mood);
                     }
 
                 } catch (Exception e){
@@ -332,9 +346,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
                 }else{
                     Toast.makeText(ActivityAddMood.this, "No mood posted",Toast.LENGTH_LONG).show();
-
                 }
-
                 finish();
             }
         });
@@ -503,6 +515,7 @@ public class ActivityAddMood extends AppCompatActivity {
     /**
      * working on the open camera and open album functionality
      */
+
     public void OpenCamera(View view){
         Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent,CAMERA_ACCESS);
@@ -512,6 +525,14 @@ public class ActivityAddMood extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent,GALLERY_ACCESS);
 
+    }
+    public void OpenMoodView(View view, Mood mood){
+        Intent intent = new Intent(ActivityAddMood.this,ActivityMoodView.class);
+        // todo fix the stack trace
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("USER_ID", userId);
+        intent.putExtra("Mood",mood);
+        startActivityForResult(intent,MOODVIEW_ACCESS);
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -526,10 +547,16 @@ public class ActivityAddMood extends AppCompatActivity {
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
             image = temp;
-            profilePic.setImageBitmap(bitmap);
+            if (imageTracker == 1){
+                profileBackground.setImageBitmap(bitmap);
+            }
+            else{
+                profilePic.setImageBitmap(bitmap);
+            }
+            imageTracker = 0;
         }
 
-        else if(requestCode==GALLERY_ACCESS){
+        else if(requestCode==GALLERY_ACCESS) {
             try {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
@@ -540,8 +567,11 @@ public class ActivityAddMood extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show();
             }
-
-        }else {
+        }
+        else  if (requestCode == MOODVIEW_ACCESS){
+            finish();
+        }
+        else {
             Toast.makeText(context, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
     }

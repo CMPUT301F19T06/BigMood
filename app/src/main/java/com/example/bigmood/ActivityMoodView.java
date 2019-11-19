@@ -86,7 +86,7 @@ public class ActivityMoodView extends AppCompatActivity {
     TextView dateText, description, moodUserName;
     Button editButton;
     Button addLoc;
-    LinearLayout profileBackground;
+    ImageView profileBackground;
     ImageView profilePic, deleteMood, emojiPic;
     TextView moodTitle, moodSituation; // moodTitle and moodType is the same here for now
     String image;
@@ -143,7 +143,7 @@ public class ActivityMoodView extends AppCompatActivity {
         final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
 
         moodUserName.setText(mood.getMoodUsername());
-        moodSituation.setText(mood.getMoodSituation());
+        moodSituation.setText("COMMUNITY: \n" + mood.getMoodSituation());
         moodTitle.setText(mood.getMoodTitle());
         // todo: moodDate does not work
         if (mood.getMoodDate() == null) {
@@ -151,19 +151,20 @@ public class ActivityMoodView extends AppCompatActivity {
         }
         dateText.setText(mood.getMoodDate().toDate().toString());
         description.setText(mood.getMoodDescription());
+        setMoodEmoji(mood.getMoodTitle());
+
         //todo: String to bitmap: done!
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            profilePic.setImageBitmap(bitmap);
+
+            //todo: use profile pic from google
+            //profilePic.setImageBitmap(bitmap);
+            profileBackground.setImageBitmap(bitmap);
 
         } catch (Exception e) {
             e.getMessage();
         }
-
-
-
-
 
         /**
          * Save button to save mood object with it's requirements
@@ -284,9 +285,6 @@ public class ActivityMoodView extends AppCompatActivity {
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
     }
-    /**
-     * working on the open camera and open album functionality
-     */
 
 
 }
