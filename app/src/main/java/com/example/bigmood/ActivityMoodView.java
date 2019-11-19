@@ -163,6 +163,22 @@ public class ActivityMoodView extends AppCompatActivity {
             }
         });
 
+        ImageView backgroundFull = findViewById(R.id.background_pic_Full);
+
+        //Expands the background image by setting the fullscreen image of the background to VISIBLE
+        profileBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backgroundFull.setVisibility(View.VISIBLE);
+            }
+        });
+        //Puts the fullscreen image back to the state GONE
+        backgroundFull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                backgroundFull.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**

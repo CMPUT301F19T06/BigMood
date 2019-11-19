@@ -170,6 +170,15 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/background_pic_Full"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/Surprise"
+        android:orientation="horizontal"
+        android:scaleType="fitCenter"
+        android:src="@drawable/emoji_happy"
+        android:visibility="gone"></ImageView>
 
 
 </RelativeLayout>
