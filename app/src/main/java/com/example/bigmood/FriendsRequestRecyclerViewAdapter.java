@@ -1,0 +1,120 @@
+package com.example.bigmood;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
+
+import static android.provider.AlarmClock.EXTRA_MESSAGE;
+
+//Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
+public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRequestRecyclerViewAdapter.ViewHolder>{
+    private static final String TAG = "RecyclerViewAdapter";
+    private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
+
+    //set up local arraylist to store rides
+    private ArrayList<String> friendReqObjects = new ArrayList<>();
+
+    //set up interface components to measure input from clicks
+    private Context mContext;
+    private String userId;
+    ImageView deleteMood;
+    //constructor
+    public FriendsRequestRecyclerViewAdapter(ArrayList friendIDs, String userId, Context mContext) {
+        this.friendReqObjects = friendIDs;
+        this.mContext = mContext;
+        this.userId = userId;
+    }
+
+    //set up a new viewholder to mount onto main activity
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_friendfragment, parent, false);
+        ViewHolder holder = new ViewHolder(view);
+        return holder;
+    }
+
+    //bind viewholder to holder, process input here
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        //prepare display variables for list
+        Log.d(TAG, "onBindViewHolder: called.");
+        FriendsActivity.index = position;
+
+        //set up the connection to view here, TBA
+        holder.friendName.setText(this.friendReqObjects.get(position));
+        //todo: Find way to implement friend display names and profile pictures proper
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FriendsActivity.index = position;
+                Log.d(TAG, "onClick: clicked on:" + String.valueOf(position));
+                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
+            }
+        });
+        //todo: find a way for firebase to accept and decline requests via buttons
+        //also update values i suppose
+        //establish listener for each element
+        holder.yeaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo: implement power of friendship
+                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
+            }
+        });
+
+        holder.nahButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo: destroy potential hopes and dreams here
+                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
+            }
+        });
+
+    }
+
+    public void intentMoodView(Mood moodID, View v){
+        //todo: send user to UserViewActivity
+        //Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
+        //intent.putExtra("Mood", moodID);
+        //intent.putExtra("USER_ID", this.userId);
+        //mContext.startActivity(intent);
+    }
+
+    //item count for parsing through
+    @Override
+    public int getItemCount() {
+        return this.friendReqObjects.size();
+    }
+
+    //constructor for ViewHolder object, which holds our xml components together
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        // TextView text;
+        TextView friendName;
+        ConstraintLayout linearLayout;
+        Button yeaButton, nahButton;
+        public ViewHolder(View itemView) {
+            super(itemView);
+            // establish views here
+            friendName = itemView.findViewById(R.id.friendName);
+            yeaButton = itemView.findViewById(R.id.acceptButton);
+            nahButton = itemView.findViewById(R.id.rejectButton);
+        }
+    }
+}

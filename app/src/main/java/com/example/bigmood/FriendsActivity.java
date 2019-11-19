@@ -47,8 +47,11 @@ public class FriendsActivity extends BaseDrawerActivity {
     private CollectionReference userCollectionReference;
     private CollectionReference friendsCollectionReference;
     private RecyclerView recyclerView;
+    private RecyclerView recyclerViewReq;
     public FriendsRecyclerViewAdapter adapter;
+    public FriendsRecyclerViewAdapter adapterReq;
     public ArrayList<String> friendObjects = new ArrayList<>();
+    public ArrayList<String> friendReq = new ArrayList<>();
     private String userId;
     private List userFriends;
     private int startingIndex = 0;
@@ -72,6 +75,7 @@ public class FriendsActivity extends BaseDrawerActivity {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 pullFriends();
+                pullFriendReqs();
                 adapter.notifyDataSetChanged();
             }
         });
@@ -118,8 +122,36 @@ public class FriendsActivity extends BaseDrawerActivity {
         });
     }
 
+    private void pullFriendReqs() {
+        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                friendReq.clear();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("incomingReq")) {
+                        // This line might explode
+                        // slam in a try/catch
+                        Toast.makeText(FriendsActivity.this, "You have friend (requests). Congrats.", Toast.LENGTH_SHORT).show();
+                        userFriends = (List) doc.get("incomingReq");
+                        ArrayList<String> temp = new ArrayList<String>(userFriends);
+                        friendReq.addAll(temp);
+                        Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendReq.toString());
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        // no friends, you fucking loser
+                        // todo: put in something for no friends
+                        Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
+                        recyclerView.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+    }
+
     private void initRecyclerView() {
-        //TODO: Load in Friends from Online.
+        //TODO: Load in Friend requests from Online.
+
         Log.d(TAG, "initRecyclerViewFriends2: Vibe Check"+friendObjects.toString());
         recyclerView = findViewById(R.id.friends_recyclerview);
         adapter = new FriendsRecyclerViewAdapter(friendObjects, this.userId, this);
