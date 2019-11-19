@@ -226,7 +226,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
-        followedUsers.clear();
+        userPoints.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -247,7 +247,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
-        followedUsers.clear();
+        userPoints.clear();
         if (!followedUsers.isEmpty()){
             for (String user : followedUsers){
                 moodCollection.whereEqualTo("moodCreator",user)
