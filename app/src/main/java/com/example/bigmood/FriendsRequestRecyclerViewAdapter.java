@@ -75,6 +75,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
             @Override
             public void onClick(View v) {
                 //todo: implement power of friendship
+                //more seriously, update database and friends
                 //intentMoodView(FriendsActivity.moodObjects.get(position), v);
             }
         });
@@ -83,6 +84,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
             @Override
             public void onClick(View v) {
                 //todo: destroy potential hopes and dreams here
+                //more seriously, update database and friends
                 //intentMoodView(FriendsActivity.moodObjects.get(position), v);
             }
         });

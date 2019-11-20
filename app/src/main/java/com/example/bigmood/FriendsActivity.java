@@ -54,10 +54,14 @@ public class FriendsActivity extends BaseDrawerActivity {
     public ArrayList<String> friendReq = new ArrayList<>();
     private String userId;
     private List userFriends;
+    private List userFriendReqs;
     private int startingIndex = 0;
     final private int queryLimit = 25;
     ImageView deleteMood;
     public static int index;
+
+    private TextView emptyFriends;
+    private TextView emptyFriendReqs;
 
     public FriendsActivity() {
         this.db = FirebaseFirestore.getInstance();
@@ -82,6 +86,10 @@ public class FriendsActivity extends BaseDrawerActivity {
 
 
         this.recyclerView = findViewById(R.id.friends_recyclerview);
+        this.recyclerViewReq = findViewById(R.id.friendReq_recyclerview);
+
+        this.emptyFriendReqs = findViewById(R.id.friends_textView_emptyUser);
+        this.emptyFriends = findViewById(R.id.friends_textView_emptyFriends);
 
         initRecyclerView();
     }
@@ -111,9 +119,12 @@ public class FriendsActivity extends BaseDrawerActivity {
                         friendObjects.addAll(temp);
                         Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendObjects.toString());
                         adapter.notifyDataSetChanged();
+                        emptyFriends.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
                     } else {
                         // no friends, you fucking loser
                         // todo: put in something for no friends
+                        emptyFriends.setVisibility(View.VISIBLE);
                         Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
                         recyclerView.setVisibility(View.GONE);
                     }
@@ -133,16 +144,20 @@ public class FriendsActivity extends BaseDrawerActivity {
                         // This line might explode
                         // slam in a try/catch
                         Toast.makeText(FriendsActivity.this, "You have friend (requests). Congrats.", Toast.LENGTH_SHORT).show();
-                        userFriends = (List) doc.get("incomingReq");
-                        ArrayList<String> temp = new ArrayList<String>(userFriends);
+                        userFriendReqs = (List) doc.get("incomingReq");
+                        ArrayList<String> temp = new ArrayList<String>(userFriendReqs);
                         friendReq.addAll(temp);
                         Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendReq.toString());
-                        adapter.notifyDataSetChanged();
+                        adapterReq.notifyDataSetChanged();
+                        emptyFriendReqs.setVisibility(View.GONE);
+                        recyclerViewReq.setVisibility(View.VISIBLE);
                     } else {
                         // no friends, you fucking loser
                         // todo: put in something for no friends
-                        Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
-                        recyclerView.setVisibility(View.GONE);
+                        emptyFriendReqs.setVisibility(View.VISIBLE);
+                        Log.d(TAG, "initRecyclerViewFriendReq: No Friends.");
+                        Toast.makeText(FriendsActivity.this, "4ever request alone", Toast.LENGTH_SHORT).show();
+                        recyclerViewReq.setVisibility(View.GONE);
                     }
                 }
             }
@@ -151,6 +166,10 @@ public class FriendsActivity extends BaseDrawerActivity {
 
     private void initRecyclerView() {
         //TODO: Load in Friend requests from Online.
+        recyclerViewReq = findViewById(R.id.friendReq_recyclerview);
+        adapterReq = new FriendsRecyclerViewAdapter(friendReq, this.userId, this);
+        recyclerViewReq.setAdapter(adapterReq);
+        recyclerViewReq.setLayoutManager(new LinearLayoutManager(this));
 
         Log.d(TAG, "initRecyclerViewFriends2: Vibe Check"+friendObjects.toString());
         recyclerView = findViewById(R.id.friends_recyclerview);

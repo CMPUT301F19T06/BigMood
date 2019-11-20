@@ -42,6 +42,10 @@
     <string name="dashboard_recyclerUser_header">Your last post:</string>
     <string name="dashboard_empty_header">Looks like there\'s no one you\'re following, you can track their recent moods here.</string>
     <string name="dashboard_emptyUser_header">Looks like you haven\'t posted anything yet.</string>
+    <string name="friends_recycler_header">Your friends:</string>
+    <string name="friends_emptyUser_header">You have no friend requests. Why get some?</string>
+    <string name="friends_empty_header">You have no friends. Why not make some?</string>
+    <string name="friends_recyclerUser_header">Friend Requests:</string>
     <string name="moodName">Mood</string>
     <string name="placeholder1">placeholder1</string>
     <string name="placeholder2">placeholder2</string>
