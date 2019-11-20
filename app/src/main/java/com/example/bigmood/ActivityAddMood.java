@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.gms.common.internal.ResourceUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,6 +50,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Document;
@@ -472,21 +475,16 @@ public class ActivityAddMood extends AppCompatActivity {
                 });
     }
 
-//    private void initRecyclerView(){
-//        Log.d("Bomb", "initRecyclerView: init recyclerview");
-//
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-//        MoodAdapter recyclerView = findViewById(R.id.mood_recycler_view);
-//        recyclerView.setLayoutManager(recyclerView);
-//        RecyclerViewAdapter adapter = new MoodAdapter(this, mNames, mImageUrls);
-//        recyclerView.setAdapter(adapter);
-//    }
+
+
+
     /**
      * Set emoji according to mood type
      * @param emotion
      */
     // todo: set emoji according to hashmap of mood type
     public void setMoodEmoji(String emotion){
+        Drawable d;
         switch (emotion){
             case "Happy":
                 emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));

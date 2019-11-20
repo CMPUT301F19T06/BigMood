@@ -33,6 +33,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -67,15 +68,14 @@ public class ActivityMoodView extends AppCompatActivity {
     private ArrayList<String> mNames = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
 
-    public static final int CAMERA_ACCESS = 1001;
-    public static final int GALLERY_ACCESS = 9999;
+
     private Context context;
     TextView dateText, moodUserName;
     EditText description;
     Button editButton;
     Button addLoc;
     ImageView profileBackground;
-    ImageView profilePic, deleteMood, emojiPic;
+    ImageView profilePic, emojiPic;
     TextView moodTitle, moodSituation; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
@@ -115,6 +115,7 @@ public class ActivityMoodView extends AppCompatActivity {
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         // todo: set image from URL
+        String url = "https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle";
         //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
 
         moodSituation = findViewById(R.id.moodSituationSpinner);
@@ -142,6 +143,7 @@ public class ActivityMoodView extends AppCompatActivity {
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            //Glide.with(ActivityMoodView.this).load(url).into(profilePic);
 
             //todo: use profile pic from google
             //profilePic.setImageBitmap(bitmap);

@@ -175,7 +175,7 @@
         android:layout_height="match_parent"
         android:background="@color/Surprise"
         android:orientation="horizontal"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:src="@drawable/emoji_happy"
         android:visibility="gone"></ImageView>
 

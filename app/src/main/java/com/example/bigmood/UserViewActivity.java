@@ -238,7 +238,7 @@ public class UserViewActivity extends BaseDrawerActivity
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (filterDoc(doc, moodFiltersToApply)) {
                         Log.d(TAG, String.valueOf(doc.getData().get("moodId")));
-                        moodObjects.add(assembleMood(doc));
+                        moodObjects.add(Mood.getFromDoc(doc));
                     }
                 }
                 sortMoods();
@@ -247,26 +247,7 @@ public class UserViewActivity extends BaseDrawerActivity
         });
     }
 
-    protected Mood assembleMood(DocumentSnapshot doc) {
-        String moodId = doc.getId();
-        String moodDescription = doc.getString("moodDescription");
-        String moodTitle = doc.getString("moodTitle");
-        Timestamp moodDate = doc.getTimestamp("moodDate");
-        String moodColor = doc.getString("moodColor");
-        String moodPhoto = (String) doc.getData().get("moodPhoto");
-        String moodEmoji = doc.getString("moodEmoji");
-        String moodSituation = doc.getString("moodSituation");
-        Mood mood = new Mood();
-        mood.setMoodID(moodId);
-        mood.setMoodTitle(moodTitle);
-        mood.setMoodDescription(moodDescription);
-        mood.setMoodSituation(moodSituation);
-        mood.setMoodEmoji(moodEmoji);
-        mood.setMoodDate(moodDate);
-        mood.setMoodColor(moodColor);
-        mood.setMoodPhoto(moodPhoto);
-        return mood;
-    }
+
 
     protected void sortMoods() {
         // Sort
