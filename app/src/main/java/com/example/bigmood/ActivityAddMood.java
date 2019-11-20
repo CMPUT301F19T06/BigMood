@@ -487,28 +487,29 @@ public class ActivityAddMood extends AppCompatActivity {
         Drawable d;
         switch (emotion){
             case "Happy":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
+                emojiPic.setImageResource(R.drawable.emoji_happy);
                 break;
             case "Sad":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));
+                emojiPic.setImageResource(R.drawable.emoji_sad);
                 break;
             case "Fear":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_fear));
+                emojiPic.setImageResource(R.drawable.emoji_fear);
+
                 break;
             case "Surprise":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_surprised));
+                emojiPic.setImageResource(R.drawable.emoji_surprised);
                 break;
             case "Anger":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_angry));
+                emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_bored));
+                emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
             case "Disgust":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_disgust));
+                emojiPic.setImageResource(R.drawable.emoji_disgust);
                 break;
             case "Love":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_love));
+                emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
         }
     }
@@ -522,7 +523,7 @@ public class ActivityAddMood extends AppCompatActivity {
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
         BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
         Bitmap bitmap = bitmapDrawable.getBitmap();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG,10, baos);
         byte [] b =baos.toByteArray();
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;

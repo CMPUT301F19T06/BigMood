@@ -138,7 +138,9 @@ public class ActivityMoodView extends AppCompatActivity {
         dateText.setText(mood.getMoodDate().toDate().toString());
         description.setEnabled(false);
         description.setText(mood.getMoodDescription());
-        setMoodEmoji(mood.getMoodTitle());
+        byte[] decodedByte = Base64.decode(mood.getMoodEmoji(), 0);
+        Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+        emojiPic.setImageBitmap(image);
 
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);

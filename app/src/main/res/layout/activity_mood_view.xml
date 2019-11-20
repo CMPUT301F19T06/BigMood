@@ -68,7 +68,7 @@
                 android:maxHeight="20sp"
                 android:scaleType="fitCenter"
 
-                app:srcCompat="@mipmap/emoji_happy"></ImageView>
+                app:srcCompat="@drawable/emoji_happy"></ImageView>
         </LinearLayout>
 
         <TextView
