@@ -72,7 +72,6 @@ import com.squareup.okhttp.internal.Platform;
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     private String userId; //The Current user's id
-    private String mode; // The mode of operation
     //used to get last known location for now
     private FusedLocationProviderClient fusedLocationClient;
     private double lastLong;
@@ -135,7 +134,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
 
         this.userId = getIntent().getExtras().getString("USER_ID");
-        this.mode = getIntent().getExtras().getString("MODE");
+        String mode = getIntent().getExtras().getString("MODE");
 
 
         this.db = FirebaseFirestore.getInstance();
@@ -165,7 +164,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
         });
 
-        if (this.mode.equals("USER")){
+        if (mode.equals("USER")){
             retrieveUserMoods();
         }
         else{
