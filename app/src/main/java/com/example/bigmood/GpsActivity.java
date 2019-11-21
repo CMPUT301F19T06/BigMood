@@ -41,11 +41,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -85,23 +87,12 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     ///////////////////
     private String TAG = "GpsActivity";
 
-    /*
-    The arraylist for the user's moods, initially null and only loaded from the database if
-    the mode is set to "USER" and it is still null
-     */
-    //private ArrayList<Point> userPoints = null;
 
     //hashmap for mood ID and map points
     private HashMap<String, Point> userPoints;
 
+    private HashMap<String, Mood> userMoods;
 
-    /*
-    The arraylist holding the followed moods, this will need to be refreshed every time
-    that "FOLLOW" mode is selected.
-     */
-    /*
-    private ArrayList<Point> followedPoints;
-     */
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
@@ -143,6 +134,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         this.moodCollection = db.collection("Moods");
 
         this.userPoints = new HashMap<>();
+        this.userMoods = new HashMap<>();
 
         //Initialize the friend list
         followedUsers = new ArrayList<>();
@@ -238,6 +230,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
         userPoints.clear();
+        userMoods.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -246,6 +239,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     if (!task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                            userMoods.put(doc.getId(), Mood.getFromDoc(doc));
                         }
                     }
                 } else{
@@ -259,6 +253,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
         userPoints.clear();
+        userMoods.clear();
         if (!followedUsers.isEmpty()){
             for (String user : followedUsers){
                 moodCollection.whereEqualTo("moodCreator",user)
@@ -267,9 +262,18 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()){
                             if (!task.getResult().isEmpty()) {
+                                ArrayList<DocumentSnapshot> temp = new ArrayList<>();
                                 for (QueryDocumentSnapshot doc : task.getResult()) {
-                                    userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                                    temp.add(doc);
                                 }
+                                temp.sort(new Comparator<DocumentSnapshot>() {
+                                    @Override
+                                    public int compare(DocumentSnapshot doc1, DocumentSnapshot doc2) {
+                                        return ((Timestamp)doc2.get("moodDate")).compareTo((Timestamp)doc1.get("moodDate"));
+                                    }
+                                });
+                                userPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
+                                userMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
                             }
                         } else{
                             Log.d(TAG, "Failed to get user moods");
