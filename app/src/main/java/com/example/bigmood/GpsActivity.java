@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.Viewpoint;
+import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyGraphicsOverlayResult;
@@ -295,7 +297,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         //symbol type for map marker
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
 
-
+        mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
         /*
         Point point = new Point(lastLong, lastLat, wgs84);
 
@@ -303,7 +305,8 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         Graphic graphic = new Graphic(point, symbol);
         graphicsOverlay.getGraphics().add(graphic);
 
-        */
+         */
+
 
         mMapView.addViewpointChangedListener(new ViewpointChangedListener() {
             @Override
@@ -312,12 +315,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 float centreX = mMapView.getX() + mMapView.getWidth() / 2;
                 float centreY = mMapView.getY() + mMapView.getHeight() / 2;
                 android.graphics.Point screenPoint = new android.graphics.Point(Math.round(centreX), Math.round(centreY));
-                /*
-                Point mapPoint = mMapView.screenToLocation(screenPoint);
-                Point wgs = (Point) GeometryEngine.project(mapPoint, wgs84);
-                double newLong = wgs.getX();
-                double newLat = wgs.getY();
-                 */
                 newPoint = screenPoint;
             }
         });
@@ -334,6 +331,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     IdentifyGraphicsOverlayResult overlayResult = identifyGraphic.get();
                     //get list of graphics
                     List<Graphic> graphic = overlayResult.getGraphics();
+                    for (Graphic g : graphic){
+
+                    }
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
@@ -349,4 +349,17 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         super.onDestroy();
     }
 
+    class mapOnTouchCustom extends DefaultMapViewOnTouchListener{
+
+        public mapOnTouchCustom(Context context, MapView mapView){
+            super(context, mapView);
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent event){
+            identifyGraphics();
+            return true;
+        }
+
+    }
 }
