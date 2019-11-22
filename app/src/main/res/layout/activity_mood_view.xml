@@ -11,8 +11,8 @@
         android:id="@+id/background_pic"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@color/cardview_dark_background"
         android:scaleType="fitXY"
+        android:background="@color/colorAccent"
         android:orientation="horizontal"></ImageView>
 
     <LinearLayout
@@ -47,7 +47,7 @@
                         android:text="MoodTitle"
                         android:autofillHints="New Mood"
                         android:textStyle="bold"
-                        android:textColor="@color/design_default_color_primary_dark"
+                        android:textColor="@color/cardview_dark_background"
                         android:gravity="center"
                         android:textSize="20sp"></TextView>
                 </LinearLayout>
@@ -79,7 +79,7 @@
             android:text="SELECT DATE"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:textColor="@color/colorBlue"
+            android:textColor="@color/Anger"
             android:textSize="18sp">
 
         </TextView>
@@ -92,25 +92,18 @@
             android:textSize="20sp"
             android:textColor="@color/common_google_signin_btn_text_dark_focused"
             android:layout_marginLeft="5dp"
-            android:text="TEST"
             android:layout_marginTop="170dp">
 
         </EditText>
-
         <Button
             android:id="@+id/edit_button"
-            android:layout_width="123dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/round_button"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="EDIT?">
-
-        </Button>
-
-
-
-
-
+            android:shadowColor="@color/colorAccent"
+            android:text="EDIT" />
 
 
     </LinearLayout>
@@ -141,6 +134,7 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="username"
+            android:textColor="@color/cardview_dark_background"
             android:textAllCaps="true"
             android:textSize="15dp"></TextView>
         <TextView
@@ -151,7 +145,7 @@
             android:autofillHints="New Mood"
             android:text="MoodSituation"
             android:gravity="left"
-
+            android:textColor="@color/cardview_dark_background"
             android:layout_marginLeft="10dp"
             android:textSize="20sp"></TextView>
 
@@ -162,6 +156,8 @@
             android:layout_marginTop="10dp"
             android:layout_marginLeft="7dp"
             android:text="Description"
+            android:shadowColor="@color/colorAccent"
+            android:textColor="@color/cardview_dark_background"
             android:textSize="35sp">
 
         </TextView>

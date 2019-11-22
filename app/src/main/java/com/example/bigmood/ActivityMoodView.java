@@ -145,7 +145,6 @@ public class ActivityMoodView extends AppCompatActivity {
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            //Glide.with(ActivityMoodView.this).load(url).into(profilePic);
 
             //todo: use profile pic from google
             //profilePic.setImageBitmap(bitmap);
@@ -198,61 +197,6 @@ public class ActivityMoodView extends AppCompatActivity {
         });
     }
 
-    /**
-     * Some new stuff
-     * todo: finish this task
-     */
-    private void getImages(){
-        Log.d("Bomb", "initImageBitmaps: preparing bitmaps.");
-
-        mImageUrls.add("https://drive.google.com/open?id=1YOIVRtEo1jOg9Q5TOYJJvLiXv_j_y8wQ");
-        mNames.add("Bored");
-
-        mImageUrls.add("https://drive.google.com/open?id=1v9CFZFzLqlFXkV2Oum6mKuzoAK3C9Fj9");
-        mNames.add("Angry");
-
-        mImageUrls.add("https://drive.google.com/open?id=1lHlkIzHNgvZ5rNKiGGBwtE2jhEl_-MCR");
-        mNames.add("Disgust");
-
-        mImageUrls.add("https://drive.google.com/open?id=1y8dg1_srfSdExr6d75WpL2dvPO9PByY4");
-        mNames.add("Fear");
-
-
-        mImageUrls.add("https://drive.google.com/open?id=1mSv_ywdMi0m1gS9X1SyTO2T4yMqR8bND");
-        mNames.add("Happy");
-
-        mImageUrls.add("https://drive.google.com/open?id=1GV9j63lW0P4qA2E6944cGwHSVM7CCPJ6");
-        mNames.add("Love");
-
-
-        mImageUrls.add("https://drive.google.com/open?id=17tPsqGny-S03sOk5Z0zaj7P3GRlEf6ll");
-        mNames.add("Sad");
-
-        mImageUrls.add("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle");
-        mNames.add("Surprised");
-
-        mImageUrls.add("https://i.imgur.com/ZcLLrkY.jpg");
-        mNames.add("Washington");
-
-        //initRecyclerView();
-
-    }
-
-    // todo: get emoji from URL
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            return null;
-        }
-    }
 
 
     /**

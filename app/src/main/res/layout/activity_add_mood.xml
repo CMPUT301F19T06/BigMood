@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@color/cardview_dark_background"
+        android:background="@color/colorAccent"
         android:orientation="horizontal">
 
         <ImageView
@@ -18,7 +18,6 @@
             android:layout_height="match_parent"
             android:id="@+id/background_pic"
             android:scaleType="fitXY"
-            android:src="@drawable/emoji_happy"
             >
 
         </ImageView>
@@ -31,8 +30,8 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:layout_marginTop="100dp"
-        android:layout_marginLeft="360dp"
+        android:layout_marginTop="110dp"
+        android:layout_marginLeft="365dp"
         android:src="@drawable/camera_info"
         >
 
@@ -43,6 +42,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_marginTop="150dp"
+        android:scrollbarFadeDuration="@integer/google_play_services_version"
         android:background="@color/colorWhite"
         android:orientation="vertical">
 
@@ -56,19 +56,7 @@
                 android:layout_width="140dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal">
 
-
-                    <Spinner
-                        android:id="@+id/currentMoodColorSpinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="Mood Color"></Spinner>
-
-                </LinearLayout>
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -121,26 +109,44 @@
             android:layout_marginTop="120dp">
 
         </EditText>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+
+
 
         <Button
             android:id="@+id/save_button"
-            android:layout_width="123dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="180dp"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:shadowColor="@color/colorAccent"
+            android:gravity="center"
+            android:background="@drawable/round_button"
             android:text="SAVE">
 
-        </Button>
 
+        </Button>
         <Button
             android:id="@+id/add_loc"
-            android:layout_width="wrap_content"
-            android:layout_height="58dp"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:text="Add Location" />
+            android:shadowColor="@color/colorAccent"
+            android:background="@drawable/round_button2"
+            android:layout_marginLeft="70dp"
+            android:gravity="center"
+            android:shadowDx="@integer/google_play_services_version"
+            android:shadowDy="@integer/google_play_services_version"
+            android:layout_width="73dp"
+            android:layout_height="74dp"
+            android:text="ADD\nLocation" />
 
+
+    </LinearLayout>
         <ImageView
             android:id="@+id/deleteMood"
             android:layout_width="78dp"
@@ -148,6 +154,8 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="@android:dimen/notification_large_icon_width"
+            android:requiresFadingEdge="horizontal"
+            android:scrollIndicators="top"
             android:src="@drawable/ic_delete">
 
         </ImageView>
@@ -162,7 +170,7 @@
         android:layout_height="153dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="59dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="30dp"
         android:src="@drawable/camera_info"
         app:civ_border_width="2dp"
         app:civ_circle_background_color="@color/colorWhite">
