@@ -11,7 +11,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -211,14 +210,10 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 if(userPoints == null){
                     retrieveUserMoods();
                 }
-                //TODO: change display to user moods
-                Toast.makeText(this, "Display Users", Toast.LENGTH_SHORT).show();
                 displayMap();
                 return true;
             case R.id.gps_mode_menu_followed:
                 retrieveFollowedMoods();
-                //TODO: change display to followed moods
-                Toast.makeText(this, "Display Followed", Toast.LENGTH_SHORT).show();
                 displayMap();
                 return true;
             default:
