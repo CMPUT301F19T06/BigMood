@@ -299,17 +299,11 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
         //symbol type for map marker
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        setGraphics();
 
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
-        /*
-        Point point = new Point(lastLong, lastLat, wgs84);
 
-
-        Graphic graphic = new Graphic(point, symbol);
-        graphicsOverlay.getGraphics().add(graphic);
-
-         */
 
 
         mMapView.addViewpointChangedListener(new ViewpointChangedListener() {
@@ -336,13 +330,21 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     //get list of graphics
                     List<Graphic> graphic = overlayResult.getGraphics();
                     for (Graphic g : graphic){
-
+                        //TODO: something
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void setGraphics(){
+        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        for (Point p : userPoints.values()){
+            Graphic graphic = new Graphic(p, symbol);
+            graphicsOverlay.getGraphics().add(graphic);
+        }
     }
 
     @Override
