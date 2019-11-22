@@ -19,14 +19,26 @@ import android.widget.Toast;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 //Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
-public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecyclerViewAdapter.ViewHolder>{
+public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecyclerViewAdapter.ViewHolder> {
     private static final String TAG = "RecyclerViewAdapter";
     private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
+    private FirebaseFirestore db;
+    private CollectionReference userCollectionReference;
 
     //set up local arraylist to store rides
     private ArrayList<String> friendObjects = new ArrayList<>();
@@ -35,11 +47,14 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     private Context mContext;
     private String userId;
     ImageView deleteMood;
+
     //constructor
     public FriendsRecyclerViewAdapter(ArrayList friendIDs, String userId, Context mContext) {
         this.friendObjects = friendIDs;
         this.mContext = mContext;
         this.userId = userId;
+        this.db = FirebaseFirestore.getInstance();
+        this.userCollectionReference = db.collection("Users");
     }
 
     //set up a new viewholder to mount onto main activity
@@ -58,7 +73,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         FriendsActivity.index = position;
 
         //set up the connection to view here, TBA
-        holder.friendName.setText(this.friendObjects.get(position));
+        holder.friendName.setText(getName(this.friendObjects.get(position)));
         //todo: Find way to implement friend display names and profile pictures proper
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +87,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
 
     }
 
-    public void intentMoodView(Mood moodID, View v){
+    public void intentMoodView(Mood moodID, View v) {
         //todo: send user to UserViewActivity
         //Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
         //intent.putExtra("Mood", moodID);
@@ -87,7 +102,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     }
 
     //constructor for ViewHolder object, which holds our xml components together
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         // TextView text;
         TextView friendName;
         ConstraintLayout linearLayout;
@@ -98,4 +113,25 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
             friendName = itemView.findViewById(R.id.friendName);
         }
     }
+
+    public String getName(String userId) {
+        final String[] tempName = new String[1];
+        final Query query = userCollectionReference.whereEqualTo("userId", userId);
+        final DocumentReference docRef = this.userCollectionReference.document(userId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("displayName")) {
+                        String temp = (String) doc.get("displayName");
+                        tempName[0] = temp;
+                    }
+                }
+            }
+        });
+        return tempName[0];
+    }
+
+    //accept the friend request
+    //displayName
 }

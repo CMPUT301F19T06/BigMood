@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -37,6 +38,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
     private static final String TAG = "RecyclerViewAdapter";
     private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
     private CollectionReference userCollectionReference;
+    private FirebaseFirestore db;
 
     //set up local arraylist to store rides
     private ArrayList<String> friendReqObjects = new ArrayList<>();
@@ -50,6 +52,8 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         this.friendReqObjects = friendIDs;
         this.mContext = mContext;
         this.userId = userId;
+        this.db = FirebaseFirestore.getInstance();
+        this.userCollectionReference = db.collection("Users");
     }
 
     //set up a new viewholder to mount onto main activity
@@ -68,7 +72,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         FriendsActivity.index = position;
 
         //set up the connection to view here, TBA
-        holder.friendName.setText(this.friendReqObjects.get(position));
+        holder.friendName.setText(getName(this.friendReqObjects.get(position)));
         //todo: Find way to implement friend display names and profile pictures proper
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,6 +175,24 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                 }
             }
         });
+    }
+
+    public String getName(String userId) {
+        final String[] tempName = new String[1];
+        final Query query = userCollectionReference.whereEqualTo("userId", userId);
+        final DocumentReference docRef = this.userCollectionReference.document(userId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("displayName")) {
+                        String temp = (String) doc.get("displayName");
+                        tempName[0] = temp;
+                    }
+                }
+            }
+        });
+        return tempName[0];
     }
 
 }

@@ -171,6 +171,7 @@ public class FriendsActivity extends BaseDrawerActivity {
         recyclerViewReq.setAdapter(adapterReq);
         recyclerViewReq.setLayoutManager(new LinearLayoutManager(this));
 
+
         Log.d(TAG, "initRecyclerViewFriends2: Vibe Check"+friendObjects.toString());
         recyclerView = findViewById(R.id.friends_recyclerview);
         adapter = new FriendsRecyclerViewAdapter(friendObjects, this.userId, this);
