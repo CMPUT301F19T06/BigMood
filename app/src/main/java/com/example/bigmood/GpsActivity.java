@@ -103,6 +103,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private MapView mMapView;
     private GraphicsOverlay graphicsOverlay;
     private android.graphics.Point newPoint;
+    private Point selectedPoint;
 
 
     @Override
@@ -320,7 +321,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void identifyGraphics(){
         ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
-                mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false);
+                mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false, 1);
 
         identifyGraphic.addDoneListener(new Runnable() {
             @Override
@@ -331,6 +332,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     List<Graphic> graphic = overlayResult.getGraphics();
                     for (Graphic g : graphic){
                         //TODO: something
+                        selectedPoint = (Point) g.getGeometry();
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
