@@ -74,6 +74,8 @@ dependencies {
 
     implementation 'com.esri.arcgisruntime:arcgis-android:100.6.0'
 
+    implementation 'com.firebaseui:firebase-ui-database:6.1.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

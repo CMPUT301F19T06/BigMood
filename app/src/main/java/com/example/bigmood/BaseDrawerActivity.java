@@ -136,6 +136,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+        /*
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
@@ -152,7 +153,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
                 firebaseSearch(newText);
                 return false;
             }
-        });
+        }); */
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -163,6 +164,11 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             case R.id.action_settings:
                 return true;
 
+            case R.id.action_search:
+                Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
+                intent.putExtra("USER_ID", userID);
+                startActivity(intent);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -170,9 +176,10 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         }
     }
 
+    /*
     //Firebase Search
     private void firebaseSearch(String searchText){
         Query firebaseSearchQuery = mRef.child("Users").orderByChild("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
 
-    }
+    }*/
 }
