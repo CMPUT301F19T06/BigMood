@@ -49,7 +49,7 @@ public class FriendsActivity extends BaseDrawerActivity {
     private RecyclerView recyclerView;
     private RecyclerView recyclerViewReq;
     public FriendsRecyclerViewAdapter adapter;
-    public FriendsRecyclerViewAdapter adapterReq;
+    public FriendsRequestRecyclerViewAdapter adapterReq;
     public ArrayList<String> friendObjects = new ArrayList<>();
     public ArrayList<String> friendReq = new ArrayList<>();
     private String userId;
@@ -167,7 +167,7 @@ public class FriendsActivity extends BaseDrawerActivity {
     private void initRecyclerView() {
         //TODO: Load in Friend requests from Online.
         recyclerViewReq = findViewById(R.id.friendReq_recyclerview);
-        adapterReq = new FriendsRecyclerViewAdapter(friendReq, this.userId, this);
+        adapterReq = new FriendsRequestRecyclerViewAdapter(friendReq, this.userId, this);
         recyclerViewReq.setAdapter(adapterReq);
         recyclerViewReq.setLayoutManager(new LinearLayoutManager(this));
 

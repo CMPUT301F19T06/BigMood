@@ -19,7 +19,16 @@ import android.widget.Toast;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
@@ -27,6 +36,7 @@ import static android.provider.AlarmClock.EXTRA_MESSAGE;
 public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRequestRecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";
     private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
+    private CollectionReference userCollectionReference;
 
     //set up local arraylist to store rides
     private ArrayList<String> friendReqObjects = new ArrayList<>();
@@ -75,17 +85,15 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
             @Override
             public void onClick(View v) {
                 //todo: implement power of friendship
-                //more seriously, update database and friends
-                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
+                updateFriend(friendReqObjects.get(position));
+                deleteRequest(friendReqObjects.get(position));
             }
         });
 
         holder.nahButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo: destroy potential hopes and dreams here
-                //more seriously, update database and friends
-                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
+                deleteRequest(friendReqObjects.get(position));
             }
         });
 
@@ -119,4 +127,50 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
             nahButton = itemView.findViewById(R.id.rejectButton);
         }
     }
+
+    private void updateFriend(String userID){
+        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
+        final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+            //accept the friend request
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("userFriends")) {
+                        // This line might explode
+                        // slam in a try/catch
+                        List<String> temp = (List) doc.get("userFriends");
+                        ArrayList<String> tempArray = new ArrayList<String>(temp);
+                        tempArray.add(userID);
+                        docRef.set(temp);
+                    } else {
+                        // no friends, you fucking loser
+                        List<String> temp = (List<String>) doc.get("incomingReq");
+                        temp.add(userID);
+                        docRef.set(temp);
+                    }
+                }
+            }
+        });
+    }
+
+    private void deleteRequest(String userID){
+        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
+        final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+        //accept the friend request
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    // This line might explode
+                    // slam in a try/catch
+                    List<String> temp = (List) doc.get("userFriends");
+                    ArrayList<String> tempArray = new ArrayList<String>(temp);
+                    tempArray.remove(userID);
+                    docRef.set(temp);
+                }
+            }
+        });
+    }
+
 }
