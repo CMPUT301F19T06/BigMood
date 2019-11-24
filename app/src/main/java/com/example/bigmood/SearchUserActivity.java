@@ -106,7 +106,14 @@ public class SearchUserActivity extends AppCompatActivity {
 
             user_name.setText(userName);
             //Bitmap bit = StringtoBitmap(userImage);
-            //user_image.setImageBitmap(bit);
+            try {
+                byte[] encodeByte = Base64.decode(userImage, Base64.DEFAULT);
+                Bitmap bit = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                user_image.setImageBitmap(bit);
+            } catch (Exception e) {
+                e.getMessage();
+            }
+
         }
 
     }
