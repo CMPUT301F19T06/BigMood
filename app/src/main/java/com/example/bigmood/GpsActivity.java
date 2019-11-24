@@ -43,6 +43,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
@@ -103,6 +105,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private GraphicsOverlay graphicsOverlay;
     private android.graphics.Point newPoint;
     private Point selectedPoint;
+    private String selectedID;
 
 
     @Override
@@ -326,14 +329,24 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     //get list of graphics
                     List<Graphic> graphic = overlayResult.getGraphics();
                     for (Graphic g : graphic){
-                        //TODO: something
                         selectedPoint = (Point) g.getGeometry();
+                        getSelectedMoodID();
+                        return;
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void getSelectedMoodID(){
+        for(Map.Entry<String, Point> entry : userPoints.entrySet()){
+            if(Objects.equals(selectedPoint, entry.getValue())){
+                selectedID = entry.getKey();
+                return;
+            }
+        }
     }
 
     private void setGraphics(){
@@ -363,6 +376,5 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             identifyGraphics();
             return true;
         }
-
     }
 }
