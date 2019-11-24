@@ -18,11 +18,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class SearchUserActivity extends AppCompatActivity {
 
@@ -31,14 +35,14 @@ public class SearchUserActivity extends AppCompatActivity {
 
     private RecyclerView mResultList;
 
-    private DatabaseReference mUserDatabase;
+    private FirebaseFirestore mUserDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_user);
 
-        mUserDatabase = FirebaseDatabase.getInstance().getReference("Users");
+        mUserDatabase = FirebaseFirestore.getInstance();
 
         mSearchField = findViewById(R.id.search_field);
         mSearchBtn = findViewById(R.id.search_btn);
@@ -58,14 +62,16 @@ public class SearchUserActivity extends AppCompatActivity {
     }
 
     private void firebaseUserSearch(String searchText) {
+
         Toast.makeText(SearchUserActivity.this, "Started Search", Toast.LENGTH_LONG).show();
 
-        Query firebaseSearchQuery = mUserDatabase.child("Users").orderByChild("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
+        Query firebaseSearchQuery = mUserDatabase.collection("Users").whereEqualTo("displayName", searchText);
 
-        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
+        FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
                 .setQuery(firebaseSearchQuery, User.class)
                 .build();
-        FirebaseRecyclerAdapter<User, UsersViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
+
+        FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
                 holder.setDetails(model.getDisplayName(), model.getProfilePictureUrl());
@@ -75,16 +81,17 @@ public class SearchUserActivity extends AppCompatActivity {
             @Override
             public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.content_friendfragment,parent,false);
+                        .inflate(R.layout.content_friendfragment, parent,false);
                 return new UsersViewHolder(view);
             }
         };
         mResultList.setAdapter(firebaseRecyclerAdapter);
+
         firebaseRecyclerAdapter.startListening();
     }
 
     //View Holder Class
-    public class UsersViewHolder extends RecyclerView.ViewHolder {
+    public static class UsersViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
         public UsersViewHolder(View itemView){
@@ -98,8 +105,8 @@ public class SearchUserActivity extends AppCompatActivity {
             ImageView  user_image = mView.findViewById(R.id.pfpImage);
 
             user_name.setText(userName);
-            Bitmap bit = StringtoBitmap(userImage);
-            user_image.setImageBitmap(bit);
+            //Bitmap bit = StringtoBitmap(userImage);
+            //user_image.setImageBitmap(bit);
         }
 
     }
