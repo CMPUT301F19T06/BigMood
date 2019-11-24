@@ -284,7 +284,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         }
     }
 
-
+    /**
+     *  Inflate and work with the map view
+     */
     private void displayMap(){
         mMapView = findViewById(R.id.mapView);
         ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS, tempLat, tempLong, 30);
@@ -318,6 +320,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         });
     }
 
+    /**
+     * show gps points of moods on map
+     */
     private void setGraphics(){
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for (Point p : userPoints.values()){
@@ -326,6 +331,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         }
     }
 
+    /**
+     * Idenetify which point user clicked
+     */
     private void identifyGraphics(){
         ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
                 mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false, 1);
@@ -350,6 +358,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         });
     }
 
+    /**
+     *  find mood ID from user selected point
+     */
     private void getSelectedMoodID(){
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
             if(Objects.equals(selectedPoint, entry.getValue())){
@@ -359,11 +370,17 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         }
     }
 
+    /**
+     *  get mood object for information to display
+     */
     private void getSelectedMood(){
         selectedMood = userMoods.get(selectedID);
         return;
     }
 
+    /**
+     * delete the map when user leaves gps mode
+     */
     @Override
     protected void onDestroy(){
         if(mMapView != null){
@@ -372,6 +389,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         super.onDestroy();
     }
 
+    /**
+     * Custom on touch listener for map view
+     */
     class mapOnTouchCustom extends DefaultMapViewOnTouchListener{
 
         public mapOnTouchCustom(Context context, MapView mapView){
