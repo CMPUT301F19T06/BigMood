@@ -106,6 +106,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private android.graphics.Point newPoint;
     private Point selectedPoint;
     private String selectedID;
+    private Mood selectedMood;
 
 
     @Override
@@ -317,6 +318,14 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         });
     }
 
+    private void setGraphics(){
+        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        for (Point p : userPoints.values()){
+            Graphic graphic = new Graphic(p, symbol);
+            graphicsOverlay.getGraphics().add(graphic);
+        }
+    }
+
     private void identifyGraphics(){
         ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
                 mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false, 1);
@@ -331,6 +340,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     for (Graphic g : graphic){
                         selectedPoint = (Point) g.getGeometry();
                         getSelectedMoodID();
+                        getSelectedMood();
                         return;
                     }
                 } catch(Exception e) {
@@ -349,12 +359,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         }
     }
 
-    private void setGraphics(){
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-        for (Point p : userPoints.values()){
-            Graphic graphic = new Graphic(p, symbol);
-            graphicsOverlay.getGraphics().add(graphic);
-        }
+    private void getSelectedMood(){
+        selectedMood = userMoods.get(selectedID);
+        return;
     }
 
     @Override
