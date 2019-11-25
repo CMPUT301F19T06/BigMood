@@ -42,9 +42,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public ImageView nav_Pfp;
 
     private String userID, username;
-    DatabaseReference mRef;
-    FirebaseDatabase mFirebaseDatabase;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -155,6 +152,12 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
+                return true;
+
+            case R.id.action_search:
+                Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
+                intent.putExtra("USER_ID", userID);
+                startActivity(intent);
                 return true;
 
             default:
