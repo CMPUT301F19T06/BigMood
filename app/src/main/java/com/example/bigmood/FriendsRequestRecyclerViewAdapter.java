@@ -34,23 +34,22 @@ import java.util.List;
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 //Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
-public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecyclerViewAdapter.ViewHolder> {
+public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRequestRecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";
     private static final String FRIEND_ID = "com.example.bigmood.FriendRecycleViewAdapter";
-    private FirebaseFirestore db;
     private CollectionReference userCollectionReference;
+    private FirebaseFirestore db;
 
     //set up local arraylist to store rides
-    private ArrayList<String> friendObjects = new ArrayList<>();
+    private ArrayList<String> friendReqObjects = new ArrayList<>();
 
     //set up interface components to measure input from clicks
     private Context mContext;
     private String userId;
     ImageView deleteMood;
-
     //constructor
-    public FriendsRecyclerViewAdapter(ArrayList friendIDs, String userId, Context mContext) {
-        this.friendObjects = friendIDs;
+    public FriendsRequestRecyclerViewAdapter(ArrayList friendIDs, String userId, Context mContext) {
+        this.friendReqObjects = friendIDs;
         this.mContext = mContext;
         this.userId = userId;
         this.db = FirebaseFirestore.getInstance();
@@ -73,7 +72,7 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         FriendsActivity.index = position;
 
         //set up the connection to view here, TBA
-        holder.friendName.setText(getName(this.friendObjects.get(position)));
+        holder.friendName.setText(getName(this.friendReqObjects.get(position)));
         //todo: Find way to implement friend display names and profile pictures proper
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,11 +82,28 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
                 //intentMoodView(FriendsActivity.moodObjects.get(position), v);
             }
         });
+        //todo: find a way for firebase to accept and decline requests via buttons
+        //also update values i suppose
         //establish listener for each element
+        holder.yeaButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //todo: implement power of friendship
+                updateFriend(friendReqObjects.get(position));
+                deleteRequest(friendReqObjects.get(position));
+            }
+        });
+
+        holder.nahButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteRequest(friendReqObjects.get(position));
+            }
+        });
 
     }
 
-    public void intentMoodView(Mood moodID, View v) {
+    public void intentMoodView(Mood moodID, View v){
         //todo: send user to UserViewActivity
         //Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
         //intent.putExtra("Mood", moodID);
@@ -98,20 +114,67 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
     //item count for parsing through
     @Override
     public int getItemCount() {
-        return this.friendObjects.size();
+        return this.friendReqObjects.size();
     }
 
     //constructor for ViewHolder object, which holds our xml components together
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder{
         // TextView text;
         TextView friendName;
         ConstraintLayout linearLayout;
-
+        Button yeaButton, nahButton;
         public ViewHolder(View itemView) {
             super(itemView);
             // establish views here
             friendName = itemView.findViewById(R.id.friendName);
+            yeaButton = itemView.findViewById(R.id.acceptButton);
+            nahButton = itemView.findViewById(R.id.rejectButton);
         }
+    }
+
+    private void updateFriend(String userID){
+        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
+        final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+            //accept the friend request
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("userFriends")) {
+                        // This line might explode
+                        // slam in a try/catch
+                        List<String> temp = (List) doc.get("userFriends");
+                        ArrayList<String> tempArray = new ArrayList<String>(temp);
+                        tempArray.add(userID);
+                        docRef.set(temp);
+                    } else {
+                        // no friends, you fucking loser
+                        List<String> temp = (List<String>) doc.get("incomingReq");
+                        temp.add(userID);
+                        docRef.set(temp);
+                    }
+                }
+            }
+        });
+    }
+
+    private void deleteRequest(String userID){
+        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
+        final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+        //accept the friend request
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    // This line might explode
+                    // slam in a try/catch
+                    List<String> temp = (List) doc.get("userFriends");
+                    ArrayList<String> tempArray = new ArrayList<String>(temp);
+                    tempArray.remove(userID);
+                    docRef.set(temp);
+                }
+            }
+        });
     }
 
     public String getName(String userId) {
@@ -132,6 +195,4 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         return tempName[0];
     }
 
-    //accept the friend request
-    //displayName
 }
