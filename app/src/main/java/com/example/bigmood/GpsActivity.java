@@ -1,7 +1,9 @@
 package com.example.bigmood;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuInflater;
 import android.graphics.Color;
@@ -349,6 +351,10 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                         selectedPoint = (Point) g.getGeometry();
                         getSelectedMoodID();
                         getSelectedMood();
+                        displayMood();
+                        selectedMood = null;
+                        selectedID = null;
+                        selectedPoint = null;
                         return;
                     }
                 } catch(Exception e) {
@@ -376,6 +382,17 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private void getSelectedMood(){
         selectedMood = userMoods.get(selectedID);
         return;
+    }
+
+    //this might work
+    private void displayMood(){
+
+        Intent intent = new Intent(GpsActivity.this, ActivityMoodView.class);
+        //intent.putExtra("USER_ID", userId);
+        //Mood mood = new Mood();
+        //mood.setMoodUsername(getUsername());
+        intent.putExtra("Mood",selectedMood);
+        startActivity(intent);
     }
 
     /**
