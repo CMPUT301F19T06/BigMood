@@ -88,6 +88,15 @@ public class UserViewActivity extends BaseDrawerActivity
             this.currentUser = getIntent().getExtras().getString("USER_ID");
             this.targetUser = getIntent().getExtras().getString("TARGET_ID");
             this.hasViewPermission = getIntent().getExtras().getBoolean("HAS_VIEW_PERMISSION");
+            this.userCollectionReference.document(this.targetUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("userFriends");
+                    if (friends.contains(currentUser)) {
+                        viewMoods();
+                    }
+                }
+            });
         } catch (NullPointerException e) {
             Log.d(TAG, "Could not acquire initial data");
             super.finish();
@@ -102,12 +111,16 @@ public class UserViewActivity extends BaseDrawerActivity
         this.initFilterSpinner();
         this.initStartGpsView();
 
-        if (hasViewPermission) {
-            findViewById(R.id.user_view_add_friend).setVisibility(View.GONE);
-            findViewById(R.id.user_view_recycler).setVisibility(View.VISIBLE);
-            setMoodListener();
-            initRecyclerView();
+        if (this.currentUser.compareTo(this.targetUser) == 0) {
+            this.viewMoods();
         }
+    }
+
+    protected void viewMoods() {
+        findViewById(R.id.user_view_add_friend).setVisibility(View.GONE);
+        findViewById(R.id.user_view_recycler).setVisibility(View.VISIBLE);
+        setMoodListener();
+        initRecyclerView();
     }
 
     protected void getUserName() {
