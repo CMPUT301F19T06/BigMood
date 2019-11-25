@@ -3,6 +3,7 @@ package com.example.bigmood;
 import android.app.Activity;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.Serializable;
@@ -246,13 +247,21 @@ public class Mood implements Serializable {
         this.latitude = latitude;
     }
 
-    public static Mood getFromDoc(QueryDocumentSnapshot doc){
+    public static Mood getFromDoc(DocumentSnapshot doc){
         String moodId = doc.getId();
         String moodPhoto = (String) doc.getData().get("moodPhoto");
         Mood mood = new Mood (doc.getString("moodTitle"), doc.getString("moodDescription")
                 , doc.getString("moodColor"), doc.getTimestamp("moodDate"));
+        String moodEmoji = doc.getString("moodEmoji");
+        String moodSituation = doc.getString("moodSituation");
+        String moodUsername = doc.getString("userName");
         mood.setMoodID(moodId);
+        mood.setMoodEmoji(moodEmoji);
+        mood.setMoodUsername(moodUsername);
+        mood.setMoodSituation(moodSituation);
         mood.setMoodPhoto(moodPhoto);
         return(mood);
     }
+
+
 }

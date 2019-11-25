@@ -128,28 +128,6 @@ public class DashboardActivity extends BaseDrawerActivity {
         recyclerViewUser.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    protected Mood assembleMood(DocumentSnapshot doc) {
-        String moodId = doc.getId();
-        String moodDescription = doc.getString("moodDescription");
-        String moodTitle = doc.getString("moodTitle");
-        Timestamp moodDate = doc.getTimestamp("moodDate");
-        String moodColor = doc.getString("moodColor");
-        String moodPhoto = (String) doc.getData().get("moodPhoto");
-        String moodEmoji = doc.getString("moodEmoji");
-        String moodSituation = doc.getString("moodSituation");
-        String moodUsername = doc.getString("userName");
-        Mood mood = new Mood();
-        mood.setMoodID(moodId);
-        mood.setMoodTitle(moodTitle);
-        mood.setMoodDescription(moodDescription);
-        mood.setMoodSituation(moodSituation);
-        mood.setMoodEmoji(moodEmoji);
-        mood.setMoodDate(moodDate);
-        mood.setMoodColor(moodColor);
-        mood.setMoodPhoto(moodPhoto);
-        mood.setMoodUsername(moodUsername);
-        return mood;
-    }
     // step 1: get all friends of user
     // step 2: get most recent mood from user
     private void pullGetFriendMoods() {
@@ -190,7 +168,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                 }
                 ArrayList<Mood> temp = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Mood mood = assembleMood(doc);
+                    Mood mood = Mood.getFromDoc(doc);
                     temp.add(mood);
                 }
                 moodObjects.add(getTopOne(temp));
@@ -215,7 +193,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                     recyclerViewUser.setVisibility(View.VISIBLE);
                 }
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    temp.add(assembleMood(doc));
+                    temp.add(Mood.getFromDoc(doc));
                 }
                 moodObjectsUser.add(getTopOne(temp));
                 adapterUser.notifyDataSetChanged();

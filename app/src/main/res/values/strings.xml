@@ -29,6 +29,7 @@
         <item>in a group</item>
         <item>alone</item>
         <item>with family</item>
+        <item>with another person</item>
     </string-array>
     <string name="mood_user_name">mood_user_name</string>
     <string name="mood_date">mood_date</string>

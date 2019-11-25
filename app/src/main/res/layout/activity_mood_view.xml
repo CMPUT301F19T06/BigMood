@@ -7,12 +7,13 @@
     android:background="@color/colorWhite"
     tools:context=".ActivityMoodView">
 
-    <LinearLayout
+    <ImageView
         android:id="@+id/background_pic"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="@color/Surprise"
-        android:orientation="horizontal"></LinearLayout>
+        android:scaleType="fitXY"
+        android:background="@color/colorAccent"
+        android:orientation="horizontal"></ImageView>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,7 +46,9 @@
                         android:layout_height="match_parent"
                         android:text="MoodTitle"
                         android:autofillHints="New Mood"
-                        android:gravity="center_vertical"
+                        android:textStyle="bold"
+                        android:textColor="@color/cardview_dark_background"
+                        android:gravity="center"
                         android:textSize="20sp"></TextView>
                 </LinearLayout>
 
@@ -65,7 +68,7 @@
                 android:maxHeight="20sp"
                 android:scaleType="fitCenter"
 
-                app:srcCompat="@mipmap/emoji_happy"></ImageView>
+                android:src="@drawable/emoji_happy"></ImageView>
         </LinearLayout>
 
         <TextView
@@ -74,36 +77,33 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="185dp"
             android:text="SELECT DATE"
-            android:textColor="@color/colorBlue"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/Anger"
             android:textSize="18sp">
 
         </TextView>
 
 
-        <TextView
+        <EditText
             android:id="@+id/moodDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:textSize="20sp"
-            android:layout_marginTop="120dp">
+            android:textColor="@color/common_google_signin_btn_text_dark_focused"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="170dp">
 
-        </TextView>
-
+        </EditText>
         <Button
             android:id="@+id/edit_button"
-            android:layout_width="123dp"
+            android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/round_button"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:text="EDIT?">
-
-        </Button>
-
-
-
-
-
+            android:shadowColor="@color/colorAccent"
+            android:text="EDIT" />
 
 
     </LinearLayout>
@@ -116,13 +116,13 @@
         android:layout_marginTop="59dp"
         android:layout_marginLeft="30dp"
         android:src="@drawable/camera_info"
-        app:civ_border_color="#00000000"
+        app:civ_border_width="2dp"
         app:civ_circle_background_color="@color/colorWhite">
 
     </de.hdodenhof.circleimageview.CircleImageView>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="210dp"
         android:orientation="vertical">
@@ -134,24 +134,30 @@
             android:layout_gravity="center"
             android:gravity="center_vertical"
             android:text="username"
+            android:textColor="@color/cardview_dark_background"
             android:textAllCaps="true"
-            android:textSize="20dp"></TextView>
+            android:textSize="15dp"></TextView>
         <TextView
             android:id="@+id/moodSituationSpinner"
             android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="100dp"
             android:autofillHints="New Mood"
             android:text="MoodSituation"
+            android:gravity="left"
+            android:textColor="@color/cardview_dark_background"
+            android:layout_marginLeft="10dp"
             android:textSize="20sp"></TextView>
 
         <TextView
-            android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/cardview_compat_inset_shadow"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="7dp"
             android:text="Description"
+            android:shadowColor="@color/colorAccent"
+            android:textColor="@color/cardview_dark_background"
             android:textSize="35sp">
 
         </TextView>
@@ -159,6 +165,15 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/background_pic_Full"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/Surprise"
+        android:orientation="horizontal"
+        android:scaleType="fitCenter"
+        android:src="@drawable/emoji_happy"
+        android:visibility="gone"></ImageView>
 
 
 </RelativeLayout>
