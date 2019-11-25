@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,6 +37,9 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public DrawerLayout drawer;
     public Toolbar toolbar;
     public NavigationView navigationView;
+    public TextView nav_Username;
+    public TextView nav_UserId;
+    public ImageView nav_Pfp;
 
     private String userID, username;
     DatabaseReference mRef;
@@ -66,6 +70,18 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerView = navigationView.getHeaderView(0);
+
+        nav_Username = headerView.findViewById(R.id.profile_username);
+        nav_Username.setText(username);
+
+        nav_UserId = headerView.findViewById(R.id.profile_userID);
+        nav_UserId.setText(userID);
+
+        nav_Pfp = headerView.findViewById(R.id.profile_pic);
+        /*TODO: set profile pic from firebase*/
+
+
         //Start the app inflating the DashboardActivity
         if(toolbar.getTitle().toString() == getString(R.string.app_name)){
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
@@ -74,9 +90,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mRef = mFirebaseDatabase.getReference("Users");
     }
 
     //Handles what happens when a certain MenuItem is pressed
@@ -97,7 +110,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
-            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Your profile", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
             intent.putExtra("TARGET_ID", userID);
             intent.putExtra("HAS_VIEW_PERMISSION", true);
@@ -135,24 +147,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                firebaseSearch(query);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                //Filter as you type
-                firebaseSearch(newText);
-                return false;
-            }
-        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -168,11 +162,5 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    //Firebase Search
-    private void firebaseSearch(String searchText){
-        Query firebaseSearchQuery = mRef.child("Users").orderByChild("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
-
     }
 }
