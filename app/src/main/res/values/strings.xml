@@ -56,7 +56,7 @@
     <string name="friends">Friends</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nickname">Nickname</string>
+    <string name="nav_userId">UserID</string>
     <string name="username">Username</string>
     <string name="profile">My Profile</string>
     <string name="map">Map</string>
