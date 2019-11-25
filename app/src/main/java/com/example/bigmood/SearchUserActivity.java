@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
@@ -37,10 +40,14 @@ public class SearchUserActivity extends AppCompatActivity {
 
     private FirebaseFirestore mUserDatabase;
 
+    private String userId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_user);
+
+        this.userId = getIntent().getExtras().getString("USER_ID");
 
         mUserDatabase = FirebaseFirestore.getInstance();
 
@@ -65,7 +72,7 @@ public class SearchUserActivity extends AppCompatActivity {
 
         Toast.makeText(SearchUserActivity.this, "Started Search", Toast.LENGTH_LONG).show();
 
-        Query firebaseSearchQuery = mUserDatabase.collection("Users").whereEqualTo("displayName", searchText);
+        Query firebaseSearchQuery = mUserDatabase.collection("Users").orderBy("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
 
         FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
                 .setQuery(firebaseSearchQuery, User.class)
@@ -79,8 +86,11 @@ public class SearchUserActivity extends AppCompatActivity {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(SearchUserActivity.this, model.getUserId(), Toast.LENGTH_LONG).show();
-                        /*TODO: Go to the User Clicked Profile Page*/
+                        Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+                        intent.putExtra("USER_ID", userId);
+                        intent.putExtra("TARGET_ID", model.getUserId());
+                        intent.putExtra("HAS_VIEW_PERMISSION", true);
+                        startActivity(intent);
                     }
                 });
             }

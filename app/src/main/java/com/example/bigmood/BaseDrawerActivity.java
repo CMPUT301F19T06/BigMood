@@ -91,7 +91,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
-            Toast.makeText(BaseDrawerActivity.this, "Not implemented yet! Your profile", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
             intent.putExtra("TARGET_ID", userID);
             intent.putExtra("HAS_VIEW_PERMISSION", true);
