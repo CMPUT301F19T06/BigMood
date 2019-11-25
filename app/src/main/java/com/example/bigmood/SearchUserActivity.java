@@ -75,6 +75,14 @@ public class SearchUserActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
                 holder.setDetails(model.getDisplayName(), model.getProfilePictureUrl());
+
+                holder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(SearchUserActivity.this, model.getUserId(), Toast.LENGTH_LONG).show();
+                        /*TODO: Go to the User Clicked Profile Page*/
+                    }
+                });
             }
 
             @NonNull
@@ -105,28 +113,20 @@ public class SearchUserActivity extends AppCompatActivity {
             ImageView  user_image = mView.findViewById(R.id.pfpImage);
 
             user_name.setText(userName);
-            //Bitmap bit = StringtoBitmap(userImage);
-            try {
-                byte[] encodeByte = Base64.decode(userImage, Base64.DEFAULT);
-                Bitmap bit = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                user_image.setImageBitmap(bit);
-            } catch (Exception e) {
-                e.getMessage();
-            }
+            Bitmap bit = StringtoBitmap(userImage);
+            user_image.setImageBitmap(bit);
 
         }
 
-    }
-
-    public Bitmap StringtoBitmap(String encodedString) {
-        try {
-            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-
-        } catch (Exception e) {
-            e.getMessage();
-            return null;
+        public Bitmap StringtoBitmap(String encodedString) {
+            try {
+                byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                return bitmap;
+            } catch (Exception e) {
+                e.getMessage();
+                return null;
+            }
         }
     }
 }
