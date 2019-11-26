@@ -66,11 +66,13 @@ public class Mood implements Serializable {
 
     private double latitude;
 
+    private String moodCreator;
+
     /**
      * This is the empty constructor, this will represent the default Mood
      * TODO:Construct default
      */
-    public Mood(){}
+    public Mood(String moodCreator){ this.moodCreator = moodCreator;}
 
     /**
      * This constructor is where all parameters are passed in and set in the object.
@@ -80,11 +82,12 @@ public class Mood implements Serializable {
      * @param moodDate
      */
 
-    public Mood (String moodTitle, String moodDescription, String moodColor, Timestamp moodDate){
+    public Mood (String moodTitle, String moodDescription, String moodColor, Timestamp moodDate, String moodCreator){
         this.moodTitle = moodTitle;
         this.moodDescription = moodDescription;
         this.moodColor = moodColor;
         this.moodDate = moodDate;
+        this.moodCreator = moodCreator;
 
     }
 
@@ -247,11 +250,13 @@ public class Mood implements Serializable {
         this.latitude = latitude;
     }
 
+    public String getMoodCreator(){ return this.moodCreator; }
+
     public static Mood getFromDoc(DocumentSnapshot doc){
         String moodId = doc.getId();
         String moodPhoto = (String) doc.getData().get("moodPhoto");
         Mood mood = new Mood (doc.getString("moodTitle"), doc.getString("moodDescription")
-                , doc.getString("moodColor"), doc.getTimestamp("moodDate"));
+                , doc.getString("moodColor"), doc.getTimestamp("moodDate"),doc.getString("moodCreator"));
         String moodEmoji = doc.getString("moodEmoji");
         String moodSituation = doc.getString("moodSituation");
         String moodUsername = doc.getString("userName");
