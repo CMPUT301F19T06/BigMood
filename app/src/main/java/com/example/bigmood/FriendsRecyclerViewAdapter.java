@@ -131,24 +131,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         }
     }
 
-    public String getName(String userId) {
-        final String[] tempName = new String[1];
-        final Query query = userCollectionReference.whereEqualTo("userId", userId);
-        final DocumentReference docRef = this.userCollectionReference.document(userId);
-        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.contains("displayName")) {
-                        String temp = (String) doc.get("displayName");
-                        tempName[0] = temp;
-                    }
-                }
-            }
-        });
-        return tempName[0];
-    }
-
     //accept the friend request
     //displayName
 }
