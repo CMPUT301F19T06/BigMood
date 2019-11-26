@@ -87,7 +87,6 @@ public class UserViewActivity extends BaseDrawerActivity
         try {
             this.currentUser = getIntent().getExtras().getString("USER_ID");
             this.targetUser = getIntent().getExtras().getString("TARGET_ID");
-            this.hasViewPermission = getIntent().getExtras().getBoolean("HAS_VIEW_PERMISSION");
             this.userCollectionReference.document(this.targetUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -104,7 +103,7 @@ public class UserViewActivity extends BaseDrawerActivity
 
         this.userName = findViewById(R.id.user_view_username);
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
-
+        this.recyclerAdapter = new RecyclerViewAdapter(moodObjects, this.targetUser, this);
         this.getUserName();
         this.initAddFriend();
         this.initSortSpinner();
@@ -155,7 +154,6 @@ public class UserViewActivity extends BaseDrawerActivity
     protected void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview");
         recyclerView = findViewById(R.id.user_view_recycler);
-        recyclerAdapter = new RecyclerViewAdapter(moodObjects, this.targetUser, this);
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

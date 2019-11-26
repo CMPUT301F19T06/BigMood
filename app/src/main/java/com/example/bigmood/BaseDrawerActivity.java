@@ -108,8 +108,8 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
             Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+            intent.putExtra("USER_ID", userID);
             intent.putExtra("TARGET_ID", userID);
-            intent.putExtra("HAS_VIEW_PERMISSION", true);
             startActivity(intent);
 
         } else if (id == R.id.nav_friends) {

@@ -108,7 +108,6 @@ public class FriendsRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRecy
         String targetUserId = friendObjects.get(targetUser);
         intent.putExtra("TARGET_ID", targetUserId);
         intent.putExtra("USER_ID", this.userId);
-        intent.putExtra("HAS_VIEW_PERMISSION", true);
         mContext.startActivity(intent);
     }
 
