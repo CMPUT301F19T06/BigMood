@@ -72,16 +72,20 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         FriendsActivity.index = position;
 
         //set up the connection to view here, TBA
-        holder.friendName.setText(getName(this.friendReqObjects.get(position)));
+        //holder.friendName.setText(getName(this.friendReqObjects.get(position)));
+
+        final Query query = userCollectionReference.whereEqualTo("userId", this.friendReqObjects.get(position));
+        final DocumentReference docRef = this.userCollectionReference.document(userId);
         //todo: Find way to implement friend display names and profile pictures proper
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FriendsActivity.index = position;
                 Log.d(TAG, "onClick: clicked on:" + String.valueOf(position));
-                //intentMoodView(FriendsActivity.moodObjects.get(position), v);
+                intentUserView(position, v);
             }
         });
+
         //todo: find a way for firebase to accept and decline requests via buttons
         //also update values i suppose
         //establish listener for each element
@@ -103,12 +107,14 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
 
     }
 
-    public void intentMoodView(Mood moodID, View v){
+    public void intentUserView(int targetUser, View v){
         //todo: send user to UserViewActivity
-        //Intent intent = new Intent(v.getContext(), ActivityAddMood.class);
-        //intent.putExtra("Mood", moodID);
-        //intent.putExtra("USER_ID", this.userId);
-        //mContext.startActivity(intent);
+        Intent intent = new Intent(v.getContext(), UserViewActivity.class);
+        String targetUserId = friendReqObjects.get(targetUser);
+        intent.putExtra("TARGET_ID", targetUserId);
+        intent.putExtra("USER_ID", this.userId);
+        intent.putExtra("HAS_VIEW_PERMISSION", true);
+        mContext.startActivity(intent);
     }
 
     //item count for parsing through
