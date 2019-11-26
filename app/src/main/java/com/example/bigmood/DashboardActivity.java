@@ -79,7 +79,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                 Toast.makeText(DashboardActivity.this, "Cool!", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
                 intent.putExtra("USER_ID", userId);
-                Mood mood = new Mood();
+                Mood mood = new Mood(userId);
                 mood.setMoodUsername(getUsername());
                 intent.putExtra("Mood",mood);
                 startActivity(intent);

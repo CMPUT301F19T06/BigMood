@@ -157,17 +157,22 @@ public class ActivityMoodView extends AppCompatActivity {
         /**
          * Edit button to edit mood object with it's requirements
          */
+        if(userId.equals(mood.getMoodCreator())) {
 
-        editButton.setOnClickListener(new View.OnClickListener() {
+            editButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View view) {
-                Intent editMood = new Intent(ActivityMoodView.this, ActivityAddMood.class);
-                editMood.putExtra("USER_ID", userId);
-                editMood.putExtra("Mood",mood);
-                startActivity(editMood);
-            }
-        });
+                @Override
+                public void onClick(View view) {
+                    Intent editMood = new Intent(ActivityMoodView.this, ActivityAddMood.class);
+                    editMood.putExtra("USER_ID", userId);
+                    editMood.putExtra("Mood", mood);
+                    startActivity(editMood);
+                }
+            });
+        }
+        else{
+            editButton.setVisibility(View.INVISIBLE);
+        }
         /**
          * get the background pic and set it to the mood Photo
          */
