@@ -41,11 +41,10 @@ import java.util.List;
  *
  *  If there is permission it displays the user's mood
  *
- *  Requires 3 fields in the intent: USER_ID, TARGET_ID, HAS_VIEW_PERMISSION
+ *  Requires 2 fields in the intent: USER_ID, TARGET_ID
  *
  *  USER_ID: The user id of the current app user
  *  TARGET_ID: The user id of the user that will be viewed
- *  HAS_VIEW_PERMISSION: true if the TARGET_ID is a friend of, or is, USER_ID, false otherwise
  */
 
 public class UserViewActivity extends BaseDrawerActivity
