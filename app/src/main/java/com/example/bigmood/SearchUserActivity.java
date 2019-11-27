@@ -65,16 +65,16 @@ public class SearchUserActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String searchText = mSearchField.getText().toString();
                 if(searchText.compareTo("") != 0){
+                    Toast.makeText(SearchUserActivity.this, "Searching", Toast.LENGTH_LONG).show();
                     firebaseUserSearch(searchText);
+                } else{
+                    Toast.makeText(SearchUserActivity.this, "Please enter a Name", Toast.LENGTH_LONG).show();
                 }
-                Toast.makeText(SearchUserActivity.this, "Please enter a Name", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void firebaseUserSearch(String searchText) {
-
-        Toast.makeText(SearchUserActivity.this, "Searching", Toast.LENGTH_LONG).show();
 
         Query firebaseSearchQuery = mUserDatabase.collection("Users").orderBy("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
 
@@ -85,7 +85,7 @@ public class SearchUserActivity extends AppCompatActivity {
         FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
-                holder.setDetails(model.getDisplayName(), model.getProfilePictureUrl());
+                holder.setDetails(model.getDisplayName());
 
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -122,25 +122,11 @@ public class SearchUserActivity extends AppCompatActivity {
             mView = itemView;
         }
 
-        public void setDetails(String userName, String userImage){
+        public void setDetails(String userName){
             TextView user_name = mView.findViewById(R.id.friendName);
             ImageView  user_image = mView.findViewById(R.id.pfpImage);
 
             user_name.setText(userName);
-            Bitmap bit = StringtoBitmap(userImage);
-            user_image.setImageBitmap(bit);
-
-        }
-
-        public Bitmap StringtoBitmap(String encodedString) {
-            try {
-                byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                return bitmap;
-            } catch (Exception e) {
-                e.getMessage();
-                return null;
-            }
         }
     }
 }
