@@ -67,9 +67,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.moodUsername.setText(moodIDs.get(position).getMoodUsername());
         Log.d("SDA","Mood from rec: " + moodIDs.get(position).getMoodUsername());
         //emoji
-        byte [] encodeByte=Base64.decode(moodIDs.get(position).getMoodEmoji(),Base64.DEFAULT);
-        Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-        holder.emoji.setImageBitmap(bitmap);
+        byte[] decodedByte = Base64.decode(moodIDs.get(position).getMoodEmoji(), 0);
+        Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+        holder.emoji.setImageBitmap(image);
 
 
         String stringHEX = moodIDs.get(position).getMoodColor();

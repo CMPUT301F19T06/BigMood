@@ -30,8 +30,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.google.android.gms.common.internal.ResourceUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,6 +50,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Document;
 
@@ -57,6 +62,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.cert.CertPathValidatorException;
 import java.security.spec.ECField;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -70,7 +76,7 @@ import static com.example.bigmood.DashboardActivity.index;
 import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.NULL;
 
 /**
- * todo: Activity add mood does both edit and add
+ * This is a class for adding and editing mood events
  */
 
 public class ActivityAddMood extends AppCompatActivity {
@@ -81,20 +87,20 @@ public class ActivityAddMood extends AppCompatActivity {
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
+    public static final int MOODVIEW_ACCESS = 5555;
     private Context context;
     TextView dateText , description, moodUserName;
     Button saveButton;
     Button addLoc;
-    LinearLayout profileBackground;
+    ImageView profileBackground, getProfileBackground;
     ImageView profilePic, deleteMood, emojiPic;
     Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
-    String dayString = dateFormat.format(date);
     private FusedLocationProviderClient fusedLocationClient;
     private String userId, username;
-
+    int imageTracker = 0;
 
     /**
      * firebase stuff here
@@ -115,6 +121,10 @@ public class ActivityAddMood extends AppCompatActivity {
 
     private DatePickerDialog.OnDateSetListener mDateSetListener;
 
+    /**
+     * OnCreate for edit Mood
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState){
 
@@ -128,11 +138,12 @@ public class ActivityAddMood extends AppCompatActivity {
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMoodSpinner);
         moodUserName = findViewById(R.id.moodUserName);
-        //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
-
-        moodColor = findViewById(R.id.currentMoodColorSpinner);
         moodSituation = findViewById(R.id.moodSituationSpinner);
+
+        // profile pick and background pic
         profileBackground = findViewById(R.id.background_pic);
+        getProfileBackground = findViewById(R.id.add_background_image);
+
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -148,13 +159,11 @@ public class ActivityAddMood extends AppCompatActivity {
          * Set up the spinner adapters accordingly
          */
         moodTitle.setAdapter(titleAdapter);
-        moodColor.setAdapter(colorAdapter);
         moodSituation.setAdapter(situations);
-
 
         /**
          * HashMap for each mood Colors
-         * todo: change the color here according to the necessity
+         * changes the color according to moodtitle
          */
         final HashMap<String,String> colorHash = new HashMap<String, String>(){{
             put("Set Color", "#FFFFFF");
@@ -170,6 +179,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
 
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
+        username = mood.getMoodUsername();
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
         final CollectionReference userCollectionReference = db.collection("Users");
@@ -185,54 +195,51 @@ public class ActivityAddMood extends AppCompatActivity {
          * If the index is not -1 or it's in edit mood situation
          */
         if (DashboardActivity.index != -1 ){
-
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
-            moodColor.setSelection(titleAdapter.getPosition(colorHash.get(mood.getMoodTitle())));
             moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
-
-            //todo: mood username
             moodUserName.setText(mood.getMoodUsername());
+            byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            emojiPic.setImageBitmap(bitmap);
 
-            setMoodEmoji(mood.getMoodTitle());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
-
-            try {
-
-                profileBackground.setBackgroundColor(Color.parseColor(stringHEX));
-            }catch (Throwable e){
-                e.printStackTrace();
-            }
-
-            //todo: String to bitmap
+            /**
+             * conversion of string to bitmap for profile picture
+             */
             try{
                 byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
-                Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                profilePic.setImageBitmap(bitmap);
+                Bitmap bitmap1 =BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                // todo: set image from google
+                profileBackground.setImageBitmap(bitmap1);
+
 
             }catch (Exception e){
                 e.getMessage();
             }
         }
 
-
+        /**
+         * Set profile background
+         */
+        getProfileBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenCamera(v);
+                imageTracker = 1;
+            }
+        });
 
         /**
          * Save button to save mood object with it's requirements
          */
-        //todo:  each user will have the moodiD's in their user profile as a reference
-
         saveButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-
-                // todo: set Mood user name here (hardcoded here)
 
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 setMoodEmoji(mood.getMoodTitle());
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
-                mood.setMoodDescription(description.getText().toString());
                 mood.setMoodSituation(situations.getItem(moodSituation.getSelectedItemPosition()).toString());
                 mood.setMoodPhoto(image);
                 mood.setMoodEmoji(getMoodEmoji());
@@ -245,72 +252,22 @@ public class ActivityAddMood extends AppCompatActivity {
                 }catch (ParseException e){
                     e.getStackTrace();
                 }
-                HashMap<String, Object> data = new HashMap<>();
-                data.put("moodTitle", mood.getMoodTitle());
-                data.put("moodDescription", mood.getMoodDescription());
-                data.put("moodColor", mood.getMoodColor());
-                data.put("moodPhoto", mood.getMoodPhoto());
-                data.put("moodDate", mood.getMoodDate());
-                data.put("dateCreated", Timestamp.now());
-                data.put("dateUpdated", Timestamp.now());
-                data.put("userName", mood.getMoodUsername());
-                data.put("moodCreator", userId);
-                data.put("moodSituation", mood.getMoodSituation());
-                data.put("longitude", mood.getLongitude());
-                data.put("latitude", mood.getLatitude());
-                data.put("moodEmoji", mood.getMoodEmoji());
-                Log.d("Index: ",String.valueOf(index));
-                try{
-                    if (index != -1){
-                        data.put("moodId", mood.getMoodID());
-                        collectionReference
-                                .document(mood.getMoodID())
-                                .update(data)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG,"Data addition successful");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d(TAG, "Data addition failed" + e.toString());
-                                    }
-                                });
-                        index = -1;
-                        finish();
-                    }
-                    else{
-                        mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
-                        data.put("moodId", mood.getMoodID());
-                        collectionReference
-                                .document(mood.getMoodID())
-                                .set(data)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG,"Data addition successful");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.d(TAG, "Data addition failed" + e.toString());
-                                    }
-                                });
-                        index = -1;
-                        finish();
-                    }
-
-                } catch (Exception e){
-                    Toast.makeText(context, "You haven't put a title for your mood",Toast.LENGTH_LONG).show();
+                String reason = description.getText().toString();
+                if (reason.length() > 20){
+                    Toast.makeText(ActivityAddMood.this, "DESCRIPTION TOO LONG\nMAX 20 CHARACTERS",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    mood.setMoodDescription(reason);
+                    // input mood after mood object is created
+                    InputMood(mood, view, collectionReference);
                 }
 
             }
         });
 
-        // todo: implementing delete mood
+        /**
+         * delete mood removes a mood event
+         */
         deleteMood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,13 +289,17 @@ public class ActivityAddMood extends AppCompatActivity {
 
                 }else{
                     Toast.makeText(ActivityAddMood.this, "No mood posted",Toast.LENGTH_LONG).show();
-
                 }
-
-                finish();
+                Intent intent = new Intent(ActivityAddMood.this, DashboardActivity.class);
+                intent.putExtra("USER_ID",userId);
+                intent.putExtra("User_Name",username);
+                startActivity(intent);
             }
         });
 
+        /**
+         * adding a location to a mood event
+         */
         addLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -355,7 +316,9 @@ public class ActivityAddMood extends AppCompatActivity {
                 });
             }
         });
-
+        /**
+         * changing the profile picture here
+         */
         profilePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -392,70 +355,79 @@ public class ActivityAddMood extends AppCompatActivity {
         };
     }
 
+
     /**
-     * Some new stuff
-     * todo: finish this task
+     * Creates a mood object and puts it in the database
+     * @param mood
+     * @param view
+     * @param collectionReference
      */
-    private void getImages(){
-        Log.d("Bomb", "initImageBitmaps: preparing bitmaps.");
+    public void InputMood(Mood mood, View view, CollectionReference collectionReference){
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("moodTitle", mood.getMoodTitle());
+        data.put("moodDescription", mood.getMoodDescription());
+        data.put("moodColor", mood.getMoodColor());
+        data.put("moodPhoto", mood.getMoodPhoto());
+        data.put("moodDate", mood.getMoodDate());
+        data.put("dateCreated", Timestamp.now());
+        data.put("dateUpdated", Timestamp.now());
+        data.put("userName", mood.getMoodUsername());
+        data.put("moodCreator", userId);
+        data.put("moodSituation", mood.getMoodSituation());
+        data.put("longitude", mood.getLongitude());
+        data.put("latitude", mood.getLatitude());
+        data.put("moodEmoji", mood.getMoodEmoji());
+        Log.d("Index: ",String.valueOf(index));
 
-        mImageUrls.add("https://drive.google.com/open?id=1YOIVRtEo1jOg9Q5TOYJJvLiXv_j_y8wQ");
-        mNames.add("Bored");
-
-        mImageUrls.add("https://drive.google.com/open?id=1v9CFZFzLqlFXkV2Oum6mKuzoAK3C9Fj9");
-        mNames.add("Angry");
-
-        mImageUrls.add("https://drive.google.com/open?id=1lHlkIzHNgvZ5rNKiGGBwtE2jhEl_-MCR");
-        mNames.add("Disgust");
-
-        mImageUrls.add("https://drive.google.com/open?id=1y8dg1_srfSdExr6d75WpL2dvPO9PByY4");
-        mNames.add("Fear");
-
-
-        mImageUrls.add("https://drive.google.com/open?id=1mSv_ywdMi0m1gS9X1SyTO2T4yMqR8bND");
-        mNames.add("Happy");
-
-        mImageUrls.add("https://drive.google.com/open?id=1GV9j63lW0P4qA2E6944cGwHSVM7CCPJ6");
-        mNames.add("Love");
-
-
-        mImageUrls.add("https://drive.google.com/open?id=17tPsqGny-S03sOk5Z0zaj7P3GRlEf6ll");
-        mNames.add("Sad");
-
-        mImageUrls.add("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle");
-        mNames.add("Surprised");
-
-        mImageUrls.add("https://i.imgur.com/ZcLLrkY.jpg");
-        mNames.add("Washington");
-
-        //initRecyclerView();
+        /**
+         * checks if the object is already present in the adapter
+         */
+        if (index != -1){
+            data.put("moodId", mood.getMoodID());
+            collectionReference
+                    .document(mood.getMoodID())
+                    .update(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("Hello","Data addition successful");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Hello", "Data addition failed" + e.toString());
+                        }
+                    });
+            OpenMoodView(view, mood);
+            index = -1;
+        }
+        else{
+            /**
+             * else add a new mood if that mood event does not exist
+             */
+            mood.setMoodID(String.valueOf(Timestamp.now().hashCode()));
+            data.put("moodId", mood.getMoodID());
+            collectionReference
+                    .document(mood.getMoodID())
+                    .set(data)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("Hello","Data addition successful");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Hello", "Data addition failed" + e.toString());
+                        }
+                    });
+            index = -1;
+            OpenMoodView(view, mood);
+        }
 
     }
-
-//    public static Bitmap getBitmapFromURL(String src) {
-//        try {
-//            URL url = new URL(src);
-//            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//            connection.setDoInput(true);
-//            connection.connect();
-//            InputStream input = connection.getInputStream();
-//            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-//            return myBitmap;
-//        } catch (IOException e) {
-//            // Log exception
-//            return null;
-//        }
-//    }
-
-//    private void initRecyclerView(){
-//        Log.d("Bomb", "initRecyclerView: init recyclerview");
-//
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-//        MoodAdapter recyclerView = findViewById(R.id.mood_recycler_view);
-//        recyclerView.setLayoutManager(recyclerView);
-//        RecyclerViewAdapter adapter = new MoodAdapter(this, mNames, mImageUrls);
-//        recyclerView.setAdapter(adapter);
-//    }
     /**
      * Set emoji according to mood type
      * @param emotion
@@ -464,32 +436,36 @@ public class ActivityAddMood extends AppCompatActivity {
     public void setMoodEmoji(String emotion){
         switch (emotion){
             case "Happy":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
+                emojiPic.setImageResource(R.drawable.emoji_happy);
                 break;
             case "Sad":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));
+                emojiPic.setImageResource(R.drawable.emoji_sad);
                 break;
             case "Fear":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_fear));
+                emojiPic.setImageResource(R.drawable.emoji_fear);
                 break;
             case "Surprise":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_surprised));
+                emojiPic.setImageResource(R.drawable.emoji_surprised);
                 break;
             case "Anger":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_angry));
+                emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_bored));
+                emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
             case "Disgust":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_disgust));
+                emojiPic.setImageResource(R.drawable.emoji_disgust);
                 break;
             case "Love":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_love));
+                emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
         }
     }
 
+    /**
+     * get the mood emoji from drawable
+     * @return : a string format for the emoji
+     */
     public String getMoodEmoji(){
         Drawable drawable= emojiPic.getDrawable();
         ByteArrayOutputStream baos=new ByteArrayOutputStream();
@@ -500,19 +476,46 @@ public class ActivityAddMood extends AppCompatActivity {
         String temp=Base64.encodeToString(b, Base64.DEFAULT);
         return temp;
     }
+
     /**
-     * working on the open camera and open album functionality
+     * Open camera
      */
+
     public void OpenCamera(View view){
         Intent intent =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent,CAMERA_ACCESS);
     }
+    /**
+     * Open gallery
+     * Not used in this implementation
+     */
     public void OpenAlbum(View view){
         Intent intent =  new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent,GALLERY_ACCESS);
 
     }
+
+    /**
+     * Open mood View
+     * @param view
+     * @param mood
+     */
+    public void OpenMoodView(View view, Mood mood){
+        Intent intent = new Intent(ActivityAddMood.this,ActivityMoodView.class);
+        // todo fix the stack trace
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("USER_ID", userId);
+        intent.putExtra("Mood",mood);
+        startActivityForResult(intent,MOODVIEW_ACCESS);
+    }
+
+    /**
+     * On activity result takes care of the stack trace for each activity opening from edit mood
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         context = getApplicationContext();
@@ -526,10 +529,16 @@ public class ActivityAddMood extends AppCompatActivity {
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
             image = temp;
-            profilePic.setImageBitmap(bitmap);
+            if (imageTracker == 1){
+                profileBackground.setImageBitmap(bitmap);
+            }
+            else{
+                profilePic.setImageBitmap(bitmap);
+            }
+            imageTracker = 0;
         }
 
-        else if(requestCode==GALLERY_ACCESS){
+        else if(requestCode==GALLERY_ACCESS) {
             try {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
@@ -540,8 +549,11 @@ public class ActivityAddMood extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show();
             }
-
-        }else {
+        }
+        else  if (requestCode == MOODVIEW_ACCESS){
+            finish();
+        }
+        else {
             Toast.makeText(context, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
     }
