@@ -183,6 +183,7 @@ public class ActivityAddMood extends AppCompatActivity {
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
         final CollectionReference userCollectionReference = db.collection("Users");
+
         if (mood.getMoodDate() == null) {
             mood.setMoodDate(Timestamp.now());
         }
@@ -198,10 +199,12 @@ public class ActivityAddMood extends AppCompatActivity {
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
             moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
             moodUserName.setText(mood.getMoodUsername());
+
             byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
             Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             emojiPic.setImageBitmap(bitmap);
-
+            Timestamp moodDate = mood.getMoodDate();
+            dateText.setText(moodDate.toDate().toString());
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
             /**
@@ -239,19 +242,25 @@ public class ActivityAddMood extends AppCompatActivity {
 
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 setMoodEmoji(mood.getMoodTitle());
+                try{
+                    mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
+                }catch (ParseException e){
+                    e.getStackTrace();
+                }
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodSituation(situations.getItem(moodSituation.getSelectedItemPosition()).toString());
                 mood.setMoodPhoto(image);
                 mood.setMoodEmoji(getMoodEmoji());
                 mood.setMoodUsername(mood.getMoodUsername());
-
                 // date input given
-                try{
-                    mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
-
-                }catch (ParseException e){
-                    e.getStackTrace();
-                }
+                // todo: fix this
+//                try{
+//                    mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
+//                    Toast.makeText(ActivityAddMood.this, dateText.getText().toString(),Toast.LENGTH_SHORT);
+//
+//                }catch (ParseException e){
+//                    e.getStackTrace();
+//                }
                 String reason = description.getText().toString();
                 if (reason.length() > 20){
                     Toast.makeText(ActivityAddMood.this, "DESCRIPTION TOO LONG\nMAX 20 CHARACTERS",Toast.LENGTH_SHORT).show();

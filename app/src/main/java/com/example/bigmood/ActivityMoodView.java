@@ -99,6 +99,7 @@ public class ActivityMoodView extends AppCompatActivity {
     }
 
 
+
     private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
@@ -115,7 +116,6 @@ public class ActivityMoodView extends AppCompatActivity {
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         // todo: set image from URL
-        String url = "https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle";
         //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
 
         moodSituation = findViewById(R.id.moodSituationSpinner);
@@ -135,7 +135,11 @@ public class ActivityMoodView extends AppCompatActivity {
         if (mood.getMoodDate() == null) {
             mood.setMoodDate(Timestamp.now());
         }
-        dateText.setText(mood.getMoodDate().toDate().toString());
+        try{
+            dateText.setText(mood.getMoodDate().toDate().toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         description.setEnabled(false);
         description.setText(mood.getMoodDescription());
         byte[] decodedByte = Base64.decode(mood.getMoodEmoji(), 0);
