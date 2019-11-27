@@ -41,7 +41,7 @@
         android:id="@+id/acceptButton"
         android:layout_width="77dp"
         android:layout_height="77dp"
-        android:text="slid into DMs"
+        android:text="Accept"
         app:layout_constraintEnd_toStartOf="@+id/rejectButton"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +49,7 @@
         android:id="@+id/rejectButton"
         android:layout_width="77dp"
         android:layout_height="77dp"
-        android:text="fuck off"
+        android:text="Reject"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

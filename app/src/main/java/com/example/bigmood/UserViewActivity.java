@@ -191,7 +191,8 @@ public class UserViewActivity extends BaseDrawerActivity
                                 }
                                 List<String> temp = (List<String>) documentSnapshot.get("incomingReq");
                                 temp.add(currentUser);
-                                docRef.set(temp);
+                                data.put("incomingReq", temp);
+                                docRef.set(data);
                             }
                         });
                 Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
