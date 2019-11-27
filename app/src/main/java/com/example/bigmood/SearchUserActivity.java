@@ -31,10 +31,12 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class SearchUserActivity extends AppCompatActivity {
 
     private EditText mSearchField;
-    private ImageButton mSearchBtn;
+    private CircleImageView mSearchBtn;
 
     private RecyclerView mResultList;
 
@@ -61,16 +63,18 @@ public class SearchUserActivity extends AppCompatActivity {
         mSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String searchText = mSearchField.getText().toString();
-                firebaseUserSearch(searchText);
+                if(searchText.compareTo("") != 0){
+                    firebaseUserSearch(searchText);
+                }
+                Toast.makeText(SearchUserActivity.this, "Please enter a Name", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void firebaseUserSearch(String searchText) {
 
-        Toast.makeText(SearchUserActivity.this, "Started Search", Toast.LENGTH_LONG).show();
+        Toast.makeText(SearchUserActivity.this, "Searching", Toast.LENGTH_LONG).show();
 
         Query firebaseSearchQuery = mUserDatabase.collection("Users").orderBy("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
 
