@@ -7,12 +7,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DashboardActivity">
+    tools:context=".FriendsActivity">
 
 
     <include
-        android:id="@+id/content_dashboard"
-        layout="@layout/content_dashboard"
+        android:id="@+id/content_friends"
+        layout="@layout/content_friends"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

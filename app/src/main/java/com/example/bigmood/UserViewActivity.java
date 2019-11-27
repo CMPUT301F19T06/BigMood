@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /*  This activity displays a user who's id is passed to it in an intent.
@@ -39,11 +41,10 @@ import java.util.List;
  *
  *  If there is permission it displays the user's mood
  *
- *  Requires 3 fields in the intent: USER_ID, TARGET_ID, HAS_VIEW_PERMISSION
+ *  Requires 2 fields in the intent: USER_ID, TARGET_ID
  *
  *  USER_ID: The user id of the current app user
  *  TARGET_ID: The user id of the user that will be viewed
- *  HAS_VIEW_PERMISSION: true if the TARGET_ID is a friend of, or is, USER_ID, false otherwise
  */
 
 public class UserViewActivity extends BaseDrawerActivity
@@ -85,7 +86,15 @@ public class UserViewActivity extends BaseDrawerActivity
         try {
             this.currentUser = getIntent().getExtras().getString("USER_ID");
             this.targetUser = getIntent().getExtras().getString("TARGET_ID");
-            this.hasViewPermission = getIntent().getExtras().getBoolean("HAS_VIEW_PERMISSION");
+            this.userCollectionReference.document(this.targetUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("userFriends");
+                    if (friends.contains(currentUser)) {
+                        viewMoods();
+                    }
+                }
+            });
         } catch (NullPointerException e) {
             Log.d(TAG, "Could not acquire initial data");
             super.finish();
@@ -93,19 +102,23 @@ public class UserViewActivity extends BaseDrawerActivity
 
         this.userName = findViewById(R.id.user_view_username);
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
-
+        this.recyclerAdapter = new RecyclerViewAdapter(moodObjects, this.targetUser, this);
         this.getUserName();
         this.initAddFriend();
         this.initSortSpinner();
         this.initFilterSpinner();
         this.initStartGpsView();
 
-        if (hasViewPermission) {
-            findViewById(R.id.user_view_add_friend).setVisibility(View.GONE);
-            findViewById(R.id.user_view_recycler).setVisibility(View.VISIBLE);
-            setMoodListener();
-            initRecyclerView();
+        if (this.currentUser.compareTo(this.targetUser) == 0) {
+            this.viewMoods();
         }
+    }
+
+    protected void viewMoods() {
+        findViewById(R.id.user_view_add_friend).setVisibility(View.GONE);
+        findViewById(R.id.user_view_recycler).setVisibility(View.VISIBLE);
+        setMoodListener();
+        initRecyclerView();
     }
 
     protected void getUserName() {
@@ -140,7 +153,6 @@ public class UserViewActivity extends BaseDrawerActivity
     protected void initRecyclerView() {
         Log.d(TAG, "initRecyclerView: init recyclerview");
         recyclerView = findViewById(R.id.user_view_recycler);
-        recyclerAdapter = new RecyclerViewAdapter(moodObjects, this.targetUser, this);
         recyclerView.setAdapter(recyclerAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -156,16 +168,38 @@ public class UserViewActivity extends BaseDrawerActivity
         });
     }
 
+
     protected void initAddFriend() {
+        String targetUser = this.targetUser;
+        final DocumentReference docRef = this.userCollectionReference.document(targetUser);
+        final HashMap<String, Object> data = new HashMap<>();
+        data.put("targetUserId", this.currentUser);
         ImageView imageView = findViewById(R.id.user_view_add_friend);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: add a friend
-                Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+                //Create and send request
+                docRef
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                            @Override
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                if (documentSnapshot.contains("incomingReq")) {
+                                    List<String> temp = (ArrayList<String>) documentSnapshot.get("incomingReq");
+                                } else {
+                                    List<String> temp = new ArrayList<String>();
+                                }
+                                List<String> temp = (List<String>) documentSnapshot.get("incomingReq");
+                                temp.add(currentUser);
+                                docRef.set(temp);
+                            }
+                        });
+                Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+
 
     protected void initSortSpinner() {
         // adapted from developer docs

@@ -10,11 +10,11 @@ import java.util.ArrayList;
  */
 public class User {
     /**
-     * The unique targetUser
+     * A unique id used by google. This is saved on user creation and is not editable
      */
     private String userId;
     /**
-     * The personal name of the user
+     * The display name of the user set in their google account
      */
     private String displayName;
     /**
@@ -30,11 +30,11 @@ public class User {
      */
     private ArrayList<String> pendingSent;
     /**
-     * The list of friend requests the user has recieved
+     * The list of friend requests the user has received
      */
     private ArrayList<String> pendingReceived;
     /**
-     * The date that the user was created
+     * The date that the user first registered and logged into the app
      */
     private Timestamp dateCreated;
 
@@ -132,7 +132,6 @@ public class User {
         this.setDisplayName(displayName);
     }
 
-
-
+    public User (){}
 
 }
