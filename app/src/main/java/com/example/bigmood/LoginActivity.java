@@ -155,7 +155,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         data.put("displayName", account.getDisplayName());
         data.put("moods", null);
         data.put("userFriends", new ArrayList<String>());
-        data.put("incomingreq", new ArrayList<String>());
+        data.put("incomingReq", new ArrayList<String>());
         userCollectionReference
                 .document(account.getId())
                 .set(data)
