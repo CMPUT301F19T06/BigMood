@@ -1,10 +1,16 @@
 package com.example.bigmood;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.MenuInflater;
 import android.graphics.Color;
 import android.location.Location;
@@ -17,6 +23,7 @@ import android.widget.PopupMenu;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
@@ -109,6 +116,10 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
     private Point selectedPoint;
     private String selectedID;
     private Mood selectedMood;
+    private LocationListener locationListener;
+    private Criteria criteria;
+    private LocationManager locationManager;
+    private Looper looper;
 
 
     @Override
@@ -117,18 +128,44 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         setContentView(R.layout.activity_gps);
 
         //get last location
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            lastLong = location.getLongitude();
-                            lastLat = location.getLatitude();
-                        }
-                    }
-                });
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                //mloc = location;
+                Log.d("Location Changes", location.toString());
+                lastLong = location.getLongitude();
+                lastLat = location.getLatitude();
+                mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("Status Changed", String.valueOf(status));
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("Provider Enabled", provider);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("Provider Disabled", provider);
+            }
+        };
+
+        criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setSpeedRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        looper = null;
         ////////////////////////////////
 
 
@@ -171,8 +208,19 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             retrieveFollowedMoods();
         }
 
-        //call to display map
+        //call to display map, might not need
         displayMap();
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+        }
+        locationManager.requestSingleUpdate(criteria, locationListener, looper);
         /////////////////////
 
 
@@ -210,17 +258,30 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+        }
         switch (item.getItemId()){
+
             case R.id.gps_mode_menu_user:
 
                 if(userPoints == null){
                     retrieveUserMoods();
                 }
                 displayMap();
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
                 return true;
             case R.id.gps_mode_menu_followed:
                 retrieveFollowedMoods();
                 displayMap();
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
                 return true;
             default:
                 return false;
@@ -291,12 +352,12 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
      */
     private void displayMap(){
         mMapView = findViewById(R.id.mapView);
-        ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS, tempLat, tempLong, 30);
+        ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS, lastLat, lastLong, 30);
         //inflate map
         mMapView.setMap(map);
 
         //set center of map
-        mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
+        //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
 
         //init graphics overlay
         graphicsOverlay = new GraphicsOverlay();

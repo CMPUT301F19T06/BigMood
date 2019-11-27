@@ -360,7 +360,7 @@ public class ActivityAddMood extends AppCompatActivity {
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for Activity#requestPermissions for more details.
-                    ActivityCompat.requestPermissions(ActivityAddMood.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
+                    ActivityCompat.requestPermissions(ActivityAddMood.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
                 }
                 locationManager.requestSingleUpdate(criteria, locationListener, looper);
             }
