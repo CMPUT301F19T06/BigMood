@@ -64,6 +64,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertPathValidatorException;
 import java.security.spec.ECField;
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -97,7 +98,6 @@ public class ActivityAddMood extends AppCompatActivity {
     Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
-    Date date = Calendar.getInstance().getTime();
     private FusedLocationProviderClient fusedLocationClient;
     private String userId, username;
     int imageTracker = 0;
@@ -146,12 +146,11 @@ public class ActivityAddMood extends AppCompatActivity {
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         this.userId = getIntent().getExtras().getString("USER_ID");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
-        final ArrayAdapter<CharSequence> colorAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodcolor_spinner, android.R.layout.simple_list_item_1);
         final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_list_item_1);
         final ArrayAdapter<CharSequence> situations = ArrayAdapter.createFromResource(this, R.array.editmood_moodsituation_spinner, android.R.layout.simple_list_item_1);
 
@@ -183,9 +182,10 @@ public class ActivityAddMood extends AppCompatActivity {
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
         final CollectionReference userCollectionReference = db.collection("Users");
-        if (mood.getMoodDate() == null) {
-            mood.setMoodDate(Timestamp.now());
-        }
+        // todo:
+        String date = getIntent().getExtras().getString("DATE");
+        dateText.setText(date);
+
         /**
          * set the mood user name according to the username on database
          */
@@ -198,10 +198,11 @@ public class ActivityAddMood extends AppCompatActivity {
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
             moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
             moodUserName.setText(mood.getMoodUsername());
+
             byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
             Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             emojiPic.setImageBitmap(bitmap);
-
+            dateText.setText(date);
             description.setText(mood.getMoodDescription());
             String stringHEX = mood.getMoodColor();
             /**
@@ -239,19 +240,17 @@ public class ActivityAddMood extends AppCompatActivity {
 
                 mood.setMoodTitle(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
                 setMoodEmoji(mood.getMoodTitle());
+                try{
+                    mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
+                }catch (ParseException e){
+                    mood.setMoodDate(Timestamp.now());
+                    e.getStackTrace();
+                }
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodSituation(situations.getItem(moodSituation.getSelectedItemPosition()).toString());
                 mood.setMoodPhoto(image);
                 mood.setMoodEmoji(getMoodEmoji());
                 mood.setMoodUsername(mood.getMoodUsername());
-
-                // date input given
-                try{
-                    mood.setMoodDate(new Timestamp((dateFormat.parse(dateText.getText().toString()))));
-
-                }catch (ParseException e){
-                    e.getStackTrace();
-                }
                 String reason = description.getText().toString();
                 if (reason.length() > 20){
                     Toast.makeText(ActivityAddMood.this, "DESCRIPTION TOO LONG\nMAX 20 CHARACTERS",Toast.LENGTH_SHORT).show();
@@ -326,36 +325,7 @@ public class ActivityAddMood extends AppCompatActivity {
             }
         });
 
-        /**
-         * date picker
-         */
-        dateText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog dialog = new DatePickerDialog(
-                        ActivityAddMood.this,android.R.style.Theme_Holo_Light_Dialog_MinWidth,
-                        mDateSetListener,
-                        year,month,day);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.show();
-            }
-        });
-        // date picker format
-        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                month = month + 1;
-                dateText.setText(String.format("%04d-%02d-%02d",year,month,day));
-
-            }
-        };
     }
-
-
     /**
      * Creates a mood object and puts it in the database
      * @param mood
@@ -369,7 +339,7 @@ public class ActivityAddMood extends AppCompatActivity {
         data.put("moodColor", mood.getMoodColor());
         data.put("moodPhoto", mood.getMoodPhoto());
         data.put("moodDate", mood.getMoodDate());
-        data.put("dateCreated", Timestamp.now());
+        data.put("dateCreated", mood.getMoodDate());
         data.put("dateUpdated", Timestamp.now());
         data.put("userName", mood.getMoodUsername());
         data.put("moodCreator", userId);
@@ -507,6 +477,8 @@ public class ActivityAddMood extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("USER_ID", userId);
         intent.putExtra("Mood",mood);
+        String date = mood.getMoodDate().toDate().toString();
+        intent.putExtra("DATE",date);
         startActivityForResult(intent,MOODVIEW_ACCESS);
     }
 

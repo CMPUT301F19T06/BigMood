@@ -12,10 +12,12 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="fitXY"
+        android:outlineAmbientShadowColor="@color/Anger"
         android:background="@color/colorAccent"
         android:orientation="horizontal"></ImageView>
 
     <LinearLayout
+        android:id="@+id/moodDetails"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
@@ -80,7 +82,7 @@
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:textColor="@color/Anger"
-            android:textSize="18sp">
+            android:textSize="15sp">
 
         </TextView>
 
@@ -136,7 +138,7 @@
             android:text="username"
             android:textColor="@color/cardview_dark_background"
             android:textAllCaps="true"
-            android:textSize="15dp"></TextView>
+            android:textSize="20dp"></TextView>
         <TextView
             android:id="@+id/moodSituationSpinner"
             android:layout_width="200dp"

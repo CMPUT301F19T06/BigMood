@@ -37,12 +37,16 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 
 import java.io.ByteArrayOutputStream;
@@ -62,6 +66,7 @@ import java.util.Date;
  * This class takes care of displaying a mood event
  */
 public class ActivityMoodView extends AppCompatActivity {
+    private static final String TAG = "ActivityMoodView";
     /**
      * todo: working on converting URL's to images
      */
@@ -76,6 +81,7 @@ public class ActivityMoodView extends AppCompatActivity {
     Button addLoc;
     ImageView profileBackground;
     ImageView profilePic, emojiPic;
+
     TextView moodTitle, moodSituation; // moodTitle and moodType is the same here for now
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
@@ -83,8 +89,6 @@ public class ActivityMoodView extends AppCompatActivity {
     String dayString = dateFormat.format(date);
     private FusedLocationProviderClient fusedLocationClient;
     private String userId, username;
-
-
 
 
     private FirebaseFirestore db;
@@ -99,6 +103,7 @@ public class ActivityMoodView extends AppCompatActivity {
     }
 
 
+
     private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
@@ -110,13 +115,12 @@ public class ActivityMoodView extends AppCompatActivity {
         profilePic = findViewById(R.id.Profile_image);
         editButton = findViewById(R.id.edit_button);
         addLoc = findViewById(R.id.add_loc);
+
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
-        // todo: set image from URL
-        String url = "https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle";
-        //profilePic.setImageBitmap(getBitmapFromURL("https://drive.google.com/open?id=1FXlozKQrb4QoNWPYfSfsKb0AeaQ5Ocle"));
+
 
         moodSituation = findViewById(R.id.moodSituationSpinner);
         profileBackground = findViewById(R.id.background_pic);
@@ -127,20 +131,31 @@ public class ActivityMoodView extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
+        final String date = (String) getIntent().getExtras().getString("DATE");
+        Log.d(TAG,"Date from mood View" + date);
+        dateText.setText(date);
+        // todo:
+        try {
+            Date parsedDate = dateFormat.parse(date);
+            Timestamp timestamp = new Timestamp(parsedDate);
+            mood.setMoodDate(timestamp);
+        } catch(Exception e) { //this generic but you can control another types of exception
+            e.printStackTrace();
+        }
 
+        Toast.makeText(getApplicationContext(),date,Toast.LENGTH_LONG);
         moodUserName.setText(mood.getMoodUsername());
         moodSituation.setText("COMMUNITY: \n" + mood.getMoodSituation());
         moodTitle.setText(mood.getMoodTitle());
-        // todo: moodDate does not work
-        if (mood.getMoodDate() == null) {
-            mood.setMoodDate(Timestamp.now());
-        }
-        dateText.setText(mood.getMoodDate().toDate().toString());
+        android.text.format.DateFormat df = new android.text.format.DateFormat();
+
+
+
         description.setEnabled(false);
         description.setText(mood.getMoodDescription());
         byte[] decodedByte = Base64.decode(mood.getMoodEmoji(), 0);
         Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
-        emojiPic.setImageBitmap(image);
+        setMoodEmoji(mood.getMoodTitle());
 
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
@@ -166,6 +181,7 @@ public class ActivityMoodView extends AppCompatActivity {
                     Intent editMood = new Intent(ActivityMoodView.this, ActivityAddMood.class);
                     editMood.putExtra("USER_ID", userId);
                     editMood.putExtra("Mood", mood);
+                    editMood.putExtra("DATE",date);
                     startActivity(editMood);
                 }
             });
@@ -201,9 +217,23 @@ public class ActivityMoodView extends AppCompatActivity {
             }
         });
     }
-
-
-
+    // todo: fix mood date
+//    public String getMoodDate(Mood mood){
+//        final String date;
+//        final QueryDocumentSnapshot queryDocumentSnapshot;
+//        Query query = moodCollectionReference
+//                .whereEqualTo("moodCreator", userId);
+//        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                date = (String) queryDocumentSnapshots..get("moodDate");
+//
+//            }
+//        }
+//        );
+//
+//            return date;
+//    }
     /**
      * Set emoji according to mood type
      * @param emotion
@@ -212,28 +242,28 @@ public class ActivityMoodView extends AppCompatActivity {
     public void setMoodEmoji(String emotion){
         switch (emotion){
             case "Happy":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_happy));
+                emojiPic.setImageResource(R.drawable.emoji_happy);
                 break;
             case "Sad":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_sad));
+                emojiPic.setImageResource(R.drawable.emoji_sad);
                 break;
             case "Fear":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_fear));
+                emojiPic.setImageResource(R.drawable.emoji_fear);
                 break;
             case "Surprise":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_surprised));
+                emojiPic.setImageResource(R.drawable.emoji_surprised);
                 break;
             case "Anger":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_angry));
+                emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_bored));
+                emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
             case "Disgust":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_disgust));
+                emojiPic.setImageResource(R.drawable.emoji_disgust);
                 break;
             case "Love":
-                emojiPic.setImageBitmap(BitmapFactory.decodeResource(getResources(),R.mipmap.emoji_love));
+                emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
         }
     }
