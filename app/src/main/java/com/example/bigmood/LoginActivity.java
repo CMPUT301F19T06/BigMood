@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -72,10 +73,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button_login_button:
-                signIn();
-                break;
+        if (v.getId() == R.id.button_login_button) {
+            signIn();
         }
     }
 
@@ -113,14 +112,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     protected void updateUI(GoogleSignInAccount account) {
-        //TODO: check for valid login and if exists move to dashboard with userid
-        // if account is null then no authentication was completed
         if (account == null & signInAttempted) {
             findViewById(R.id.textView_login_error_msg).setVisibility(View.VISIBLE);
         } else if (account != null){
             findViewById(R.id.textView_login_error_msg).setVisibility(View.GONE);
             findViewById(R.id.button_login_button).setVisibility(View.GONE);
-            //TODO: check if user exists
             checkUserExists(account);
         }
     }
@@ -129,28 +125,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // start spinner until completed
         findViewById(R.id.progressBar_login_check_user).setVisibility(View.VISIBLE);
         DocumentReference docRef = userCollectionReference.document(account.getId());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d(USER_EXISTS_TAG, "DocumentSnapshot data: " + document.getData());
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    Log.d(USER_EXISTS_TAG, "DocumentSnapshot data: " + document.getData());
 
-                    } else {
-                        Log.d(USER_EXISTS_TAG, "No such document");
-                        createUser(account);
-                    }
-                    findViewById(R.id.progressBar_login_check_user).setVisibility(View.GONE);
-                    TextView welcomeMsg = findViewById(R.id.textView_login_welcome_msg);
-                    welcomeMsg.setText(String.format("Welcome %s", account.getDisplayName()));
-                    welcomeMsg.setVisibility(View.VISIBLE);
-                    startDashboard(account.getId(), account.getDisplayName());
                 } else {
-                    Log.d(USER_EXISTS_TAG, "get failed with ", task.getException());
-                    //TODO: handle error
-                    findViewById(R.id.progressBar_login_check_user).setVisibility(View.GONE);
+                    Log.d(USER_EXISTS_TAG, "No such document");
+                    createUser(account);
                 }
+                findViewById(R.id.progressBar_login_check_user).setVisibility(View.GONE);
+                TextView welcomeMsg = findViewById(R.id.textView_login_welcome_msg);
+                welcomeMsg.setText(String.format("Welcome %s", account.getDisplayName()));
+                welcomeMsg.setVisibility(View.VISIBLE);
+                startDashboard(account.getId(), account.getDisplayName());
+            } else {
+                Log.d(USER_EXISTS_TAG, "get failed with ", task.getException());
+                findViewById(R.id.progressBar_login_check_user).setVisibility(View.GONE);
             }
         });
     }
@@ -162,21 +154,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         data.put("targetUser", account.getId());
         data.put("displayName", account.getDisplayName());
         data.put("moods", null);
+        data.put("userFriends", new ArrayList<String>());
+        data.put("incomingReq", new ArrayList<String>());
         userCollectionReference
                 .document(account.getId())
                 .set(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(REGISTER_USER_TAG, "Data addition successful");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(REGISTER_USER_TAG, "Data addition failed" + e.toString());
-                    }
-                });
+                .addOnSuccessListener(aVoid -> Log.d(REGISTER_USER_TAG, "Data addition successful"))
+                .addOnFailureListener(e -> Log.d(REGISTER_USER_TAG, "Data addition failed" + e.toString()));
     }
 
     protected void startDashboard(String id, String username) {
