@@ -45,9 +45,6 @@ public class UserViewActivityTest {
         intent.putExtra("TARGET_ID", "109926616595958819946");
         rule.launchActivity(intent);
         solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
-        solo.clickOnActionBarItem(1);
-        solo.waitForActivity(BaseDrawerActivity.class, 2000);
-        solo.assertCurrentActivity("Wrong Activity", BaseDrawerActivity.class);
 
         Point deviceSize = new Point();
         solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getSize(deviceSize);
@@ -62,6 +59,8 @@ public class UserViewActivityTest {
         solo.drag(fromX, toX, fromY, toY,5);
         assertTrue(solo.searchText("Dashboard"));
         assertTrue(solo.searchText("Friends"));
+        assertTrue(solo.searchText("Map"));
+        assertTrue(solo.searchText("My Profile"));
     }
 
     @Test
