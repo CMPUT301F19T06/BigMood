@@ -65,7 +65,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.moodDescription.setText(moodIDs.get(position).getMoodTitle());
 
         holder.moodUsername.setText(moodIDs.get(position).getMoodUsername());
-        Log.d("SDA","Mood from rec: " + moodIDs.get(position).getMoodUsername());
+        Log.d("SDA","Mood from rec: " + moodIDs.get(position).getMoodSituation());
         //emoji
         byte[] decodedByte = Base64.decode(moodIDs.get(position).getMoodEmoji(), 0);
         Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
@@ -74,7 +74,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         String stringHEX = moodIDs.get(position).getMoodColor();
         try {
-            holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
+            //holder.linearLayout.setBackgroundColor(Color.parseColor(stringHEX));
         }catch (Throwable e){
             e.printStackTrace();
         }
@@ -112,9 +112,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public void intentMoodView(Mood moodID, View v){
         Intent intent = new Intent(v.getContext(), ActivityMoodView.class);
         intent.putExtra("Mood", moodID);
-        Log.d(TAG,"Mood Id from recyclerView" + moodID.getMoodID());
-
+        Log.d(TAG,"Mood Id from recyclerView" + moodID.getMoodDate());
+        String date = moodID.getMoodDate().toDate().toString();
         intent.putExtra("USER_ID", this.userId);
+        intent.putExtra("DATE",date);
+
         mContext.startActivity(intent);
     }
 
@@ -136,6 +138,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             // establish views here
             moodUsername = itemView.findViewById(R.id.moodUserName);
             moodDate = itemView.findViewById(R.id.moodDate);
+
             moodDescription = itemView.findViewById(R.id.moodDescription);
             linearLayout = itemView.findViewById(R.id.linearLayout);
             emoji = itemView.findViewById(R.id.moodEmoji);

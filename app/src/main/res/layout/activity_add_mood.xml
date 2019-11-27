@@ -96,8 +96,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="185dp"
             android:text="SELECT DATE"
-            android:textColor="@color/colorBlue"
-            android:textSize="18sp">
+            android:gravity="center"
+            android:textColor="@color/Anger"
+            android:textSize="15sp">
 
         </TextView>
 
@@ -193,7 +194,7 @@
             android:text="username"
             android:textColor="@color/cardview_dark_background"
             android:textAllCaps="true"
-            android:textSize="15dp"></TextView>
+            android:textSize="20dp"></TextView>
         <Spinner
             android:id="@+id/moodSituationSpinner"
             android:layout_width="200dp"
