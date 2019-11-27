@@ -39,7 +39,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
     public NavigationView navigationView;
     public TextView nav_Username;
     public TextView nav_UserId;
-    public ImageView nav_Pfp;
 
     private String userID, username;
 
@@ -75,16 +74,12 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         nav_UserId = headerView.findViewById(R.id.profile_userID);
         nav_UserId.setText(userID);
 
-        nav_Pfp = headerView.findViewById(R.id.profile_pic);
-        /*TODO: set profile pic from firebase*/
-
-
         //Start the app inflating the DashboardActivity
         if(toolbar.getTitle().toString() == getString(R.string.app_name)){
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.putExtra("User_Name", username);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
     }
@@ -104,7 +99,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.putExtra("User_Name", username);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else if (id == R.id.nav_profile) {
             Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
@@ -116,7 +111,6 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.putExtra("User_Name", username);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         } else if (id == R.id.nav_map) {
             Intent intent = new Intent(getApplicationContext(), GpsActivity.class);

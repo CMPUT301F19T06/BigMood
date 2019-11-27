@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -59,7 +60,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
     //set up a new viewholder to mount onto main activity
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_friendfragment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_friendrequestfragment, parent, false);
         ViewHolder holder = new ViewHolder(view);
         return holder;
     }
@@ -76,6 +77,17 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
 
         final Query query = userCollectionReference.whereEqualTo("userId", this.friendReqObjects.get(position));
         final DocumentReference docRef = this.userCollectionReference.document(userId);
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    if (doc.contains("displayName")) {
+                        String temp = (String) doc.get("displayName");
+                        holder.friendName.setText(temp);
+                    }
+                }
+            }
+        });
         //todo: Find way to implement friend display names and profile pictures proper
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +140,8 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         // TextView text;
         TextView friendName;
         ConstraintLayout linearLayout;
-        Button yeaButton, nahButton;
+        Button yeaButton;
+        Button nahButton;
         public ViewHolder(View itemView) {
             super(itemView);
             // establish views here
@@ -141,6 +154,8 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
     private void updateFriend(String userID){
         final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
         final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+        final HashMap<String, Object> data = new HashMap<>();
+        data.put("userId", this.userId);
             //accept the friend request
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -152,12 +167,14 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                         List<String> temp = (List) doc.get("userFriends");
                         ArrayList<String> tempArray = new ArrayList<String>(temp);
                         tempArray.add(userID);
-                        docRef.set(temp);
+                        data.put("incomingReq", temp);
+                        docRef.set(data);
                     } else {
                         // no friends, you fucking loser
                         List<String> temp = (List<String>) doc.get("incomingReq");
                         temp.add(userID);
-                        docRef.set(temp);
+                        data.put("incomingReq", temp);
+                        docRef.set(data);
                     }
                 }
             }
@@ -167,6 +184,8 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
     private void deleteRequest(String userID){
         final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
         final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+        final HashMap<String, Object> data = new HashMap<>();
+        data.put("userId", this.userId);
         //accept the friend request
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -177,7 +196,8 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                     List<String> temp = (List) doc.get("userFriends");
                     ArrayList<String> tempArray = new ArrayList<String>(temp);
                     tempArray.remove(userID);
-                    docRef.set(temp);
+                    data.put("incomingReq", temp);
+                    docRef.set(data);
                 }
             }
         });
