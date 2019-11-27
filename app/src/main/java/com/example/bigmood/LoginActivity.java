@@ -168,7 +168,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         intent.putExtra("USER_ID", id);
         intent.putExtra("User_Name",username);
         Log.d("User","Username from login: " + username);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
     }
 }
