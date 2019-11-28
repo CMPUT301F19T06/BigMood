@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -112,7 +115,6 @@ public class ActivityMoodView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // all the stuff id's
         setContentView(R.layout.activity_mood_view);
-        profilePic = findViewById(R.id.Profile_image);
         editButton = findViewById(R.id.edit_button);
         addLoc = findViewById(R.id.add_loc);
 
@@ -120,8 +122,6 @@ public class ActivityMoodView extends AppCompatActivity {
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
-
-
         moodSituation = findViewById(R.id.moodSituationSpinner);
         profileBackground = findViewById(R.id.background_pic);
         emojiPic = findViewById(R.id.currentMoodImage);
@@ -132,11 +132,11 @@ public class ActivityMoodView extends AppCompatActivity {
 
         final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
         final String date = (String) getIntent().getExtras().getString("DATE");
-        Log.d(TAG,"Date from mood View" + date);
         dateText.setText(date);
-        // todo:
+
         try {
             Date parsedDate = dateFormat.parse(date);
+
             Timestamp timestamp = new Timestamp(parsedDate);
             mood.setMoodDate(timestamp);
         } catch(Exception e) { //this generic but you can control another types of exception
@@ -149,13 +149,12 @@ public class ActivityMoodView extends AppCompatActivity {
         moodTitle.setText(mood.getMoodTitle());
         android.text.format.DateFormat df = new android.text.format.DateFormat();
 
-
-
         description.setEnabled(false);
         description.setText(mood.getMoodDescription());
         byte[] decodedByte = Base64.decode(mood.getMoodEmoji(), 0);
         Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         setMoodEmoji(mood.getMoodTitle());
+        emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
 
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
@@ -179,6 +178,7 @@ public class ActivityMoodView extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent editMood = new Intent(ActivityMoodView.this, ActivityAddMood.class);
+                    editMood.putExtra("EDIT","EditingMode");
                     editMood.putExtra("USER_ID", userId);
                     editMood.putExtra("Mood", mood);
                     editMood.putExtra("DATE",date);
@@ -257,6 +257,7 @@ public class ActivityMoodView extends AppCompatActivity {
                 emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
+
                 emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
             case "Disgusted":

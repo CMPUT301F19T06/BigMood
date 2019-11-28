@@ -1,17 +1,25 @@
 package com.example.bigmood;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -30,6 +38,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -57,6 +68,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,10 +93,7 @@ import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.N
  */
 
 public class ActivityAddMood extends AppCompatActivity {
-
-    //todo: some new stuff
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private static final String TAG = "ActivityAddView";
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
@@ -93,11 +102,10 @@ public class ActivityAddMood extends AppCompatActivity {
     TextView dateText , description, moodUserName;
     Button saveButton;
     Button addLoc;
-    ImageView profileBackground, getProfileBackground;
+    ImageView profileBackground, getProfileBackground, galleryAccess;
     ImageView profilePic, deleteMood, emojiPic;
     Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     private FusedLocationProviderClient fusedLocationClient;
     private String userId, username;
     int imageTracker = 0;
@@ -127,11 +135,9 @@ public class ActivityAddMood extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState){
-
         super.onCreate(savedInstanceState);
         // all the stuff id's
         setContentView(R.layout.activity_add_mood);
-        profilePic = findViewById(R.id.Profile_image);
         saveButton = findViewById(R.id.save_button);
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
@@ -141,14 +147,15 @@ public class ActivityAddMood extends AppCompatActivity {
         moodSituation = findViewById(R.id.moodSituationSpinner);
 
         // profile pick and background pic
+        profilePic = findViewById(R.id.add_background_image);
         profileBackground = findViewById(R.id.background_pic);
         getProfileBackground = findViewById(R.id.add_background_image);
+        galleryAccess = findViewById(R.id.gallery_access);
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         this.userId = getIntent().getExtras().getString("USER_ID");
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
         final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_list_item_1);
@@ -159,6 +166,7 @@ public class ActivityAddMood extends AppCompatActivity {
          */
         moodTitle.setAdapter(titleAdapter);
         moodSituation.setAdapter(situations);
+
 
         /**
          * HashMap for each mood Colors
@@ -176,48 +184,52 @@ public class ActivityAddMood extends AppCompatActivity {
             put("Touched","#EDC0E1");
         }};
 
-
+        /**
+         * getting the information from the intents
+         */
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
         username = mood.getMoodUsername();
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
-        final CollectionReference userCollectionReference = db.collection("Users");
-        // todo:
         String date = getIntent().getExtras().getString("DATE");
+        String mode = getIntent().getExtras().getString("EDIT");
+
         dateText.setText(date);
 
         /**
-         * set the mood user name according to the username on database
+         * handling if it's either editing or adding a mood
          */
-        final String TAG = "Sample";
+        switch (mode){
+            case "AddingMode":
+                setMoodEmoji("Happy");
+                emojiPic.setColorFilter(getColor(R.color.Happy), PorterDuff.Mode.MULTIPLY);
+                break;
+            case "EditingMode":
+                setMoodEmoji(mood.getMoodTitle());
+                emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+                moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
+                moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
+                moodUserName.setText(mood.getMoodUsername());
+                byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
+                Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                emojiPic.setImageBitmap(bitmap);
+                setMoodEmoji(mood.getMoodTitle());
+                emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+                dateText.setText(date);
+                description.setText(mood.getMoodDescription());
 
-        /**
-         * If the index is not -1 or it's in edit mood situation
-         */
-        if (DashboardActivity.index != -1 ){
-            moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
-            moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
-            moodUserName.setText(mood.getMoodUsername());
-
-            byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
-            Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            emojiPic.setImageBitmap(bitmap);
-            dateText.setText(date);
-            description.setText(mood.getMoodDescription());
-            String stringHEX = mood.getMoodColor();
-            /**
-             * conversion of string to bitmap for profile picture
-             */
-            try{
-                byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
-                Bitmap bitmap1 =BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                // todo: set image from google
-                profileBackground.setImageBitmap(bitmap1);
+                /**
+                 * conversion of string to bitmap for profile picture
+                 */
+                try{
+                    byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
+                    Bitmap bitmap1 =BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                    profileBackground.setImageBitmap(bitmap1);
 
 
-            }catch (Exception e){
-                e.getMessage();
-            }
+                }catch (Exception e){
+                    e.getMessage();
+                }
         }
 
         /**
@@ -227,7 +239,12 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 OpenCamera(v);
-                imageTracker = 1;
+            }
+        });
+        galleryAccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenAlbum(v);
             }
         });
 
@@ -249,6 +266,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodSituation(situations.getItem(moodSituation.getSelectedItemPosition()).toString());
                 mood.setMoodPhoto(image);
+
                 mood.setMoodEmoji(getMoodEmoji());
                 mood.setMoodUsername(mood.getMoodUsername());
                 String reason = description.getText().toString();
@@ -299,20 +317,62 @@ public class ActivityAddMood extends AppCompatActivity {
         /**
          * adding a location to a mood event
          */
+        LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                //mloc = location;
+                Log.d("Location Changes", location.toString());
+                //lng = location.getLongitude();
+                //lat = location.getLatitude();
+                mood.setLatitude(location.getLatitude());
+                mood.setLongitude(location.getLongitude());
+
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("Status Changed", String.valueOf(status));
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("Provider Enabled", provider);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("Provider Disabled", provider);
+            }
+        };
+
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setSpeedRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Looper looper = null;
+
+
         addLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        if (location != null){
-                            mood.setLongitude(location.getLongitude());
-                            mood.setLatitude(location.getLatitude());
-                        } else {
-                            Toast.makeText(context, "Location error",Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    Activity#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for Activity#requestPermissions for more details.
+                    ActivityCompat.requestPermissions(ActivityAddMood.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+                }
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
             }
         });
         /**
@@ -347,7 +407,6 @@ public class ActivityAddMood extends AppCompatActivity {
         data.put("longitude", mood.getLongitude());
         data.put("latitude", mood.getLatitude());
         data.put("moodEmoji", mood.getMoodEmoji());
-        Log.d("Index: ",String.valueOf(index));
 
         /**
          * checks if the object is already present in the adapter
@@ -402,7 +461,6 @@ public class ActivityAddMood extends AppCompatActivity {
      * Set emoji according to mood type
      * @param emotion
      */
-    // todo: set emoji according to hashmap of mood type
     public void setMoodEmoji(String emotion){
         switch (emotion){
             case "Happy":
@@ -482,6 +540,8 @@ public class ActivityAddMood extends AppCompatActivity {
         startActivityForResult(intent,MOODVIEW_ACCESS);
     }
 
+
+
     /**
      * On activity result takes care of the stack trace for each activity opening from edit mood
      * @param requestCode
@@ -501,13 +561,7 @@ public class ActivityAddMood extends AppCompatActivity {
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
             image = temp;
-            if (imageTracker == 1){
-                profileBackground.setImageBitmap(bitmap);
-            }
-            else{
-                profilePic.setImageBitmap(bitmap);
-            }
-            imageTracker = 0;
+            profileBackground.setImageBitmap(bitmap);
         }
 
         else if(requestCode==GALLERY_ACCESS) {
@@ -515,11 +569,20 @@ public class ActivityAddMood extends AppCompatActivity {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                profilePic.setImageBitmap(selectedImage);
+                imageStream.close();
+
+                profileBackground.setImageBitmap(selectedImage);
+                ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                selectedImage.compress(Bitmap.CompressFormat.JPEG,100, baos);
+                byte [] b =baos.toByteArray();
+                String temp=Base64.encodeToString(b, Base64.DEFAULT);
+                image = temp;
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show();
+            } catch (IOException e){
+                e.printStackTrace();
             }
         }
         else  if (requestCode == MOODVIEW_ACCESS){
