@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -159,7 +161,6 @@ public class ActivityAddMood extends AppCompatActivity {
         emojiPic = findViewById(R.id.currentMoodImage);
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         this.userId = getIntent().getExtras().getString("USER_ID");
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
         final ArrayAdapter<CharSequence> titleAdapter = ArrayAdapter.createFromResource(this, R.array.editmood_moodspinner, android.R.layout.simple_list_item_1);
@@ -193,7 +194,6 @@ public class ActivityAddMood extends AppCompatActivity {
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
         final CollectionReference userCollectionReference = db.collection("Users");
-        // todo:
         String date = getIntent().getExtras().getString("DATE");
         dateText.setText(date);
 
@@ -209,13 +209,12 @@ public class ActivityAddMood extends AppCompatActivity {
             moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
             moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
             moodUserName.setText(mood.getMoodUsername());
-
             byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
             Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            emojiPic.setImageBitmap(bitmap);
             dateText.setText(date);
             description.setText(mood.getMoodDescription());
-            String stringHEX = mood.getMoodColor();
+            setMoodEmoji(mood.getMoodTitle());
+            emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()));
             /**
              * conversion of string to bitmap for profile picture
              */
@@ -230,6 +229,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 e.getMessage();
             }
         }
+
 
         /**
          * Set profile background
@@ -265,6 +265,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 mood.setMoodColor(colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())));
                 mood.setMoodSituation(situations.getItem(moodSituation.getSelectedItemPosition()).toString());
                 mood.setMoodPhoto(image);
+
                 mood.setMoodEmoji(getMoodEmoji());
                 mood.setMoodUsername(mood.getMoodUsername());
                 String reason = description.getText().toString();
@@ -467,25 +468,39 @@ public class ActivityAddMood extends AppCompatActivity {
                 emojiPic.setImageResource(R.drawable.emoji_happy);
                 break;
             case "Sad":
+
                 emojiPic.setImageResource(R.drawable.emoji_sad);
+
                 break;
             case "Fear":
                 emojiPic.setImageResource(R.drawable.emoji_fear);
+
                 break;
             case "Surprise":
+
                 emojiPic.setImageResource(R.drawable.emoji_surprised);
+
                 break;
             case "Anger":
+
                 emojiPic.setImageResource(R.drawable.emoji_angry);
+
                 break;
             case "Bored":
+
                 emojiPic.setImageResource(R.drawable.emoji_bored);
+
                 break;
             case "Disgust":
+
                 emojiPic.setImageResource(R.drawable.emoji_disgust);
+
                 break;
             case "Love":
+
                 emojiPic.setImageResource(R.drawable.emoji_love);
+                emojiPic.setColorFilter(getColor(R.color.Love));
+
                 break;
         }
     }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -146,13 +149,12 @@ public class ActivityMoodView extends AppCompatActivity {
         moodTitle.setText(mood.getMoodTitle());
         android.text.format.DateFormat df = new android.text.format.DateFormat();
 
-
-
         description.setEnabled(false);
         description.setText(mood.getMoodDescription());
         byte[] decodedByte = Base64.decode(mood.getMoodEmoji(), 0);
         Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         setMoodEmoji(mood.getMoodTitle());
+        emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
 
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
@@ -254,9 +256,11 @@ public class ActivityMoodView extends AppCompatActivity {
                 emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
+
                 emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
             case "Disgust":
+
                 emojiPic.setImageResource(R.drawable.emoji_disgust);
                 break;
             case "Love":
