@@ -23,18 +23,19 @@
 
         <ImageView
             android:id="@+id/user_view_location_pic"
-            android:layout_width="match_parent"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
 
             android:layout_weight="1"
             android:clickable="true"
             android:foregroundTint="#00070101"
+            android:visibility="gone"
             app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
         <ImageView
             android:id="@+id/user_view_add_friend"
-            android:layout_width="match_parent"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="1"

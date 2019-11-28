@@ -70,6 +70,7 @@ public class UserViewActivity extends BaseDrawerActivity
     final static public int SORT_DATEASC = 2;
     ArrayList<String> moodFiltersToApply = new ArrayList<>();
     final static protected int MAX_FILTERS = 8;
+    public static int index;
 
     public UserViewActivity() {
         this.db = FirebaseFirestore.getInstance();
@@ -81,7 +82,7 @@ public class UserViewActivity extends BaseDrawerActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_view_user, frameLayout);
-        toolbar.setTitle("UserView");
+        toolbar.setTitle("Profile");
 
         try {
             this.currentUser = getIntent().getExtras().getString("USER_ID");
@@ -111,6 +112,7 @@ public class UserViewActivity extends BaseDrawerActivity
 
         if (this.currentUser.compareTo(this.targetUser) == 0) {
             this.viewMoods();
+            findViewById(R.id.user_view_location_pic).setVisibility(View.VISIBLE);
         }
     }
 
@@ -318,5 +320,12 @@ public class UserViewActivity extends BaseDrawerActivity
             }
         }
         updateSortAndFilter();
+    }
+
+    @Override
+    protected void onResume() {
+        index = -1;
+        super.onResume();
+        navigationView.getMenu().getItem(1).setChecked(true);
     }
 }
