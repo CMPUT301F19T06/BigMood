@@ -84,6 +84,7 @@ public class DashboardActivity extends BaseDrawerActivity {
                 Mood mood = new Mood(userId);
                 mood.setMoodUsername(getUsername());
                 intent.putExtra("Mood",mood);
+                intent.putExtra("EDIT","AddingMode");
                 startActivity(intent);
             }
         });

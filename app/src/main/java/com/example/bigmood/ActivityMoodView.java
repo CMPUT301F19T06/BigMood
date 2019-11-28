@@ -178,6 +178,7 @@ public class ActivityMoodView extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     Intent editMood = new Intent(ActivityMoodView.this, ActivityAddMood.class);
+                    editMood.putExtra("EDIT","EditingMode");
                     editMood.putExtra("USER_ID", userId);
                     editMood.putExtra("Mood", mood);
                     editMood.putExtra("DATE",date);

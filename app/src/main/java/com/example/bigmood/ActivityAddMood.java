@@ -93,10 +93,7 @@ import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.N
  */
 
 public class ActivityAddMood extends AppCompatActivity {
-
-    //todo: some new stuff
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private static final String TAG = "ActivityAddView";
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
@@ -109,7 +106,6 @@ public class ActivityAddMood extends AppCompatActivity {
     ImageView profilePic, deleteMood, emojiPic;
     Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     private FusedLocationProviderClient fusedLocationClient;
     private String userId, username;
     int imageTracker = 0;
@@ -139,7 +135,6 @@ public class ActivityAddMood extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState){
-
         super.onCreate(savedInstanceState);
         // all the stuff id's
         setContentView(R.layout.activity_add_mood);
@@ -172,6 +167,7 @@ public class ActivityAddMood extends AppCompatActivity {
         moodTitle.setAdapter(titleAdapter);
         moodSituation.setAdapter(situations);
 
+
         /**
          * HashMap for each mood Colors
          * changes the color according to moodtitle
@@ -188,48 +184,53 @@ public class ActivityAddMood extends AppCompatActivity {
             put("Touched","#EDC0E1");
         }};
 
-
+        /**
+         * getting the information from the intents
+         */
         final Mood mood = (Mood)getIntent().getSerializableExtra("Mood");
         username = mood.getMoodUsername();
         moodUserName.setText(mood.getMoodUsername());
         final CollectionReference collectionReference = db.collection("Moods");
-        final CollectionReference userCollectionReference = db.collection("Users");
         String date = getIntent().getExtras().getString("DATE");
+        String mode = getIntent().getExtras().getString("EDIT");
+
         dateText.setText(date);
 
         /**
-         * set the mood user name according to the username on database
+         * handling if it's either editing or adding a mood
          */
-        final String TAG = "Sample";
+        switch (mode){
+            case "AddingMode":
+                setMoodEmoji("Happy");
+                emojiPic.setColorFilter(getColor(R.color.Happy), PorterDuff.Mode.MULTIPLY);
+                break;
+            case "EditingMode":
+                setMoodEmoji(mood.getMoodTitle());
+                emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+                moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
+                moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
+                moodUserName.setText(mood.getMoodUsername());
+                byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
+                Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                emojiPic.setImageBitmap(bitmap);
+                setMoodEmoji(mood.getMoodTitle());
+                emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+                dateText.setText(date);
+                description.setText(mood.getMoodDescription());
 
-        /**
-         * If the index is not -1 or it's in edit mood situation
-         */
-        if (DashboardActivity.index != -1 ){
-            moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
-            moodSituation.setSelection(situations.getPosition(mood.getMoodSituation()));
-            moodUserName.setText(mood.getMoodUsername());
-            byte [] bytes=Base64.decode(mood.getMoodEmoji(),Base64.DEFAULT);
-            Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            dateText.setText(date);
-            description.setText(mood.getMoodDescription());
-            setMoodEmoji(mood.getMoodTitle());
-            emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()));
-            /**
-             * conversion of string to bitmap for profile picture
-             */
-            try{
-                byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
-                Bitmap bitmap1 =BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-                // todo: set image from google
-                profileBackground.setImageBitmap(bitmap1);
+                /**
+                 * conversion of string to bitmap for profile picture
+                 */
+                try{
+                    byte [] encodeByte=Base64.decode(mood.getMoodPhoto(),Base64.DEFAULT);
+                    Bitmap bitmap1 =BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+                    profileBackground.setImageBitmap(bitmap1);
 
 
-            }catch (Exception e){
-                e.getMessage();
-            }
+                }catch (Exception e){
+                    e.getMessage();
+                }
         }
-
 
         /**
          * Set profile background
@@ -406,7 +407,6 @@ public class ActivityAddMood extends AppCompatActivity {
         data.put("longitude", mood.getLongitude());
         data.put("latitude", mood.getLatitude());
         data.put("moodEmoji", mood.getMoodEmoji());
-        Log.d("Index: ",String.valueOf(index));
 
         /**
          * checks if the object is already present in the adapter
@@ -461,46 +461,31 @@ public class ActivityAddMood extends AppCompatActivity {
      * Set emoji according to mood type
      * @param emotion
      */
-    // todo: set emoji according to hashmap of mood type
     public void setMoodEmoji(String emotion){
         switch (emotion){
             case "Happy":
                 emojiPic.setImageResource(R.drawable.emoji_happy);
                 break;
             case "Sad":
-
                 emojiPic.setImageResource(R.drawable.emoji_sad);
-
                 break;
             case "Scared":
                 emojiPic.setImageResource(R.drawable.emoji_fear);
-
                 break;
-
             case "Surprised":
                 emojiPic.setImageResource(R.drawable.emoji_surprised);
-
                 break;
-
             case "Angry":
                 emojiPic.setImageResource(R.drawable.emoji_angry);
-
                 break;
             case "Bored":
-
                 emojiPic.setImageResource(R.drawable.emoji_bored);
-
                 break;
-
             case "Disgusted":
                 emojiPic.setImageResource(R.drawable.emoji_disgust);
-
                 break;
-
             case "Touched":
                 emojiPic.setImageResource(R.drawable.emoji_love);
-                emojiPic.setColorFilter(getColor(R.color.Love));
-
                 break;
         }
     }
@@ -555,33 +540,7 @@ public class ActivityAddMood extends AppCompatActivity {
         startActivityForResult(intent,MOODVIEW_ACCESS);
     }
 
-    private String cameraFilePath;
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        //This is the directory in which the file will be created. This is the default location of Camera photos
-        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DCIM), "Camera");
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for using again
-        cameraFilePath = "file://" + image.getAbsolutePath();
-        return image;
-    }
 
-    private void captureFromCamera() {
-        try {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", createImageFile()));
-            startActivityForResult(intent, CAMERA_ACCESS);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
 
     /**
      * On activity result takes care of the stack trace for each activity opening from edit mood

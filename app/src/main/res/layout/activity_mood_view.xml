@@ -48,7 +48,6 @@
                         android:layout_height="match_parent"
                         android:text="MoodTitle"
                         android:autofillHints="New Mood"
-                        android:textStyle="bold"
                         android:textColor="@color/cardview_dark_background"
                         android:gravity="center"
                         android:textSize="20sp"></TextView>
