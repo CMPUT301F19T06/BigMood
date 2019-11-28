@@ -421,12 +421,12 @@ public class GpsActivity extends AppCompatActivity{
                             getSelectedMood();
                             displayMood();
 
-                            return;
                         }
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
+                return;
             }
         });
     }
@@ -455,7 +455,7 @@ public class GpsActivity extends AppCompatActivity{
     private void displayMood(){
 
         Intent intent = new Intent(GpsActivity.this, ActivityMoodView.class);
-        //intent.putExtra("USER_ID", userId);
+        intent.putExtra("USER_ID", selectedMood.getMoodUsername());
         //Mood mood = new Mood();
         //mood.setMoodUsername(getUsername());
         intent.putExtra("Mood",selectedMood);
