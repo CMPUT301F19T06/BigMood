@@ -167,13 +167,13 @@ public class ActivityAddMood extends AppCompatActivity {
         final HashMap<String,String> colorHash = new HashMap<String, String>(){{
             put("Set Color", "#FFFFFF");
             put("Happy", "#FFFF00");
-            put("Fear", "#1AFF00");
-            put("Surprise", "#00B7FF");
-            put("Disgust", "#CC00FF");
-            put("Anger", "#AEFF00");
+            put("Scared", "#1AFF00");
+            put("Surprised", "#00B7FF");
+            put("Disgusted", "#CC00FF");
+            put("Angry", "#AEFF00");
             put("Bored", "#FE6301");
             put("Sad", "#0054FF");
-            put("Love","#EDC0E1");
+            put("Touched","#EDC0E1");
         }};
 
 
