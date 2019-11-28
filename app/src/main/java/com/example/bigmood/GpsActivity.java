@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -134,7 +135,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 Log.d("Location Changes", location.toString());
                 lastLong = location.getLongitude();
                 lastLat = location.getLatitude();
-                mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
+                mMapView.setViewpoint(new Viewpoint(new Point(lastLong, lastLat, wgs84), 3000));
             }
 
             @Override
@@ -222,7 +223,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
         });
 
-        //call to display map, might not need
+        //call to display map
         displayMap();
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -273,6 +274,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 if(userPoints == null){
                     retrieveUserMoods();
                 }
+                Toast.makeText(getApplicationContext(), userPoints.size(), Toast.LENGTH_LONG).show();
                 //displayMap();
                 locationManager.requestSingleUpdate(criteria, locationListener, looper);
                 setGraphics();
@@ -363,11 +365,11 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
 
         //init graphics overlay
-        /*
+
         graphicsOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
-         */
+
 
         //symbol type for map marker
         //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
@@ -375,29 +377,13 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
 
-
-/*
-        mMapView.addViewpointChangedListener(new ViewpointChangedListener() {
-            @Override
-            public void viewpointChanged(ViewpointChangedEvent viewpointChangedEvent) {
-                //update screen center view point
-                float centreX = mMapView.getX() + mMapView.getWidth() / 2;
-                float centreY = mMapView.getY() + mMapView.getHeight() / 2;
-                android.graphics.Point screenPoint = new android.graphics.Point(Math.round(centreX), Math.round(centreY));
-                newPoint = screenPoint;
-            }
-        });
-
- */
     }
 
     /**
      * show gps points of moods on map
      */
     private void setGraphics(){
-        //init graphics overlay
-        graphicsOverlay = new GraphicsOverlay();
-        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
 
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for (Point p : userPoints.values()){
@@ -422,18 +408,20 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                     IdentifyGraphicsOverlayResult overlayResult = identifyGraphic.get();
                     //get list of graphics
                     List<Graphic> graphic = overlayResult.getGraphics();
-                    if (graphic.isEmpty()){
-                        return;
-                    }
-                    for (Graphic g : graphic){
-                        selectedPoint = (Point) g.getGeometry();
-                        getSelectedMoodID();
-                        getSelectedMood();
-                        displayMood();
+                    if (!graphic.isEmpty()){
+
                         selectedMood = null;
                         selectedID = null;
                         selectedPoint = null;
-                        return;
+
+                        for (Graphic g : graphic){
+                            selectedPoint = (Point) g.getGeometry();
+                            getSelectedMoodID();
+                            getSelectedMood();
+                            displayMood();
+
+                            return;
+                        }
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
@@ -495,6 +483,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent event){
+            newPoint = new android.graphics.Point((int) event.getX(), (int) event.getY());
             identifyGraphics();
             return true;
         }
