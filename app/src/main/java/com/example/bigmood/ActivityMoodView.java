@@ -112,7 +112,6 @@ public class ActivityMoodView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // all the stuff id's
         setContentView(R.layout.activity_mood_view);
-        profilePic = findViewById(R.id.Profile_image);
         editButton = findViewById(R.id.edit_button);
         addLoc = findViewById(R.id.add_loc);
 
@@ -120,8 +119,6 @@ public class ActivityMoodView extends AppCompatActivity {
         description = findViewById(R.id.moodDescription);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
-
-
         moodSituation = findViewById(R.id.moodSituationSpinner);
         profileBackground = findViewById(R.id.background_pic);
         emojiPic = findViewById(R.id.currentMoodImage);
@@ -132,11 +129,11 @@ public class ActivityMoodView extends AppCompatActivity {
 
         final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
         final String date = (String) getIntent().getExtras().getString("DATE");
-        Log.d(TAG,"Date from mood View" + date);
         dateText.setText(date);
-        // todo:
+
         try {
             Date parsedDate = dateFormat.parse(date);
+
             Timestamp timestamp = new Timestamp(parsedDate);
             mood.setMoodDate(timestamp);
         } catch(Exception e) { //this generic but you can control another types of exception

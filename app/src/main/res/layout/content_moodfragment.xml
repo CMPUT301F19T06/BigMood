@@ -13,6 +13,8 @@
     android:clipToPadding="true"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
+    android:elevation="10dp"
+    android:outlineSpotShadowColor="@color/Anger"
     android:background="@drawable/cool_background"
     app:layout_scrollFlags="snap">
 
@@ -39,6 +41,7 @@
         android:layout_marginStart="56dp"
         android:text="@string/description"
         android:textSize="24sp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/moodUserName">

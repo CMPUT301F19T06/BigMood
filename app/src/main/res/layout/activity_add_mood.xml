@@ -14,10 +14,10 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/background_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/background_pic"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             >
 
         </ImageView>
@@ -34,6 +34,16 @@
         android:layout_marginLeft="365dp"
         android:src="@drawable/camera_info"
         >
+
+    </ImageView>
+    <ImageView
+        android:id="@+id/gallery_access"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="110dp"
+        android:layout_marginLeft="325dp"
+        android:src="@drawable/gallery_icon"
+        android:scaleType="fitXY">
 
     </ImageView>
 

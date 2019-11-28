@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -57,6 +59,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -93,7 +96,7 @@ public class ActivityAddMood extends AppCompatActivity {
     TextView dateText , description, moodUserName;
     Button saveButton;
     Button addLoc;
-    ImageView profileBackground, getProfileBackground;
+    ImageView profileBackground, getProfileBackground, galleryAccess;
     ImageView profilePic, deleteMood, emojiPic;
     Spinner moodTitle, moodColor, moodSituation; // moodTitle and moodType is the same here for now
     String image;
@@ -131,7 +134,6 @@ public class ActivityAddMood extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // all the stuff id's
         setContentView(R.layout.activity_add_mood);
-        profilePic = findViewById(R.id.Profile_image);
         saveButton = findViewById(R.id.save_button);
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
@@ -141,8 +143,10 @@ public class ActivityAddMood extends AppCompatActivity {
         moodSituation = findViewById(R.id.moodSituationSpinner);
 
         // profile pick and background pic
+        profilePic = findViewById(R.id.add_background_image);
         profileBackground = findViewById(R.id.background_pic);
         getProfileBackground = findViewById(R.id.add_background_image);
+        galleryAccess = findViewById(R.id.gallery_access);
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
@@ -227,7 +231,12 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 OpenCamera(v);
-                imageTracker = 1;
+            }
+        });
+        galleryAccess.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenAlbum(v);
             }
         });
 
@@ -482,6 +491,34 @@ public class ActivityAddMood extends AppCompatActivity {
         startActivityForResult(intent,MOODVIEW_ACCESS);
     }
 
+    private String cameraFilePath;
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        //This is the directory in which the file will be created. This is the default location of Camera photos
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Camera");
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        // Save a file: path for using again
+        cameraFilePath = "file://" + image.getAbsolutePath();
+        return image;
+    }
+
+    private void captureFromCamera() {
+        try {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", createImageFile()));
+            startActivityForResult(intent, CAMERA_ACCESS);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * On activity result takes care of the stack trace for each activity opening from edit mood
      * @param requestCode
@@ -501,13 +538,7 @@ public class ActivityAddMood extends AppCompatActivity {
             byte [] b =baos.toByteArray();
             String temp=Base64.encodeToString(b, Base64.DEFAULT);
             image = temp;
-            if (imageTracker == 1){
-                profileBackground.setImageBitmap(bitmap);
-            }
-            else{
-                profilePic.setImageBitmap(bitmap);
-            }
-            imageTracker = 0;
+            profileBackground.setImageBitmap(bitmap);
         }
 
         else if(requestCode==GALLERY_ACCESS) {
@@ -515,11 +546,20 @@ public class ActivityAddMood extends AppCompatActivity {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                profilePic.setImageBitmap(selectedImage);
+                imageStream.close();
+
+                profileBackground.setImageBitmap(selectedImage);
+                ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                selectedImage.compress(Bitmap.CompressFormat.JPEG,100, baos);
+                byte [] b =baos.toByteArray();
+                String temp=Base64.encodeToString(b, Base64.DEFAULT);
+                image = temp;
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show();
+            } catch (IOException e){
+                e.printStackTrace();
             }
         }
         else  if (requestCode == MOODVIEW_ACCESS){
