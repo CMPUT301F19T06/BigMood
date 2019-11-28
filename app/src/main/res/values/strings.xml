@@ -6,13 +6,13 @@
     <string name="editmood_image_description">Displays either the color of the mood of the mood or a picture uploaded by the user.</string>
     <string-array name="editmood_moodspinner">
         <item>Happy</item>
-        <item>Anger</item>
-        <item>Fear</item>
+        <item>Angry</item>
+        <item>Scared</item>
         <item>Sad</item>
-        <item>Surprise</item>
-        <item>Disgust</item>
+        <item>Surprised</item>
+        <item>Disgusted</item>
         <item>Bored</item>
-        <item>Love</item>
+        <item>Touched</item>
     </string-array>
 
     <string-array name="editmood_moodcolor_spinner">
