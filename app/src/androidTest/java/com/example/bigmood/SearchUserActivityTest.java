@@ -52,22 +52,6 @@ public class SearchUserActivityTest {
         Activity activity = rule.getActivity();
     }
 
-
-//    /**
-//     * Test if search button goes to SearchUserActivity
-//     */
-//    @Test
-//    public void checkSearchButton(){
-//        Intent intent = new Intent(getApplicationContext(), BaseDrawerActivity.class);
-//        intent.putExtra("USER_ID", "109926616595958819946");
-//        intent.putExtra("User_Name", "Jarrett Yu");
-//        rule.launchActivity(intent);
-//        solo.assertCurrentActivity("Wrong Activity", DashboardActivity.class);
-//
-//        solo.clickOnView(solo.getView(R.id.action_search));
-//        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
-//    }
-
     /**
      * Test if search button goes to SearchUserActivity
      */
