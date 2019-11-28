@@ -84,7 +84,7 @@ import com.squareup.okhttp.internal.Platform;
  *  - "FOLLOW": Show the moods of those that the user is following
  */
 
-public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
+public class GpsActivity extends AppCompatActivity{
 
     private String userId; //The Current user's id
 
@@ -208,7 +208,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             retrieveFollowedMoods();
         }
 
-                final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
+        final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
         FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
         FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
 
@@ -216,10 +216,47 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             @Override
             public void onClick(View view) {
                 //TODO: When the mode button is pressed
-                PopupMenu modemenu = new PopupMenu(getApplicationContext(), modeButton);
-                modemenu.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) getParent());
+                PopupMenu modemenu = new PopupMenu(getApplicationContext(), view);
                 modemenu.inflate(R.menu.gps_mode_menu);
                 modemenu.show();
+
+                modemenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    Activity#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for Activity#requestPermissions for more details.
+                            ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+                        }
+                        switch (item.getItemId()){
+
+                            case R.id.gps_mode_menu_user:
+
+                                if(userPoints == null){
+                                    retrieveUserMoods();
+                                }
+                                //Toast.makeText(GpsActivity.this, String.valueOf(userPoints.size()), Toast.LENGTH_LONG).show();
+                                //displayMap();
+                                locationManager.requestSingleUpdate(criteria, locationListener, looper);
+                                setGraphics();
+                                return true;
+                            case R.id.gps_mode_menu_followed:
+                                retrieveFollowedMoods();
+                                //displayMap();
+                                locationManager.requestSingleUpdate(criteria, locationListener, looper);
+                                setGraphics();
+                                return true;
+                            default:
+                                return false;
+
+                        }
+                    }
+                });
             }
         });
 
@@ -255,42 +292,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    Activity#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for Activity#requestPermissions for more details.
-            ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-        }
-        switch (item.getItemId()){
-
-            case R.id.gps_mode_menu_user:
-
-                if(userPoints == null){
-                    retrieveUserMoods();
-                }
-                Toast.makeText(getApplicationContext(), userPoints.size(), Toast.LENGTH_LONG).show();
-                //displayMap();
-                locationManager.requestSingleUpdate(criteria, locationListener, looper);
-                setGraphics();
-                return true;
-            case R.id.gps_mode_menu_followed:
-                retrieveFollowedMoods();
-                //displayMap();
-                locationManager.requestSingleUpdate(criteria, locationListener, looper);
-                setGraphics();
-                return true;
-            default:
-                return false;
-
-        }
-
-    }
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
