@@ -69,4 +69,11 @@ public class UserViewActivityTest {
         solo.wait(1);
         assertTrue(solo.searchText("Happy"));
     }
+
+    @Test
+    public void checkFriend() throws InterruptedException {
+        solo.clickOnView(solo.getView(R.id.user_view_add_friend));
+        //todo: figure out how to slap in query
+        assertTrue(true);
+    }
 }
