@@ -2,6 +2,7 @@ package com.example.bigmood;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ComponentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,6 +33,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static java.sql.Types.NULL;
 
 public class SearchUserActivity extends AppCompatActivity {
 
@@ -82,6 +85,17 @@ public class SearchUserActivity extends AppCompatActivity {
     private void firebaseUserSearch(String searchText) {
 
         Query firebaseSearchQuery = mUserDatabase.collection("Users").orderBy("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
+
+        firebaseSearchQuery
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.getResult().isEmpty()){
+                            Toast.makeText(SearchUserActivity.this, "Sorry we could not find " + searchText, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
 
         FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
                 .setQuery(firebaseSearchQuery, User.class)
