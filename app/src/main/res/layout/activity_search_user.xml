@@ -59,4 +59,13 @@
         android:layout_below="@+id/search_field"
         android:layout_marginTop="20dp"/>
 
+    <include layout="@layout/content_no_user_fragment"
+        android:id="@+id/SorryText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/search_field"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        />
+
 </RelativeLayout>

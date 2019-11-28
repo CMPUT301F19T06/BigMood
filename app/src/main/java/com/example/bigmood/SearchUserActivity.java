@@ -6,6 +6,7 @@ import androidx.core.app.ComponentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -83,8 +84,14 @@ public class SearchUserActivity extends AppCompatActivity {
      * @param searchText
      */
     private void firebaseUserSearch(String searchText) {
+        View fragment = findViewById(R.id.SorryText);
 
-        Query firebaseSearchQuery = mUserDatabase.collection("Users").orderBy("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
+
+        Query firebaseSearchQuery = mUserDatabase
+                .collection("Users")
+                .orderBy("displayName")
+                .startAt(searchText)
+                .endAt(searchText + "\uf8ff");
 
         firebaseSearchQuery
                 .get()
@@ -92,43 +99,78 @@ public class SearchUserActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.getResult().isEmpty()){
-                            Toast.makeText(SearchUserActivity.this, "Sorry we could not find " + searchText, Toast.LENGTH_LONG).show();
+                            FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
+                                    .setQuery(firebaseSearchQuery, User.class)
+                                    .build();
+
+                            FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
+                                @Override
+                                protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
+                                    holder.setDetails(model.getDisplayName());
+
+                                    holder.mView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+                                            intent.putExtra("USER_ID", userId);
+                                            intent.putExtra("TARGET_ID", model.getUserId());
+                                            intent.putExtra("HAS_VIEW_PERMISSION", true);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                }
+
+                                @NonNull
+                                @Override
+                                public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                                    View view = LayoutInflater.from(parent.getContext())
+                                            .inflate(R.layout.content_friendfragment, parent,false);
+                                    return new UsersViewHolder(view);
+                                }
+                            };
+                            mResultList.setAdapter(firebaseRecyclerAdapter);
+
+                            firebaseRecyclerAdapter.startListening();
+
+                            TextView SorText = fragment.findViewById(R.id.textView_Sorry);
+                            SorText.setText("Your Search Didn't Return Any Results");
+                            fragment.setVisibility(View.VISIBLE);
+                        } else{
+                            fragment.setVisibility(View.GONE);
+                            FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
+                                    .setQuery(firebaseSearchQuery, User.class)
+                                    .build();
+
+                            FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
+                                @Override
+                                protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
+                                    holder.setDetails(model.getDisplayName());
+
+                                    holder.mView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
+                                            intent.putExtra("USER_ID", userId);
+                                            intent.putExtra("TARGET_ID", model.getUserId());
+                                            intent.putExtra("HAS_VIEW_PERMISSION", true);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                }
+
+                                @NonNull
+                                @Override
+                                public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                                    View view = LayoutInflater.from(parent.getContext())
+                                            .inflate(R.layout.content_friendfragment, parent,false);
+                                    return new UsersViewHolder(view);
+                                }
+                            };
+                            mResultList.setAdapter(firebaseRecyclerAdapter);
+                            firebaseRecyclerAdapter.startListening();
                         }
                     }
                 });
-
-        FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
-                .setQuery(firebaseSearchQuery, User.class)
-                .build();
-
-        FirestoreRecyclerAdapter firebaseRecyclerAdapter = new FirestoreRecyclerAdapter<User, UsersViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull UsersViewHolder holder, int position, @NonNull User model) {
-                holder.setDetails(model.getDisplayName());
-
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
-                        intent.putExtra("USER_ID", userId);
-                        intent.putExtra("TARGET_ID", model.getUserId());
-                        intent.putExtra("HAS_VIEW_PERMISSION", true);
-                        startActivity(intent);
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            public UsersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.content_friendfragment, parent,false);
-                return new UsersViewHolder(view);
-            }
-        };
-        mResultList.setAdapter(firebaseRecyclerAdapter);
-
-        firebaseRecyclerAdapter.startListening();
     }
 
     /**
