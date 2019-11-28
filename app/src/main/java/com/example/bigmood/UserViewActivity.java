@@ -111,6 +111,7 @@ public class UserViewActivity extends BaseDrawerActivity
 
         if (this.currentUser.compareTo(this.targetUser) == 0) {
             this.viewMoods();
+            findViewById(R.id.user_view_location_pic).setVisibility(View.VISIBLE);
         }
     }
 
