@@ -241,7 +241,7 @@ public class Mood implements Serializable {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
-    
+
     public double getLatitude() {
         return latitude;
     }

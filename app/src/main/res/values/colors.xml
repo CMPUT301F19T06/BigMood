@@ -13,5 +13,10 @@
     <color name="Disgust">#CC00FF</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name= "colorBlue">#2400EE</color>
+    // mood fragments
+    <color name= "MoodfragmentShadow">@color/colorAccent</color>
+    <color name="MoodfragmentColor">#F9EBA5</color>
+    <color name="MoodFragmentBorder">#F4DD61</color>
+    <color name="DashboardBackground">#FDFAE8</color>
 
 </resources>

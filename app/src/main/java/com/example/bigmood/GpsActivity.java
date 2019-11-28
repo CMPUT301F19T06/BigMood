@@ -1,28 +1,43 @@
 package com.example.bigmood;
 
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.MenuInflater;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import com.esri.arcgisruntime.concurrent.ListenableFuture;
+import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.geometry.SpatialReferences;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.Basemap;
 import com.esri.arcgisruntime.mapping.Viewpoint;
+import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
+import com.esri.arcgisruntime.mapping.view.IdentifyGraphicsOverlayResult;
+import com.esri.arcgisruntime.mapping.view.ViewpointChangedEvent;
+import com.esri.arcgisruntime.mapping.view.ViewpointChangedListener;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -34,14 +49,21 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.okhttp.internal.Platform;
 
 
 /**
@@ -64,35 +86,40 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     private String userId; //The Current user's id
-    private String mode; // The mode of operation
-    //used to get last known location for now
-    private FusedLocationProviderClient fusedLocationClient;
+
     private double lastLong;
     private double lastLat;
+    private double tempLong = -113.52705;
+    private double tempLat = 53.52679;
     //spatial reference for map points
     private SpatialReference wgs84 = SpatialReferences.getWgs84();
     ///////////////////
     private String TAG = "GpsActivity";
 
-    /*
-    The arraylist for the user's moods, initially null and only loaded from the database if
-    the mode is set to "USER" and it is still null
-     */
-    private ArrayList<Point> userPoints = null;
 
-    /*
-    The arraylist holding the followed moods, this will need to be refreshed every time
-    that "FOLLOW" mode is selected.
-     */
+    //hashmap for mood ID and map points
+    private HashMap<String, Point> userPoints;
 
-    private ArrayList<Point> followedPoints;
-    private ArrayList<String> followedUsers;
+    private HashMap<String, Mood> userMoods;
+
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
 
+    private ArrayList<String> followedUsers;
+
     //using esri mapView
     private MapView mMapView;
+    private GraphicsOverlay graphicsOverlay;
+    private android.graphics.Point newPoint;
+    private Point selectedPoint;
+    private String selectedID;
+    private Mood selectedMood;
+    private LocationListener locationListener;
+    private Criteria criteria;
+    private LocationManager locationManager;
+    private Looper looper;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,27 +127,56 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         setContentView(R.layout.activity_gps);
 
         //get last location
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            lastLong = location.getLongitude();
-                            lastLat = location.getLatitude();
-                        }
-                    }
-                });
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                //mloc = location;
+                Log.d("Location Changes", location.toString());
+                lastLong = location.getLongitude();
+                lastLat = location.getLatitude();
+                mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("Status Changed", String.valueOf(status));
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("Provider Enabled", provider);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("Provider Disabled", provider);
+            }
+        };
+
+        criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setSpeedRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        looper = null;
         ////////////////////////////////
 
 
         this.userId = getIntent().getExtras().getString("USER_ID");
-        this.mode = getIntent().getExtras().getString("MODE");
+        String mode = getIntent().getExtras().getString("MODE");
 
 
         this.db = FirebaseFirestore.getInstance();
         this.moodCollection = db.collection("Moods");
+
+        this.userPoints = new HashMap<>();
+        this.userMoods = new HashMap<>();
 
         //Initialize the friend list
         followedUsers = new ArrayList<>();
@@ -144,53 +200,14 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
         });
 
-        if (this.mode.equals("USER")){
-            userPoints = new ArrayList<>();
+        if (mode.equals("USER")){
             retrieveUserMoods();
         }
         else{
             retrieveFollowedMoods();
         }
 
-        mMapView = findViewById(R.id.mapView);
-        ArcGISMap map =new ArcGISMap(Basemap.Type.TOPOGRAPHIC, lastLat, lastLong, 30);
-        mMapView.setMap(map);
-
-        //set center of map
-        mMapView.setViewpoint(new Viewpoint(new Point(lastLong, lastLat, wgs84), 3000));
-
-        //init graphics overlay
-        GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
-        mMapView.getGraphicsOverlays().add(graphicsOverlay);
-
-        //symbol type for map marker
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-
-        /*
-        Point point = new Point(lastLong, lastLat, wgs84);
-
-
-        Graphic graphic = new Graphic(point, symbol);
-        graphicsOverlay.getGraphics().add(graphic);
-
-        */
-
-        //show all pins on map
-        if (this.mode.equals("USER")){
-            for (Point i : userPoints){
-                Graphic graphic = new Graphic(i, symbol);
-                graphicsOverlay.getGraphics().add(graphic);
-            }
-        } else {
-            for (Point i : followedPoints){
-                Graphic graphic = new Graphic(i, symbol);
-                graphicsOverlay.getGraphics().add(graphic);
-            }
-        }
-
-        ///////////////////////////////////
-
-        final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
+                final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
         FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
         FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
 
@@ -204,6 +221,21 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 modemenu.show();
             }
         });
+
+        //call to display map, might not need
+        displayMap();
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+        }
+        locationManager.requestSingleUpdate(criteria, locationListener, looper);
+        /////////////////////
 
         zoominButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,19 +256,30 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    Activity#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for Activity#requestPermissions for more details.
+            ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
+        }
         switch (item.getItemId()){
+
             case R.id.gps_mode_menu_user:
 
                 if(userPoints == null){
                     retrieveUserMoods();
                 }
-                //TODO: change display to user moods
-                Toast.makeText(this, "Display Users", Toast.LENGTH_SHORT).show();
+                displayMap();
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
                 return true;
             case R.id.gps_mode_menu_followed:
                 retrieveFollowedMoods();
-                //TODO: change display to followed moods
-                Toast.makeText(this, "Display Followed", Toast.LENGTH_SHORT).show();
+                displayMap();
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
                 return true;
             default:
                 return false;
@@ -247,13 +290,18 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
+        userPoints.clear();
+        userMoods.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot doc : task.getResult()){
-                        userPoints.add(new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                    if (!task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                            userMoods.put(doc.getId(), Mood.getFromDoc(doc));
+                        }
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
@@ -265,5 +313,176 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
+        userPoints.clear();
+        userMoods.clear();
+        if (!followedUsers.isEmpty()){
+            for (String user : followedUsers){
+                moodCollection.whereEqualTo("moodCreator",user)
+                        .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            if (!task.getResult().isEmpty()) {
+                                ArrayList<DocumentSnapshot> temp = new ArrayList<>();
+                                for (QueryDocumentSnapshot doc : task.getResult()) {
+                                    temp.add(doc);
+                                }
+                                temp.sort(new Comparator<DocumentSnapshot>() {
+                                    @Override
+                                    public int compare(DocumentSnapshot doc1, DocumentSnapshot doc2) {
+                                        return ((Timestamp)doc2.get("moodDate")).compareTo((Timestamp)doc1.get("moodDate"));
+                                    }
+                                });
+                                userPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
+                                userMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
+                            }
+                        } else{
+                            Log.d(TAG, "Failed to get user moods");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    /**
+     *  Inflate and work with the map view
+     */
+    private void displayMap(){
+        mMapView = findViewById(R.id.mapView);
+        ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS, lastLat, lastLong, 30);
+        //inflate map
+        mMapView.setMap(map);
+
+        map.setMaxScale(1000);
+        map.setMinScale(8000);
+
+        //set center of map
+        //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
+
+        //init graphics overlay
+        graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
+        //symbol type for map marker
+        //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        setGraphics();
+
+        mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
+
+
+/*
+        mMapView.addViewpointChangedListener(new ViewpointChangedListener() {
+            @Override
+            public void viewpointChanged(ViewpointChangedEvent viewpointChangedEvent) {
+                //update screen center view point
+                float centreX = mMapView.getX() + mMapView.getWidth() / 2;
+                float centreY = mMapView.getY() + mMapView.getHeight() / 2;
+                android.graphics.Point screenPoint = new android.graphics.Point(Math.round(centreX), Math.round(centreY));
+                newPoint = screenPoint;
+            }
+        });
+
+ */
+    }
+
+    /**
+     * show gps points of moods on map
+     */
+    private void setGraphics(){
+        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        for (Point p : userPoints.values()){
+            Graphic graphic = new Graphic(p, symbol);
+            graphicsOverlay.getGraphics().add(graphic);
+        }
+    }
+
+    /**
+     * Idenetify which point user clicked
+     */
+    private void identifyGraphics(){
+        ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
+                mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false, 1);
+
+        identifyGraphic.addDoneListener(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    IdentifyGraphicsOverlayResult overlayResult = identifyGraphic.get();
+                    //get list of graphics
+                    List<Graphic> graphic = overlayResult.getGraphics();
+                    for (Graphic g : graphic){
+                        selectedPoint = (Point) g.getGeometry();
+                        getSelectedMoodID();
+                        getSelectedMood();
+                        displayMood();
+                        selectedMood = null;
+                        selectedID = null;
+                        selectedPoint = null;
+                        return;
+                    }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     *  find mood ID from user selected point
+     */
+    private void getSelectedMoodID(){
+        for(Map.Entry<String, Point> entry : userPoints.entrySet()){
+            if(Objects.equals(selectedPoint, entry.getValue())){
+                selectedID = entry.getKey();
+                return;
+            }
+        }
+    }
+
+    /**
+     *  get mood object for information to display
+     */
+    private void getSelectedMood(){
+        selectedMood = userMoods.get(selectedID);
+        return;
+    }
+
+    //this might work
+    private void displayMood(){
+
+        Intent intent = new Intent(GpsActivity.this, ActivityMoodView.class);
+        //intent.putExtra("USER_ID", userId);
+        //Mood mood = new Mood();
+        //mood.setMoodUsername(getUsername());
+        intent.putExtra("Mood",selectedMood);
+        startActivity(intent);
+    }
+
+    /**
+     * delete the map when user leaves gps mode
+     */
+    @Override
+    protected void onDestroy(){
+        if(mMapView != null){
+            mMapView.dispose();
+        }
+        super.onDestroy();
+    }
+
+    /**
+     * Custom on touch listener for map view
+     */
+    class mapOnTouchCustom extends DefaultMapViewOnTouchListener{
+
+        public mapOnTouchCustom(Context context, MapView mapView){
+            super(context, mapView);
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent event){
+            identifyGraphics();
+            return true;
+        }
     }
 }
