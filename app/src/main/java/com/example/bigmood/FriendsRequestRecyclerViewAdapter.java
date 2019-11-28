@@ -34,6 +34,10 @@ import java.util.List;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
+/**
+ *  Class for the adapter for the Friend fragment. Displays a user's profile pic and username,
+ *  as well as the option to accept and reject the request
+ */
 //Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
 public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRequestRecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";

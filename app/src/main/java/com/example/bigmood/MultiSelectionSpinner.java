@@ -13,11 +13,11 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-/*
+/**
 *   adapted from https://github.com/GunaseelanArumaikkannu/MultiSpinner
 *
 *   modified to hard code the initial string
-* */
+*/
 @SuppressLint("AppCompatCustomView")
 public class MultiSelectionSpinner extends Spinner implements OnMultiChoiceClickListener {
 

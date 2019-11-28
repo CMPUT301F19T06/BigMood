@@ -33,6 +33,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ *  Activity for searching for users. Clicking on a user sends the current user to view their profile
+ *  with the appropriate permissions.
+ */
 public class SearchUserActivity extends AppCompatActivity {
 
     private EditText mSearchField;

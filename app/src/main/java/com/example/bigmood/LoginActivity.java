@@ -32,8 +32,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-// Login screen for google authentication. Authentication was used from the developers guide
-// at https://developers.google.com/identity/sign-in/android/sign-in
+/**
+ *  Login screen for google authentication. Authentication was used from the developers guide
+ *  at https://developers.google.com/identity/sign-in/android/sign-in
+ *
+ *  Connects to the dashboard automatically if the google account is still valid
+ */
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private FirebaseFirestore db;
     private CollectionReference userCollectionReference;

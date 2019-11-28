@@ -40,6 +40,12 @@ import java.util.List;
 
 import static java.sql.Types.NULL;
 
+/**
+ *  Allows a user to see their followed people and requests to follow them. They can choose to
+ *  accept or decline a request. Takes inputs USER_ID.
+ *
+ *  USER_ID: User id of current user
+ */
 public class FriendsActivity extends BaseDrawerActivity {
     //TODO: clean up imports and variables
     private static final String TAG = "FRIENDSACTIVITY";

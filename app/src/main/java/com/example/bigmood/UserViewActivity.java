@@ -35,7 +35,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-/*  This activity displays a user who's id is passed to it in an intent.
+/**
+ *  This activity displays a user who's id is passed to it in an intent.
  *  It also requires a permission flag to be passed to it since it is more
  *  convenient to acquire the flag from outside the activity.
  *

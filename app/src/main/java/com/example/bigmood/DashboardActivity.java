@@ -36,6 +36,15 @@ import java.util.Comparator;
 import java.util.List;
 
 
+/**
+ *  Class designed to be the "home" screen of application. Allows a user to see their last
+ *  posted mood and the last posted mood of each of their friends.
+ *
+ *  Takes in 2 inputs, USER_ID and User_Name
+ *
+ *  USER_ID: User id of current user
+ *  User_Name: Display name of current user
+ */
 public class DashboardActivity extends BaseDrawerActivity {
     private static final String TAG = "DASHBOARDACTIVITY";
     private FirebaseFirestore db;

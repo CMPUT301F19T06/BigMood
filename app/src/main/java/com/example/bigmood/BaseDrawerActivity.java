@@ -31,6 +31,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+
+/**
+ *  Class for implementing a sidemenu for navigation. Connections friends, dashboard, My Profile, and map
+ *  Requires USER_ID and User_Name as extras in intents.
+ *
+ *  USER_ID: User id of current user
+ *  User_Name: Display name of current user
+ */
 public class BaseDrawerActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     public FrameLayout frameLayout;
