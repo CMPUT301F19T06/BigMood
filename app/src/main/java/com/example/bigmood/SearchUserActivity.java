@@ -65,7 +65,7 @@ public class SearchUserActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String searchText = mSearchField.getText().toString();
                 if(searchText.compareTo("") != 0){
-                    Toast.makeText(SearchUserActivity.this, "Searching", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SearchUserActivity.this, "Searching...", Toast.LENGTH_SHORT).show();
                     firebaseUserSearch(searchText);
                 } else{
                     Toast.makeText(SearchUserActivity.this, "Please enter a Name", Toast.LENGTH_LONG).show();
@@ -76,6 +76,7 @@ public class SearchUserActivity extends AppCompatActivity {
 
     /**
      * Searches for the searchText in firebase under the collection "Users" and adds it to a RecyclerView
+     * Search Query is Case Sensitive
      * @param searchText
      */
     private void firebaseUserSearch(String searchText) {
