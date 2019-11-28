@@ -74,6 +74,10 @@ public class SearchUserActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Searches for the searchText in firebase under the collection "Users" and adds it to a RecyclerView
+     * @param searchText
+     */
     private void firebaseUserSearch(String searchText) {
 
         Query firebaseSearchQuery = mUserDatabase.collection("Users").orderBy("displayName").startAt(searchText).endAt(searchText + "\uf8ff");
@@ -112,7 +116,9 @@ public class SearchUserActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.startListening();
     }
 
-    //View Holder Class
+    /**
+     * UserViewHolder Class to set the details in the fragments in the RecyclerView
+      */
     public static class UsersViewHolder extends RecyclerView.ViewHolder {
         View mView;
 
