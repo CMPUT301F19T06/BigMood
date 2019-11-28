@@ -370,7 +370,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
 
 
-
+/*
         mMapView.addViewpointChangedListener(new ViewpointChangedListener() {
             @Override
             public void viewpointChanged(ViewpointChangedEvent viewpointChangedEvent) {
@@ -381,6 +381,8 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 newPoint = screenPoint;
             }
         });
+        
+ */
     }
 
     /**
