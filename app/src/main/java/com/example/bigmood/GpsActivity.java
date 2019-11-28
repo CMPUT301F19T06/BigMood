@@ -273,13 +273,15 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 if(userPoints == null){
                     retrieveUserMoods();
                 }
-                displayMap();
+                //displayMap();
                 locationManager.requestSingleUpdate(criteria, locationListener, looper);
+                setGraphics();
                 return true;
             case R.id.gps_mode_menu_followed:
                 retrieveFollowedMoods();
-                displayMap();
+                //displayMap();
                 locationManager.requestSingleUpdate(criteria, locationListener, looper);
+                setGraphics();
                 return true;
             default:
                 return false;
@@ -361,12 +363,15 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
 
         //init graphics overlay
+        /*
         graphicsOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
+         */
+
         //symbol type for map marker
         //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-        setGraphics();
+        //setGraphics();
 
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
 
@@ -390,6 +395,10 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
      * show gps points of moods on map
      */
     private void setGraphics(){
+        //init graphics overlay
+        graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for (Point p : userPoints.values()){
             Graphic graphic = new Graphic(p, symbol);
@@ -404,13 +413,18 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
                 mMapView.identifyGraphicsOverlayAsync(graphicsOverlay, newPoint, 10, false, 1);
 
+
         identifyGraphic.addDoneListener(new Runnable() {
             @Override
             public void run() {
                 try{
+
                     IdentifyGraphicsOverlayResult overlayResult = identifyGraphic.get();
                     //get list of graphics
                     List<Graphic> graphic = overlayResult.getGraphics();
+                    if (graphic.isEmpty()){
+                        return;
+                    }
                     for (Graphic g : graphic){
                         selectedPoint = (Point) g.getGeometry();
                         getSelectedMoodID();
