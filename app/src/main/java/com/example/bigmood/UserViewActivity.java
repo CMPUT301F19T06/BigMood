@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -175,7 +176,6 @@ public class UserViewActivity extends BaseDrawerActivity
         String targetUser = this.targetUser;
         final DocumentReference docRef = this.userCollectionReference.document(targetUser);
         final HashMap<String, Object> data = new HashMap<>();
-        data.put("targetUserId", this.currentUser);
         ImageView imageView = findViewById(R.id.user_view_add_friend);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,18 +186,28 @@ public class UserViewActivity extends BaseDrawerActivity
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                List<String> tempReq = new ArrayList<String>();
                                 if (documentSnapshot.contains("incomingReq")) {
-                                    List<String> temp = (ArrayList<String>) documentSnapshot.get("incomingReq");
-                                } else {
-                                    List<String> temp = new ArrayList<String>();
+                                    tempReq = (ArrayList<String>) documentSnapshot.get("incomingReq");
                                 }
-                                List<String> temp = (List<String>) documentSnapshot.get("incomingReq");
-                                temp.add(currentUser);
-                                data.put("incomingReq", temp);
-                                docRef.set(data);
+                                if (documentSnapshot.contains("userFriends")) {
+                                    List<String> tempFriends = (ArrayList<String>) documentSnapshot.get("incomingReq");
+                                    if (tempFriends.contains(currentUser)) {
+                                        Toast.makeText(UserViewActivity.this, "You're already following!", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                }
+
+                                if (!tempReq.contains(currentUser)) {
+                                    tempReq.add(currentUser);
+                                    data.put("incomingReq", tempReq);
+                                    docRef.set(data, SetOptions.merge());
+                                    Toast.makeText(UserViewActivity.this, "Sent follow request!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(UserViewActivity.this, "Follow request already sent!", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
-                Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
             }
         });
     }
