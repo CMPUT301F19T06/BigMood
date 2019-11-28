@@ -27,13 +27,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
+/**
+ *  Class for the adapter for the Friend fragment. Displays a user's profile pic and username,
+ *  as well as the option to accept and reject the request
+ */
 //Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
 public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<FriendsRequestRecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";
@@ -151,7 +157,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         }
     }
 
-    private void updateFriend(String userID){
+    private void updateFriend(String targetId){
         final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
         final DocumentReference docRef = this.userCollectionReference.document(this.userId);
         final HashMap<String, Object> data = new HashMap<>();
@@ -162,26 +168,25 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     if (doc.contains("userFriends")) {
-                        // This line might explode
-                        // slam in a try/catch
+                        // take the user's friends and append userID and update
                         List<String> temp = (List) doc.get("userFriends");
                         ArrayList<String> tempArray = new ArrayList<String>(temp);
-                        tempArray.add(userID);
-                        data.put("incomingReq", temp);
-                        docRef.set(data);
+                        tempArray.add(targetId);
+                        data.put("userFriends", tempArray);
+                        docRef.set(data, SetOptions.merge());
                     } else {
                         // no friends, you fucking loser
                         List<String> temp = (List<String>) doc.get("incomingReq");
-                        temp.add(userID);
-                        data.put("incomingReq", temp);
-                        docRef.set(data);
+                        temp.add(targetId);
+                        data.put("userFriends", temp);
+                        docRef.set(data, SetOptions.merge());
                     }
                 }
             }
         });
     }
 
-    private void deleteRequest(String userID){
+    private void deleteRequest(String targetId){
         final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
         final DocumentReference docRef = this.userCollectionReference.document(this.userId);
         final HashMap<String, Object> data = new HashMap<>();
@@ -193,11 +198,11 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     // This line might explode
                     // slam in a try/catch
-                    List<String> temp = (List) doc.get("userFriends");
+                    List<String> temp = (List) doc.get("incomingReq");
                     ArrayList<String> tempArray = new ArrayList<String>(temp);
-                    tempArray.remove(userID);
-                    data.put("incomingReq", temp);
-                    docRef.set(data);
+                    tempArray.remove(targetId);
+                    data.put("incomingReq", tempArray);
+                    docRef.set(data, SetOptions.merge());
                 }
             }
         });

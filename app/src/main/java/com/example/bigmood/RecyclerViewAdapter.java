@@ -27,6 +27,10 @@ import java.util.ArrayList;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
+/**
+ *  Adapter for moods for use in Recycler views. Displays the mood title, the mood creator,
+ *  the date for the mood, as well as a colored emoji
+ */
 //Here, we're using a RecyclerViewAdapter instead of a Listylist due to the limitations
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>{
     private static final String TAG = "RecyclerViewAdapter";
