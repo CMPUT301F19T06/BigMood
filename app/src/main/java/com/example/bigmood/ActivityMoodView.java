@@ -246,24 +246,23 @@ public class ActivityMoodView extends AppCompatActivity {
             case "Sad":
                 emojiPic.setImageResource(R.drawable.emoji_sad);
                 break;
-            case "Fear":
+            case "Scared":
                 emojiPic.setImageResource(R.drawable.emoji_fear);
                 break;
-            case "Surprise":
+            case "Surprised":
                 emojiPic.setImageResource(R.drawable.emoji_surprised);
                 break;
-            case "Anger":
+            case "Angry":
                 emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
 
                 emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
-            case "Disgust":
-
+            case "Disgusted":
                 emojiPic.setImageResource(R.drawable.emoji_disgust);
                 break;
-            case "Love":
+            case "Touched":
                 emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
         }

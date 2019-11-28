@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
- * Test class for LoginActivity and BaseDrawerActivity. All the UI tests are written here. Robotium test framework is used
+ * Test class for LoginActivity. All the UI tests are written here. Robotium test framework is used
  */
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTest {
@@ -49,30 +49,14 @@ public class LoginActivityTest {
     }
 
     /**
-     * Test if nav drawer opens
+     * Test if login screen works
      */
     @Test
-    public void checkOpenNavDrawer(){
+    public void checkLogin(){
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
 
-        solo.waitForActivity(BaseDrawerActivity.class, 2000);
-        solo.assertCurrentActivity("Wrong Activity", BaseDrawerActivity.class);
-
-        Point deviceSize = new Point();
-        solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getSize(deviceSize);
-
-        float screenWidth = deviceSize.x;
-        float screenHeight = deviceSize.y;
-        float fromX = 0;
-        float toX = screenWidth / 2;
-        float fromY = screenHeight / 2;
-        float toY = fromY;
-
-        solo.drag(fromX, toX, fromY, toY,5);
-        solo.searchText("Dashboard");
-        solo.searchText("Friends");
+        assertTrue(solo.searchButton("Sign in"));
     }
-
 
     /**
      * Close activity after each test

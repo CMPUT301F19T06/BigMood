@@ -179,13 +179,13 @@ public class ActivityAddMood extends AppCompatActivity {
         final HashMap<String,String> colorHash = new HashMap<String, String>(){{
             put("Set Color", "#FFFFFF");
             put("Happy", "#FFFF00");
-            put("Fear", "#1AFF00");
-            put("Surprise", "#00B7FF");
-            put("Disgust", "#CC00FF");
-            put("Anger", "#AEFF00");
+            put("Scared", "#1AFF00");
+            put("Surprised", "#00B7FF");
+            put("Disgusted", "#CC00FF");
+            put("Angry", "#AEFF00");
             put("Bored", "#FE6301");
             put("Sad", "#0054FF");
-            put("Love","#EDC0E1");
+            put("Touched","#EDC0E1");
         }};
 
 
@@ -472,17 +472,17 @@ public class ActivityAddMood extends AppCompatActivity {
                 emojiPic.setImageResource(R.drawable.emoji_sad);
 
                 break;
-            case "Fear":
+            case "Scared":
                 emojiPic.setImageResource(R.drawable.emoji_fear);
 
                 break;
-            case "Surprise":
 
+            case "Surprised":
                 emojiPic.setImageResource(R.drawable.emoji_surprised);
 
                 break;
-            case "Anger":
 
+            case "Angry":
                 emojiPic.setImageResource(R.drawable.emoji_angry);
 
                 break;
@@ -491,13 +491,13 @@ public class ActivityAddMood extends AppCompatActivity {
                 emojiPic.setImageResource(R.drawable.emoji_bored);
 
                 break;
-            case "Disgust":
 
+            case "Disgusted":
                 emojiPic.setImageResource(R.drawable.emoji_disgust);
 
                 break;
-            case "Love":
 
+            case "Touched":
                 emojiPic.setImageResource(R.drawable.emoji_love);
                 emojiPic.setColorFilter(getColor(R.color.Love));
 
