@@ -86,8 +86,7 @@ import com.squareup.okhttp.internal.Platform;
 public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
     private String userId; //The Current user's id
-    //used to get last known location for now
-    private FusedLocationProviderClient fusedLocationClient;
+
     private double lastLong;
     private double lastLat;
     private double tempLong = -113.52705;
@@ -356,6 +355,9 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         //inflate map
         mMapView.setMap(map);
 
+        map.setMaxScale(1000);
+        map.setMinScale(8000);
+
         //set center of map
         //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
 
@@ -381,7 +383,7 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
                 newPoint = screenPoint;
             }
         });
-        
+
  */
     }
 
