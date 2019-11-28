@@ -115,20 +115,21 @@ public class FriendsActivity extends BaseDrawerActivity {
                         // slam in a try/catch
                         Toast.makeText(FriendsActivity.this, "You have friends. Congrats.", Toast.LENGTH_SHORT).show();
                         userFriends = (List) doc.get("userFriends");
-                        ArrayList<String> temp = new ArrayList<String>(userFriends);
-                        friendObjects.addAll(temp);
-                        Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendObjects.toString());
-                        adapter.notifyDataSetChanged();
-                        emptyFriends.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
-                    } else {
-                        // no friends, you fucking loser
-                        // todo: put in something for no friends
-                        emptyFriends.setVisibility(View.VISIBLE);
-                        Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
-                        recyclerView.setVisibility(View.GONE);
+                        if (!userFriends.isEmpty()){
+                            ArrayList<String> temp = new ArrayList<String>(userFriends);
+                            friendObjects.addAll(temp);
+                            Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendObjects.toString());
+                            adapter.notifyDataSetChanged();
+                            emptyFriends.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                        } else {
+                            // no friends, you fucking loser
+                            // todo: put in something for no friends
+                            emptyFriends.setVisibility(View.VISIBLE);
+                            //Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
+                            recyclerView.setVisibility(View.GONE);
                     }
-                }
+                }}
             }
         });
     }
@@ -145,22 +146,23 @@ public class FriendsActivity extends BaseDrawerActivity {
                         // slam in a try/catch
                         Toast.makeText(FriendsActivity.this, "You have friend (requests). Congrats.", Toast.LENGTH_SHORT).show();
                         userFriendReqs = (List) doc.get("incomingReq");
-                        ArrayList<String> temp = new ArrayList<String>(userFriendReqs);
-                        friendReq.addAll(temp);
-                        Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendReq.toString());
-                        adapterReq.notifyDataSetChanged();
-                        emptyFriendReqs.setVisibility(View.GONE);
-                        recyclerViewReq.setVisibility(View.VISIBLE);
-                    } else {
-                        // no friends, you fucking loser
-                        // todo: put in something for no friends
-                        emptyFriendReqs.setVisibility(View.VISIBLE);
-                        Log.d(TAG, "initRecyclerViewFriendReq: No Friends.");
-                        Toast.makeText(FriendsActivity.this, "4ever request alone", Toast.LENGTH_SHORT).show();
-                        recyclerViewReq.setVisibility(View.GONE);
-                    }
+                        if (!userFriendReqs.isEmpty()){
+                            ArrayList<String> temp = new ArrayList<String>(userFriendReqs);
+                            friendReq.addAll(temp);
+                            Log.d(TAG, "initRecyclerViewFriends: Vibe Check"+friendReq.toString());
+                            adapterReq.notifyDataSetChanged();
+                            emptyFriendReqs.setVisibility(View.GONE);
+                            recyclerViewReq.setVisibility(View.VISIBLE);
+                        } else {
+                            // no friends, you fucking loser
+                            // todo: put in something for no friends
+                            emptyFriendReqs.setVisibility(View.VISIBLE);
+                            Log.d(TAG, "initRecyclerViewFriendReq: No Friends.");
+                            //Toast.makeText(FriendsActivity.this, "4ever request alone", Toast.LENGTH_SHORT).show();
+                            recyclerViewReq.setVisibility(View.GONE);
+                        }
                 }
-            }
+            }}
         });
     }
 
