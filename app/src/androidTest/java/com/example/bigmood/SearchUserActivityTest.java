@@ -25,7 +25,7 @@ import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentat
 import static junit.framework.TestCase.assertTrue;
 
 /**
- * Test class for LoginActivity and BaseDrawerActivity. All the UI tests are written here. Robotium test framework is used
+ * Test class for SearchUserActivity. All the UI tests are written here. Robotium test framework is used
  */
 @RunWith(AndroidJUnit4.class)
 public class SearchUserActivityTest {
@@ -53,7 +53,7 @@ public class SearchUserActivityTest {
     }
 
     /**
-     * Test if search button goes to SearchUserActivity
+     * Test Search functionality and clicking on user
      */
     @Test
     public void checkSearch(){
