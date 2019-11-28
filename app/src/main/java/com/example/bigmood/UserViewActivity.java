@@ -187,18 +187,32 @@ public class UserViewActivity extends BaseDrawerActivity
                         .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                List<String> temp = new ArrayList<String>();
                                 if (documentSnapshot.contains("incomingReq")) {
-                                    List<String> temp = (ArrayList<String>) documentSnapshot.get("incomingReq");
+                                    temp = (ArrayList<String>) documentSnapshot.get("incomingReq");
                                 } else {
-                                    List<String> temp = new ArrayList<String>();
+                                     temp = new ArrayList<String>();
                                 }
-                                List<String> temp = (List<String>) documentSnapshot.get("incomingReq");
-                                temp.add(currentUser);
-                                data.put("incomingReq", temp);
-                                docRef.set(data);
+                                temp = (List<String>) temp;
+                                if(temp!=null){
+                                    if(temp.contains(currentUser)){
+                                        Toast.makeText(UserViewActivity.this, "Follow Request Pending!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        temp.add(currentUser);
+                                        data.put("incomingReq", temp);
+                                        docRef.set(data);
+                                        Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
+                                    }
+                                    //already have a pending request
+                                } else {
+                                    temp.add(currentUser);
+                                    data.put("incomingReq", temp);
+                                    docRef.set(data);
+                                    Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
-                Toast.makeText(UserViewActivity.this, "Send Follow Request!", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
