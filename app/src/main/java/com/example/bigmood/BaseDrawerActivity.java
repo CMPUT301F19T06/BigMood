@@ -75,7 +75,7 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
         nav_UserId.setText(userID);
 
         //Start the app inflating the DashboardActivity
-        if(toolbar.getTitle().toString() == getString(R.string.app_name)){
+        if(toolbar.getTitle().toString().compareTo("BigMood") == 0){
             Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.putExtra("User_Name", username);
@@ -105,8 +105,8 @@ public class BaseDrawerActivity extends AppCompatActivity implements NavigationV
             Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
             intent.putExtra("USER_ID", userID);
             intent.putExtra("TARGET_ID", userID);
+            intent.putExtra("User_Name", username);
             startActivity(intent);
-
         } else if (id == R.id.nav_friends) {
             Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
             intent.putExtra("USER_ID", userID);

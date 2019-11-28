@@ -98,7 +98,7 @@ public class FriendsActivity extends BaseDrawerActivity {
     protected void onResume() {
         index = -1;
         super.onResume();
-        navigationView.getMenu().getItem(0).setChecked(true);
+        navigationView.getMenu().getItem(2).setChecked(true);
     }
 
     // step 1: get all friends and shunt them into a list
