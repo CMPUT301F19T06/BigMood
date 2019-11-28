@@ -207,6 +207,21 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
             retrieveFollowedMoods();
         }
 
+                final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
+        FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
+        FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
+
+        modeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //TODO: When the mode button is pressed
+                PopupMenu modemenu = new PopupMenu(getApplicationContext(), modeButton);
+                modemenu.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) getParent());
+                modemenu.inflate(R.menu.gps_mode_menu);
+                modemenu.show();
+            }
+        });
+
         //call to display map, might not need
         displayMap();
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -221,22 +236,6 @@ public class GpsActivity extends AppCompatActivity implements PopupMenu.OnMenuIt
         }
         locationManager.requestSingleUpdate(criteria, locationListener, looper);
         /////////////////////
-
-
-        final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
-        FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
-        FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
-
-        modeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: When the mode button is pressed
-                PopupMenu modemenu = new PopupMenu(getApplicationContext(), modeButton);
-                modemenu.setOnMenuItemClickListener((PopupMenu.OnMenuItemClickListener) getParent());
-                modemenu.inflate(R.menu.gps_mode_menu);
-                modemenu.show();
-            }
-        });
 
         zoominButton.setOnClickListener(new View.OnClickListener() {
             @Override
