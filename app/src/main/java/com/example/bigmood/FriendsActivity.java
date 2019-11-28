@@ -87,7 +87,7 @@ public class FriendsActivity extends BaseDrawerActivity {
                 if (doc.contains("userFriends")) {
                     // This line might explode
                     // slam in a try/catch
-                    Toast.makeText(FriendsActivity.this, "You have friends. Congrats.", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(FriendsActivity.this, "You have friends. Congrats.", Toast.LENGTH_SHORT).show();
                     userFriends = (List) doc.get("userFriends");
                     ArrayList<String> temp = new ArrayList<String>(userFriends);
                     friendObjects.addAll(temp);
@@ -98,7 +98,7 @@ public class FriendsActivity extends BaseDrawerActivity {
                 } else {
                     // no friends, you fucking loser
                     emptyFriends.setVisibility(View.VISIBLE);
-                    Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(FriendsActivity.this, "4ever alone", Toast.LENGTH_SHORT).show();
                     recyclerView.setVisibility(View.GONE);
                 }
             }
