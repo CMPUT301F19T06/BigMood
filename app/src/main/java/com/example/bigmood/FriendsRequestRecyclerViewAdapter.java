@@ -198,10 +198,10 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                     // This line might explode
                     // slam in a try/catch
-                    List<String> temp = (List) doc.get("userFriends");
+                    List<String> temp = (List) doc.get("incomingReq");
                     ArrayList<String> tempArray = new ArrayList<String>(temp);
                     tempArray.remove(targetId);
-                    data.put("incomingReq", temp);
+                    data.put("incomingReq", tempArray);
                     docRef.set(data, SetOptions.merge());
                 }
             }

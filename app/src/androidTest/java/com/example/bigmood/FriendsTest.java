@@ -68,4 +68,10 @@ public class FriendsTest {
         solo.wait(1);
         assertTrue(solo.searchText("Happy"));
     }
+
+    @Test
+    public void testFriend() throws InterruptedException{
+        //todo: artifically add friend request into profile
+        //todo: artifically reject button, open nav drawer, and connections
+    }
 }
