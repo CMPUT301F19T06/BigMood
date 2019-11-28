@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         byte[] decodedByte = Base64.decode(moodIDs.get(position).getMoodEmoji(), 0);
         Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         holder.emoji.setImageBitmap(image);
+        holder.emoji.setColorFilter(Color.parseColor(moodIDs.get(position).getMoodColor()), PorterDuff.Mode.MULTIPLY);
 
 
         String stringHEX = moodIDs.get(position).getMoodColor();
