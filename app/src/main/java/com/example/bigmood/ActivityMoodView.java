@@ -125,20 +125,19 @@ public class ActivityMoodView extends AppCompatActivity {
 
         final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
         final String date = (String) getIntent().getExtras().getString("DATE");
-        dateText.setText(date);
-
+        Date parsedDate = new Date();
         try {
-            Date parsedDate = dateFormat.parse(date);
+            parsedDate = dateFormat.parse(date);
 
             Timestamp timestamp = new Timestamp(parsedDate);
             mood.setMoodDate(timestamp);
         } catch(Exception e) { //this generic but you can control another types of exception
             e.printStackTrace();
         }
-
+        dateText.setText(dateFormat.format(parsedDate));
         Toast.makeText(getApplicationContext(),date,Toast.LENGTH_LONG);
         moodUserName.setText(mood.getMoodUsername());
-        moodSituation.setText("Was " + mood.getMoodSituation());
+        moodSituation.setText(mood.getMoodSituation());
         moodTitle.setText(mood.getMoodTitle());
         android.text.format.DateFormat df = new android.text.format.DateFormat();
 

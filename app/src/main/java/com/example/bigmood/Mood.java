@@ -260,10 +260,12 @@ public class Mood implements Serializable {
         String moodEmoji = doc.getString("moodEmoji");
         String moodSituation = doc.getString("moodSituation");
         String moodUsername = doc.getString("userName");
+        Timestamp moodDate = doc.getTimestamp("moodDate");
         mood.setMoodID(moodId);
         mood.setMoodEmoji(moodEmoji);
         mood.setMoodUsername(moodUsername);
         mood.setMoodSituation(moodSituation);
+        mood.setMoodDate(moodDate);
         mood.setMoodPhoto(moodPhoto);
         return(mood);
     }

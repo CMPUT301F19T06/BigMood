@@ -23,6 +23,8 @@ import android.widget.Toast;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
@@ -66,7 +68,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         //set up the connection to view here, TBA
         //temporary placeholder for date
-        holder.moodDate.setText(moodIDs.get(position).getMoodDate().toDate().toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        holder.moodDate.setText(sdf.format(moodIDs.get(position).getMoodDate().toDate()));
         holder.moodDescription.setText(moodIDs.get(position).getMoodTitle());
 
         holder.moodUsername.setText(moodIDs.get(position).getMoodUsername());

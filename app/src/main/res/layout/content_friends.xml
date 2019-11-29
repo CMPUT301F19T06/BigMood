@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_marginTop="100dp"
+    android:layout_height="match_parent"
     android:background="@color/DashboardBackground"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/friendReq_recyclerViewUserHeader"
@@ -54,6 +54,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        tools:layout_editor_absoluteY="60dp"/>
+        tools:layout_editor_absoluteY="60dp" />
 
 </LinearLayout>
