@@ -160,7 +160,6 @@ public class UserViewActivityTest {
     @Test
     public void checkFriend() throws InterruptedException {
         solo.clickOnView(solo.getView(R.id.user_view_add_friend));
-        //todo: figure out how to slap in query
-        assertTrue(true);
+        assertTrue(solo.searchText("Sent follow request!"));
     }
 }

@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="fitCenter"
-        android:outlineAmbientShadowColor="@color/Anger"
+        android:outlineAmbientShadowColor="@color/Angry"
         android:background="@color/colorAccent"
         android:orientation="horizontal"></ImageView>
 
@@ -31,9 +31,11 @@
             android:layout_marginLeft="180dp"
             android:layout_marginTop="5dp"
             android:orientation="horizontal">
+
             <LinearLayout
                 android:layout_width="130dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -46,10 +48,10 @@
                         android:id="@+id/currentMood"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="MoodTitle"
                         android:autofillHints="New Mood"
-                        android:textColor="@color/cardview_dark_background"
                         android:gravity="center"
+                        android:text="MoodTitle"
+                        android:textColor="@color/cardview_dark_background"
                         android:textSize="20sp"></TextView>
                 </LinearLayout>
 
@@ -59,10 +61,10 @@
 
             <ImageView
                 android:id="@+id/currentMoodImage"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_weight="5"
+                android:layout_weight="2"
                 android:adjustViewBounds="true"
                 android:foregroundGravity="center"
                 android:maxWidth="20sp"
@@ -80,7 +82,7 @@
             android:text="SELECT DATE"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:textColor="@color/Anger"
+            android:textColor="@color/Angry"
             android:textSize="15sp">
 
         </TextView>
