@@ -2,6 +2,7 @@ package com.example.bigmood;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import com.google.firebase.Timestamp;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,22 +61,50 @@ public class AddMoodTest {
         intent.putExtra("Mood",new Mood("404"));
         rule.launchActivity(intent);
         solo.waitForActivity(ActivityAddMood.class, 2000);
+        String id = String.valueOf(Timestamp.now().hashCode());
+        mood.setMoodID(id);
+
+        solo.clickOnButton("SAVE");
+        solo.waitForActivity(ActivityMoodView.class,2000);
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
 
     }
 
     @Test
-    public void testMoodView() {
-        addMood("Happy");
-        solo.clickOnText("My Profile");
-        solo.waitForActivity("UserViewActivity", 1000);
-        solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
-        assertTrue(solo.searchText("Happy"));
-        solo.clickOnText("Happy");
-        solo.waitForActivity("ActivityMoodView");
-        solo.assertCurrentActivity("Wrong Activity", ActivityMoodView.class);
-        deleteMood("Happy");
+    public void testMoodDescription(){
+        Intent intent = new Intent(getApplicationContext(), ActivityAddMood.class);
+        intent.putExtra("USER_ID", "404");
+        intent.putExtra("EDIT","AddingMode");
+        String date = Timestamp.now().toDate().toString();
+        intent.putExtra("DATE", date);
+        Mood mood = mockMood();
+        mood.setMoodUsername("Donald Trump");
+        intent.putExtra("Mood",new Mood("404"));
+        rule.launchActivity(intent);
+        solo.enterText((EditText)solo.getView(R.id.moodDescription), "Hi there");
+        solo.clickOnView(solo.getView(R.id.save_button));
+        Intent moodView = new Intent(getApplicationContext(), ActivityMoodView.class);
+        intent.putExtra("USER_ID", "404");
+        date = mood.getMoodDate().toDate().toString();
+        intent.putExtra("DATE", date);
+        solo.waitForActivity(ActivityMoodView.class,2000);
+        rule.launchActivity(moodView);
+        solo.clickOnButton("EDIT");
+        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is more than 20 than 20 characters");
+        solo.clickOnButton("SAVE");
+        solo.assertCurrentActivity("Right activity",ActivityAddMood.class);
+        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is four words");
+        solo.clickOnButton("SAVE");
+        solo.assertCurrentActivity("Right activity",ActivityAddMood.class);
+        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is fine");
+        solo.clickOnButton("SAVE");
+        solo.waitForActivity(ActivityMoodView.class, 2000);
+        solo.assertCurrentActivity("Right activity",ActivityMoodView.class);
+
+
     }
+
+
 
     public void startDashboard() {
         Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
@@ -86,9 +116,11 @@ public class AddMoodTest {
     }
 
 
-
+    /**
+     * add mood test
+     * @param title
+     */
     public void addMood(String title) {
-        solo.clickOnView(solo.getView(R.id.fab));
         solo.waitForActivity("ActivityAddMood", 500);
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
         solo.waitForActivity("ActivityAddMood", 1000);
@@ -114,14 +146,17 @@ public class AddMoodTest {
     @Test
     public void editTest() {
         // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
-        solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
         //Get view for EditText and enter a city name
-        solo.isSpinnerTextSelected(R.array.editmood_moodspinner,"Happy");
-        solo.isSpinnerTextSelected(R.array.editmood_moodsituation_spinner,"in a group");
+        // 0 is the first spinner in the layout
+        View view1 = solo.getView(Spinner.class, 0);
+        solo.clickOnView(view1);
+        solo.scrollToTop(); // I put this in here so that it always keeps the list at start
+        // select the 10th item in the spinner
+        solo.clickOnView(solo.getView(TextView.class, 2));
 
         solo.clickOnButton("SAVE"); //Select CONFIRM Button
         solo.waitForActivity("ActivityViewMood", 1000);
-        
+
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
 
     }

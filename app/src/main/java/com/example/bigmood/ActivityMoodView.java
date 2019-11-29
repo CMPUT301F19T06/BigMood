@@ -244,16 +244,4 @@ public class ActivityMoodView extends AppCompatActivity {
         }
     }
 
-    public String getMoodEmoji(){
-        Drawable drawable= emojiPic.getDrawable();
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
-        Bitmap bitmap = bitmapDrawable.getBitmap();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b =baos.toByteArray();
-        String temp=Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
-
 }
