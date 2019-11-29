@@ -68,7 +68,9 @@ import com.esri.arcgisruntime.mapping.view.MapView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.okhttp.internal.Platform;
@@ -111,6 +113,11 @@ public class GpsActivity extends AppCompatActivity{
     private HashMap<String, Point> userPoints;
 
     private HashMap<String, Mood> userMoods;
+
+    private HashMap<String, Point> personalPoints;
+    private HashMap<String, Mood> personalMoods;
+    private HashMap<String, Point> followedPoints;
+    private HashMap<String, Mood> followedMoods;
 
 
     private FirebaseFirestore db;
@@ -189,6 +196,10 @@ public class GpsActivity extends AppCompatActivity{
 
         this.userPoints = new HashMap<>();
         this.userMoods = new HashMap<>();
+        this.personalPoints = new HashMap<>();
+        this.personalMoods = new HashMap<>();
+        this.followedPoints = new HashMap<>();
+        this.followedMoods = new HashMap<>();
 
         //Initialize the friend list
         followedUsers = new ArrayList<>();
@@ -212,12 +223,25 @@ public class GpsActivity extends AppCompatActivity{
             }
         });
 
-        if (mode.equals("USER")){
-            retrieveUserMoods();
 
+        db.collection("Mood").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                for( QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                    retrieveUserMoods();
+                    retrieveFollowedMoods();
+                }
+            }
+        });
+
+        retrieveUserMoods();
+        retrieveFollowedMoods();
+
+        if (mode.equals("USER")){
+            switchUserMoods();
         }
         else{
-            retrieveFollowedMoods();
+            switchFollowedMoods();
         }
 
         final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
@@ -247,12 +271,12 @@ public class GpsActivity extends AppCompatActivity{
 
                             case R.id.gps_mode_menu_user:
 
-                                retrieveUserMoods();
+                                switchUserMoods();
                                 //Toast.makeText(GpsActivity.this, String.valueOf(userPoints.size()), Toast.LENGTH_LONG).show();
                                 //setGraphics();
                                 return true;
                             case R.id.gps_mode_menu_followed:
-                                retrieveFollowedMoods();
+                                switchFollowedMoods();
 
                                 //setGraphics();
                                 return true;
@@ -283,12 +307,21 @@ public class GpsActivity extends AppCompatActivity{
         /////////////////////
     }
 
+    private void switchUserMoods(){
+        userPoints = personalPoints;
+        userMoods = personalMoods;
+    }
+
+    private void switchFollowedMoods(){
+        userPoints = followedPoints;
+        userMoods = followedMoods;
+    }
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
 
-        userPoints.clear();
-        userMoods.clear();
+        personalPoints.clear();
+        personalMoods.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -296,8 +329,8 @@ public class GpsActivity extends AppCompatActivity{
                 if (task.isSuccessful()){
                     if (!task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
-                            userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
-                            userMoods.put(doc.getId(), Mood.getFromDoc(doc));
+                            personalPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                            personalMoods.put(doc.getId(), Mood.getFromDoc(doc));
 
                         }
                         setGraphics();
@@ -312,8 +345,8 @@ public class GpsActivity extends AppCompatActivity{
 
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
-        userPoints.clear();
-        userMoods.clear();
+        followedPoints.clear();
+        followedUsers.clear();
         if (!followedUsers.isEmpty()){
             for (String user : followedUsers){
                 moodCollection.whereEqualTo("moodCreator",user)
@@ -332,13 +365,14 @@ public class GpsActivity extends AppCompatActivity{
                                         return ((Timestamp)doc2.get("moodDate")).compareTo((Timestamp)doc1.get("moodDate"));
                                     }
                                 });
-                                userPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
-                                userMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
+                                followedPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
+                                followedMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
                             }
                             setGraphics();
                         } else{
                             Log.d(TAG, "Failed to get friend moods");
                         }
+                        Toast.makeText(GpsActivity.this, "AAA The length of userMoods: " + String.valueOf(userPoints.size()), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
