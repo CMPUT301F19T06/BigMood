@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -312,12 +313,10 @@ public class GpsActivity extends AppCompatActivity{
 
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
-        //userPoints.clear();
-        //userMoods.clear();
+        userPoints.clear();
+        userMoods.clear();
         if (!followedUsers.isEmpty()){
             for (String user : followedUsers){
-                userPoints.clear();
-                userMoods.clear();
                 moodCollection.whereEqualTo("moodCreator",user)
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -373,6 +372,7 @@ public class GpsActivity extends AppCompatActivity{
      * show gps points of moods on map
      */
     private void setGraphics(){
+        Log.d(TAG, "setGraphics: " + String.valueOf(userPoints.size()));
 
         /*
         if (!graphicsOverlay.getGraphics().isEmpty()){
@@ -388,20 +388,21 @@ public class GpsActivity extends AppCompatActivity{
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
             Mood temp = userMoods.get(entry.getKey());
             BitmapDrawable emoji = setEmojiDrawable(temp.getMoodTitle());
-            emoji.setColorFilter(Color.parseColor(temp.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+            emoji.setColorFilter(new PorterDuffColorFilter(Color.parseColor(temp.getMoodColor()), PorterDuff.Mode.MULTIPLY));
             ListenableFuture<PictureMarkerSymbol> e = createAsync(emoji);
-            Graphic graphic = null;
+            Log.d(TAG, "setGraphics: preTry:" + String.valueOf(userPoints.size()));
             try {
                 PictureMarkerSymbol em = e.get();
                 em.setHeight(30);
                 em.setWidth(30);
-                graphic = new Graphic(entry.getValue(), em);
+                Graphic graphic = new Graphic(entry.getValue(), em);
+                graphicsOverlay.getGraphics().add(graphic);
             } catch (ExecutionException ex) {
                 ex.printStackTrace();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-            graphicsOverlay.getGraphics().add(graphic);
+            Log.d(TAG, "setGraphics: postTry:" + String.valueOf(userPoints.size()));
         }
     }
 
