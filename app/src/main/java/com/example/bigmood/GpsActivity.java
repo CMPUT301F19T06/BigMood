@@ -6,6 +6,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,6 +44,7 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyGraphicsOverlayResult;
 import com.esri.arcgisruntime.mapping.view.ViewpointChangedEvent;
 import com.esri.arcgisruntime.mapping.view.ViewpointChangedListener;
+import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -55,6 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
@@ -65,6 +72,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.okhttp.internal.Platform;
+
+import static com.esri.arcgisruntime.symbology.PictureMarkerSymbol.createAsync;
 
 
 /**
@@ -120,6 +129,8 @@ public class GpsActivity extends AppCompatActivity{
     private Criteria criteria;
     private LocationManager locationManager;
     private Looper looper;
+
+    private BitmapDrawable emoji;
 
 
     @Override
@@ -350,10 +361,53 @@ public class GpsActivity extends AppCompatActivity{
         graphicsOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-        for (Point p : userPoints.values()){
-            Graphic graphic = new Graphic(p, symbol);
+        //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        for(Map.Entry<String, Point> entry : userPoints.entrySet()){
+            Mood temp = userMoods.get(entry.getKey());
+            setEmojiDrawable(temp.getMoodTitle());
+            emoji.setColorFilter(Color.parseColor(temp.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+            ListenableFuture<PictureMarkerSymbol> e = createAsync(emoji);
+            Graphic graphic = null;
+            try {
+                PictureMarkerSymbol em = e.get();
+                em.setHeight(30);
+                em.setWidth(30);
+                graphic = new Graphic(entry.getValue(), em);
+            } catch (ExecutionException ex) {
+                ex.printStackTrace();
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
             graphicsOverlay.getGraphics().add(graphic);
+        }
+    }
+
+    public void setEmojiDrawable(String emotion){
+        switch (emotion){
+            case "Happy":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_happy));
+                break;
+            case "Sad":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_sad));
+                break;
+            case "Scared":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_fear));
+                break;
+            case "Surprised":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_surprised));
+                break;
+            case "Angry":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_angry));
+                break;
+            case "Bored":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_bored));
+                break;
+            case "Disgusted":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_disgust));
+                break;
+            case "Touched":
+                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_love));
+                break;
         }
     }
 
