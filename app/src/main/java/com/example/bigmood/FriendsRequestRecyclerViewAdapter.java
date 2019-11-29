@@ -158,8 +158,8 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
     }
 
     private void updateFriend(String targetId){
-        final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
-        final DocumentReference docRef = this.userCollectionReference.document(this.userId);
+        final Query query = userCollectionReference.whereEqualTo("userId", targetId);
+        final DocumentReference docRef = this.userCollectionReference.document(targetId);
         final HashMap<String, Object> data = new HashMap<>();
         data.put("userId", this.userId);
             //accept the friend request
@@ -171,13 +171,13 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
                         // take the user's friends and append userID and update
                         List<String> temp = (List) doc.get("userFriends");
                         ArrayList<String> tempArray = new ArrayList<String>(temp);
-                        tempArray.add(targetId);
+                        tempArray.add(userId);
                         data.put("userFriends", tempArray);
                         docRef.set(data, SetOptions.merge());
                     } else {
                         // no friends, you fucking loser
                         List<String> temp = (List<String>) doc.get("incomingReq");
-                        temp.add(targetId);
+                        temp.add(userId);
                         data.put("userFriends", temp);
                         docRef.set(data, SetOptions.merge());
                     }
