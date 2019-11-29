@@ -116,7 +116,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="59dp"
         android:layout_marginLeft="30dp"
-        android:src="@drawable/camera_info"
+        android:src="@drawable/ic_profile"
         app:civ_border_width="2dp"
         app:civ_circle_background_color="@color/colorWhite">
 
@@ -170,10 +170,8 @@
         android:id="@+id/background_pic_Full"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/Surprise"
         android:orientation="horizontal"
         android:scaleType="fitCenter"
-        android:src="@drawable/emoji_happy"
         android:visibility="gone"></ImageView>
 
 
