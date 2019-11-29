@@ -73,8 +73,8 @@ public class BaseDrawerActivityTest {
     @Test
     public void checkSearchButton(){
         Intent intent = new Intent(getApplicationContext(), BaseDrawerActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
-        intent.putExtra("User_Name", "Jarrett Yu");
+        intent.putExtra("USER_ID", "404");
+        intent.putExtra("User_Name", "Donald Trump");
         rule.launchActivity(intent);
         solo.assertCurrentActivity("Wrong Activity", DashboardActivity.class);
 
@@ -90,8 +90,8 @@ public class BaseDrawerActivityTest {
     @Test
     public void checkMyProfile(){
         Intent intent = new Intent(getApplicationContext(), BaseDrawerActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
-        intent.putExtra("User_Name","Jarrett Yu");
+        intent.putExtra("USER_ID", "404");
+        intent.putExtra("User_Name","Donald Trump");
         rule.launchActivity(intent);
 
         solo.waitForActivity(BaseDrawerActivity.class, 2000);
@@ -122,8 +122,8 @@ public class BaseDrawerActivityTest {
     @Test
     public void checkFriends(){
         Intent intent = new Intent(getApplicationContext(), BaseDrawerActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
-        intent.putExtra("User_Name","Jarrett Yu");
+        intent.putExtra("USER_ID", "404");
+        intent.putExtra("User_Name","Donald Trump");
         rule.launchActivity(intent);
 
         solo.waitForActivity(BaseDrawerActivity.class, 2000);
@@ -154,8 +154,8 @@ public class BaseDrawerActivityTest {
     @Test
     public void checkMaps(){
         Intent intent = new Intent(getApplicationContext(), BaseDrawerActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
-        intent.putExtra("User_Name","Jarrett Yu");
+        intent.putExtra("USER_ID", "404");
+        intent.putExtra("User_Name","Donald Trump");
         rule.launchActivity(intent);
 
         solo.waitForActivity(BaseDrawerActivity.class, 2000);

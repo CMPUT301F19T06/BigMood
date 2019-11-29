@@ -155,13 +155,10 @@ public class ActivityMoodView extends AppCompatActivity {
         Bitmap image = BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
         setMoodEmoji(mood.getMoodTitle());
         emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
-
+        // setting the profile background here
         try {
             byte[] encodeByte = Base64.decode(mood.getMoodPhoto(), Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-
-            //todo: use profile pic from google
-            //profilePic.setImageBitmap(bitmap);
             profileBackground.setImageBitmap(bitmap);
 
         } catch (Exception e) {
@@ -207,6 +204,7 @@ public class ActivityMoodView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 backgroundFull.setVisibility(View.VISIBLE);
+                profileBackground.setVisibility(View.INVISIBLE);
             }
         });
         //Puts the fullscreen image back to the state GONE
@@ -214,26 +212,12 @@ public class ActivityMoodView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 backgroundFull.setVisibility(View.GONE);
+                profileBackground.setVisibility(View.VISIBLE);
+
             }
         });
     }
-    // todo: fix mood date
-//    public String getMoodDate(Mood mood){
-//        final String date;
-//        final QueryDocumentSnapshot queryDocumentSnapshot;
-//        Query query = moodCollectionReference
-//                .whereEqualTo("moodCreator", userId);
-//        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                date = (String) queryDocumentSnapshots..get("moodDate");
-//
-//            }
-//        }
-//        );
-//
-//            return date;
-//    }
+
     /**
      * Set emoji according to mood type
      * @param emotion
@@ -257,7 +241,6 @@ public class ActivityMoodView extends AppCompatActivity {
                 emojiPic.setImageResource(R.drawable.emoji_angry);
                 break;
             case "Bored":
-
                 emojiPic.setImageResource(R.drawable.emoji_bored);
                 break;
             case "Disgusted":

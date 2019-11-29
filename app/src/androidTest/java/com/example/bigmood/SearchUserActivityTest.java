@@ -58,7 +58,28 @@ public class SearchUserActivityTest {
     @Test
     public void checkSearch(){
         Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
+        intent.putExtra("USER_ID", "404");
+        rule.launchActivity(intent);
+
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
+
+        solo.enterText((EditText)solo.getView(R.id.search_field), "Joshua Derkson");
+        solo.clickOnView(solo.getView(R.id.search_btn));
+        solo.clearEditText((EditText) solo.getView(R.id.search_field));
+
+        assertTrue(solo.waitForText("Joshua Derkson"));
+
+        solo.clickOnText("Joshua Derkson");
+        solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
+    }
+
+    /**
+     * Test Search functionality if input is half the name and clicking on user
+     */
+    @Test
+    public void checkSearchHalfName(){
+        Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
+        intent.putExtra("USER_ID", "404");
         rule.launchActivity(intent);
 
         solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
@@ -69,8 +90,51 @@ public class SearchUserActivityTest {
 
         assertTrue(solo.waitForText("Joshua Derkson"));
 
-        solo.clickInRecyclerView(0);
+        solo.clickOnText("Joshua Derkson");
         solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
+    }
+
+    /**
+     * Test back button after clicking a user
+     */
+    @Test
+    public void checkBackButton(){
+        Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
+        intent.putExtra("USER_ID", "404");
+        rule.launchActivity(intent);
+
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
+
+        solo.enterText((EditText)solo.getView(R.id.search_field), "Joshua Derkson");
+        solo.clickOnView(solo.getView(R.id.search_btn));
+        solo.clearEditText((EditText) solo.getView(R.id.search_field));
+
+        assertTrue(solo.waitForText("Joshua Derkson"));
+
+        solo.clickOnText("Joshua Derkson");
+        solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
+
+        solo.goBack();
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
+    }
+
+    /**
+     * Test Search functionality on user not in database
+     */
+    @Test
+    public void checkNoUser(){
+        Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
+        intent.putExtra("USER_ID", "404");
+        rule.launchActivity(intent);
+
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
+
+        solo.enterText((EditText)solo.getView(R.id.search_field), "Jack");
+        solo.clickOnView(solo.getView(R.id.search_btn));
+        solo.clearEditText((EditText) solo.getView(R.id.search_field));
+
+        assertTrue(solo.waitForText("Your Search Didn't Return Any Results"));
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
     }
 
     /**

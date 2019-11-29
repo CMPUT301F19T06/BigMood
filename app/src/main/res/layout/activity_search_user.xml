@@ -28,6 +28,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
         android:layout_toStartOf="@+id/search_btn"
+        android:background="@drawable/cool_background"
         android:ems="10"
         android:inputType="textPersonName"
         android:paddingBottom="10dp"
@@ -35,7 +36,7 @@
         android:paddingRight="20dp"
         android:paddingTop="10dp"
         android:hint="@string/search_hint"
-        android:textColor="#999999"
+        android:textColor="@color/cardview_dark_background"
         android:textSize="16sp"
         />
 
@@ -47,8 +48,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/search_field"
         android:layout_marginRight="30dp"
-        app:civ_circle_background_color="@color/colorPrimary"
         app:civ_border_width="1dp"
+        android:background="@drawable/round_button"
         android:src="@drawable/ic_search_black"
         />
 
@@ -56,6 +57,7 @@
         android:id="@+id/search_suggestions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/DashboardBackground"
         android:layout_below="@+id/search_field"
         android:layout_marginTop="20dp"/>
 
