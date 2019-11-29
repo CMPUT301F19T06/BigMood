@@ -21,6 +21,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static junit.framework.TestCase.assertTrue;
@@ -51,23 +52,10 @@ public class AddMoodTest {
      */
     @Test
     public void checkAddMood() throws Exception{
-        Intent intent = new Intent(getApplicationContext(), ActivityAddMood.class);
-        intent.putExtra("USER_ID", "404");
-        intent.putExtra("EDIT","AddingMode");
-        String date = Timestamp.now().toDate().toString();
-        intent.putExtra("DATE", date);
-        Mood mood = mockMood();
-        mood.setMoodUsername("Donald Trump");
-        intent.putExtra("Mood",new Mood("404"));
-        rule.launchActivity(intent);
-        solo.waitForActivity(ActivityAddMood.class, 2000);
-        String id = String.valueOf(Timestamp.now().hashCode());
-        mood.setMoodID(id);
-
+        startAdd();
         solo.clickOnButton("SAVE");
         solo.waitForActivity(ActivityMoodView.class,2000);
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
-
     }
 
     @Test
@@ -97,46 +85,33 @@ public class AddMoodTest {
         solo.clickOnButton("SAVE");
         solo.waitForActivity(ActivityMoodView.class, 2000);
         solo.assertCurrentActivity("Right activity",ActivityMoodView.class);
+    }
 
+    @Test
+    public void testSpinners() {
+        String[] moods = {"Sad", "Happy", "Angry", "Scared", "Disgusted", "Bored"};
+        String[] situations = {"alone", "with someone", "with a few others"};
+        startAdd();
+        solo.clickOnText("Happy");
+        for (String string : moods) {
+            solo.clickOnText(string);
+            assertTrue(solo.searchText(string));
+            solo.clickOnText(string);
+        }
+        solo.clickOnText("Touched");
+        assertTrue(solo.searchText("Touched"));
+
+        solo.clickOnText("in a crowd");
+        for (String string : situations) {
+            solo.clickOnText(string);
+            assertTrue(solo.searchText(string));
+            solo.clickOnText(string);
+        }
+        solo.clickOnText("in a crowd");
+        assertTrue(solo.searchText("in a crowd"));
 
     }
 
-
-
-    public void startDashboard() {
-        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
-        intent.putExtra("USER_ID", "404");
-        intent.putExtra("User_Name","Donald Trump");
-        rule.launchActivity(intent);
-        solo.waitForActivity("DashboardActivity", 500);
-        solo.assertCurrentActivity("Wrong Activity", DashboardActivity.class);
-    }
-
-
-    /**
-     * add mood test
-     * @param title
-     */
-    public void addMood(String title) {
-        solo.waitForActivity("ActivityAddMood", 500);
-        solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
-        solo.waitForActivity("ActivityAddMood", 1000);
-        solo.clickOnMenuItem("Disgusted");
-        solo.clickOnMenuItem("Alone");
-        solo.clickOnText(title);
-        solo.clickOnButton("SAVE");
-        solo.waitForActivity("ActivityViewMood", 1000);
-        solo.goBack();
-        solo.waitForActivity("DashboardActivity", 1000);
-    }
-
-    public void deleteMood(String title) {
-        solo.clickOnText(title);
-        solo.waitForActivity("ActivityViewMood", 1000);
-        solo.clickOnText("EDIT");
-        solo.waitForActivity("ActivityAddMood", 1000);
-        solo.clickOnView(solo.getView(R.id.deleteMood));
-    }
     /**
      * Add a mood
      **/
@@ -158,6 +133,23 @@ public class AddMoodTest {
 
     }
 
+    public void startAdd() {
+        Intent intent = new Intent(getApplicationContext(), ActivityAddMood.class);
+        intent.putExtra("USER_ID", "404");
+        intent.putExtra("EDIT","AddingMode");
+        String date = Timestamp.now().toDate().toString();
+        String id = String.valueOf(Timestamp.now().hashCode());
+        Mood mood = new Mood("404");
+        mood.setMoodUsername("Donald Trump");
+        mood.setMoodID(id);
+        intent.putExtra("DATE", date);
+        intent.putExtra("Mood", mood);
+        rule.launchActivity(intent);
+        solo.waitForActivity(ActivityAddMood.class, 2000);
+
+    }
+
+
     /**
      * Close activity after each test
      * @throws Exception
@@ -166,5 +158,7 @@ public class AddMoodTest {
     public void tearDown() throws Exception{
         solo.finishOpenedActivities();
     }
+
+
 
 }
