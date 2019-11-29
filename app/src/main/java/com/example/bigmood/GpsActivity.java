@@ -240,15 +240,12 @@ public class GpsActivity extends AppCompatActivity{
                                 if(userPoints == null){
                                     retrieveUserMoods();
                                 }
-                                //Toast.makeText(GpsActivity.this, String.valueOf(userPoints.size()), Toast.LENGTH_LONG).show();
-                                //displayMap();
-                                locationManager.requestSingleUpdate(criteria, locationListener, looper);
+
                                 setGraphics();
                                 return true;
                             case R.id.gps_mode_menu_followed:
                                 retrieveFollowedMoods();
-                                //displayMap();
-                                locationManager.requestSingleUpdate(criteria, locationListener, looper);
+
                                 setGraphics();
                                 return true;
                             default:
@@ -360,21 +357,7 @@ public class GpsActivity extends AppCompatActivity{
         mMapView.setMap(map);
 
         map.setMaxScale(1000);
-        map.setMinScale(8000);
-
-        //set center of map
-        //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
-
-        //init graphics overlay
-
-        graphicsOverlay = new GraphicsOverlay();
-        mMapView.getGraphicsOverlays().add(graphicsOverlay);
-
-
-
-        //symbol type for map marker
-        //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-        //setGraphics();
+        map.setMinScale(25000);
 
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
 
@@ -384,7 +367,8 @@ public class GpsActivity extends AppCompatActivity{
      * show gps points of moods on map
      */
     private void setGraphics(){
-
+        graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
         SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for (Point p : userPoints.values()){
