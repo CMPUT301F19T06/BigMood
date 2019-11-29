@@ -17,7 +17,7 @@ import org.junit.Test;
 public class MoodViewTest {
     private Solo solo;
     @Rule
-    public ActivityTestRule<ActivityAddMood> rule =
+    public ActivityTestRule<ActivityMoodView> rule =
             new ActivityTestRule(ActivityMoodView.class, true, true);
 
     /**

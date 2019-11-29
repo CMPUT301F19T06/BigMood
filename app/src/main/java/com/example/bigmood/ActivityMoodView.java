@@ -70,14 +70,7 @@ import java.util.Date;
  */
 public class ActivityMoodView extends AppCompatActivity {
     private static final String TAG = "ActivityMoodView";
-    /**
-     * todo: working on converting URL's to images
-     */
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
 
-
-    private Context context;
     TextView dateText, moodUserName;
     EditText description;
     Button editButton;
@@ -85,7 +78,7 @@ public class ActivityMoodView extends AppCompatActivity {
     ImageView profileBackground;
     ImageView profilePic, emojiPic;
 
-    TextView moodTitle, moodSituation; // moodTitle and moodType is the same here for now
+    TextView moodTitle, moodSituation;
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();

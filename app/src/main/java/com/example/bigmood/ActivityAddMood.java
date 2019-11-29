@@ -93,7 +93,7 @@ import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.N
  */
 
 public class ActivityAddMood extends AppCompatActivity {
-    private static final String TAG = "ActivityAddView";
+    private static final String TAG = "ActivityAddMood";
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
@@ -231,6 +231,9 @@ public class ActivityAddMood extends AppCompatActivity {
                     e.getMessage();
                 }
         }
+        /**
+         * changes the moodTitle and emojis here
+         */
         moodTitle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
