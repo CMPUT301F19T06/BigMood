@@ -9,12 +9,14 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,8 +125,9 @@ public class DashboardActivity extends BaseDrawerActivity {
     private void pullGetFriendMoods() {
         final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            moodObjects.clear();
+
             for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                moodObjects.clear();
                 List<String> friends = (List<String>) doc.get("userFriends");
                 if (!friends.isEmpty()) {
                     // This line might explode
@@ -148,17 +151,20 @@ public class DashboardActivity extends BaseDrawerActivity {
     private void pullTopMood(String friendId) {
         Query query = moodCollectionReference
                 .whereEqualTo("moodCreator", friendId);
-        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            if (queryDocumentSnapshots.isEmpty()){
-                return;
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.isEmpty()) {
+                    return;
+                }
+                ArrayList<Mood> temp = new ArrayList<>();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Mood mood = Mood.getFromDoc(doc);
+                    temp.add(mood);
+                }
+                moodObjects.add(DashboardActivity.this.getTopOne(temp));
+                adapter.notifyDataSetChanged();
             }
-            ArrayList<Mood> temp = new ArrayList<>();
-            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                Mood mood = Mood.getFromDoc(doc);
-                temp.add(mood);
-            }
-            moodObjects.add(getTopOne(temp));
-            adapter.notifyDataSetChanged();
         });
     }
 

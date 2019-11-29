@@ -169,18 +169,9 @@ public class ActivityAddMood extends AppCompatActivity {
             case "AddingMode":
                 setMoodEmoji("Happy");
                 emojiPic.setColorFilter(getColor(R.color.Happy), PorterDuff.Mode.MULTIPLY);
-                dateText.setText(dateFormat.format(new Date()));
+                dateText.setText(date);
                 break;
             case "EditingMode":
-                Date parsedDate = new Date();
-                try {
-                    parsedDate = dateFormat.parse(date);
-
-                    Timestamp timestamp = new Timestamp(parsedDate);
-                    mood.setMoodDate(timestamp);
-                } catch(Exception e) { //this generic but you can control another types of exception
-                    e.printStackTrace();
-                }
                 setMoodEmoji(mood.getMoodTitle());
                 emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
                 moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
@@ -191,7 +182,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 emojiPic.setImageBitmap(bitmap);
                 setMoodEmoji(mood.getMoodTitle());
                 emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
-                dateText.setText(dateFormat.format(parsedDate));
+                dateText.setText(date);
                 description.setText(mood.getMoodDescription());
 
                 /**
