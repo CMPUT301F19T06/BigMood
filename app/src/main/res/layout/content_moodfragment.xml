@@ -35,7 +35,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/moodDescription"
+        android:id="@+id/moodDescription_edit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="56dp"
@@ -59,7 +59,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/moodDescription">
+        app:layout_constraintTop_toBottomOf="@+id/moodDescription_edit">
 
     </TextView>
 
@@ -72,7 +72,7 @@
         android:foregroundGravity="right"
         android:src="@drawable/emoji_happy"
         app:layout_constraintBottom_toTopOf="@+id/moodDate"
-        app:layout_constraintEnd_toStartOf="@+id/moodDescription"
+        app:layout_constraintEnd_toStartOf="@+id/moodDescription_edit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/moodUserName" />
 

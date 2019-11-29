@@ -72,7 +72,7 @@ public class ActivityMoodView extends AppCompatActivity {
     private static final String TAG = "ActivityMoodView";
 
     TextView dateText, moodUserName;
-    EditText description;
+    TextView description;
     Button editButton;
     Button addLoc;
     ImageView profileBackground;
@@ -112,7 +112,7 @@ public class ActivityMoodView extends AppCompatActivity {
         addLoc = findViewById(R.id.add_loc);
 
         dateText = findViewById(R.id.currentDate);
-        description = findViewById(R.id.moodDescription);
+        description = findViewById(R.id.moodDescription_view);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         moodSituation = findViewById(R.id.moodSituationSpinner);
@@ -243,17 +243,5 @@ public class ActivityMoodView extends AppCompatActivity {
                 break;
         }
     }
-
-    public String getMoodEmoji(){
-        Drawable drawable= emojiPic.getDrawable();
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-        BitmapDrawable bitmapDrawable = ((BitmapDrawable) drawable);
-        Bitmap bitmap = bitmapDrawable.getBitmap();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b =baos.toByteArray();
-        String temp=Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-
 
 }

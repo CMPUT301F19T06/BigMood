@@ -11,23 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 /**
  *  Adapter for moods for use in Recycler views. Displays the mood title, the mood creator,
@@ -148,7 +139,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             moodUsername = itemView.findViewById(R.id.moodUserName);
             moodDate = itemView.findViewById(R.id.moodDate);
 
-            moodDescription = itemView.findViewById(R.id.moodDescription);
+            moodDescription = itemView.findViewById(R.id.moodDescription_edit);
             linearLayout = itemView.findViewById(R.id.linearLayout);
             emoji = itemView.findViewById(R.id.moodEmoji);
         }

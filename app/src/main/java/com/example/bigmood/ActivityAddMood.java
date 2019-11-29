@@ -109,7 +109,7 @@ public class ActivityAddMood extends AppCompatActivity {
         saveButton = findViewById(R.id.save_button);
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
-        description = findViewById(R.id.moodDescription);
+        description = findViewById(R.id.moodDescription_edit);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         moodSituation = findViewById(R.id.moodSituationSpinner);
@@ -118,7 +118,6 @@ public class ActivityAddMood extends AppCompatActivity {
         profilePic = findViewById(R.id.add_background_image);
         profileBackground = findViewById(R.id.background_pic);
         getProfileBackground = findViewById(R.id.add_background_image);
-        galleryAccess = findViewById(R.id.gallery_access);
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
@@ -234,12 +233,6 @@ public class ActivityAddMood extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 OpenCamera(v);
-            }
-        });
-        galleryAccess.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenAlbum(v);
             }
         });
 
