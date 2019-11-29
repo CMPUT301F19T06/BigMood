@@ -121,6 +121,7 @@ public class AddMoodTest {
 
         solo.clickOnButton("SAVE"); //Select CONFIRM Button
         solo.waitForActivity("ActivityViewMood", 1000);
+        
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
 
     }

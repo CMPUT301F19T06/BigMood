@@ -36,16 +36,7 @@
         >
 
     </ImageView>
-    <ImageView
-        android:id="@+id/gallery_access"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="110dp"
-        android:layout_marginLeft="325dp"
-        android:src="@drawable/gallery_icon"
-        android:scaleType="fitXY">
 
-    </ImageView>
 
     <LinearLayout
         android:layout_width="match_parent"
