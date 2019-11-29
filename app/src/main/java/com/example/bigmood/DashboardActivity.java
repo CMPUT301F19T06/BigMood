@@ -81,6 +81,10 @@ public class DashboardActivity extends BaseDrawerActivity {
             pullCurrentUserTopMood();
             pullGetFriendMoods();
         });
+        this.userCollectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
+            pullCurrentUserTopMood();
+            pullGetFriendMoods();
+        });
 
         this.recyclerViewUser = findViewById(R.id.dashboard_recyclerviewUser);
         this.emptyUser = findViewById(R.id.dashboard_textView_emptyUser);
