@@ -112,7 +112,7 @@ public class AddMoodTest {
      * Add a mood
      **/
     @Test
-    public void checkList() {
+    public void editTest() {
         // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
         //Get view for EditText and enter a city name

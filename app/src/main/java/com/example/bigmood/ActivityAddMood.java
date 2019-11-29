@@ -268,6 +268,10 @@ public class ActivityAddMood extends AppCompatActivity {
                 if (reason.length() > 20){
                     Toast.makeText(ActivityAddMood.this, "DESCRIPTION TOO LONG\nMAX 20 CHARACTERS",Toast.LENGTH_SHORT).show();
                 }
+                else if (words(reason) == false){
+                    Toast.makeText(ActivityAddMood.this, "MAX 3 WORDS",Toast.LENGTH_SHORT).show();
+
+                }
                 else {
                     mood.setMoodDescription(reason);
                     // input mood after mood object is created
@@ -482,6 +486,20 @@ public class ActivityAddMood extends AppCompatActivity {
             case "Touched":
                 emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
+        }
+    }
+
+    /**
+     * number of words testing
+     * @param i
+     * @return
+     */
+    public boolean words(String i){
+        String[] arrOfi = i.split(" ");
+        if (arrOfi.length <= 3){
+            return true;
+        } else {
+            return false;
         }
     }
 
