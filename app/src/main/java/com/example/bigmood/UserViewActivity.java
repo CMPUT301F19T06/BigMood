@@ -89,11 +89,11 @@ public class UserViewActivity extends BaseDrawerActivity
         try {
             this.currentUser = getIntent().getExtras().getString("USER_ID");
             this.targetUser = getIntent().getExtras().getString("TARGET_ID");
-            this.userCollectionReference.document(this.targetUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            this.userCollectionReference.document(this.currentUser).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     ArrayList<String> friends = (ArrayList<String>) documentSnapshot.get("userFriends");
-                    if (friends.contains(currentUser)) {
+                    if (friends.contains(targetUser)) {
                         viewMoods();
                     }
                 }
