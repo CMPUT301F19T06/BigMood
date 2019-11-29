@@ -71,7 +71,13 @@ public class FriendsTest {
 
     @Test
     public void testFriend() throws InterruptedException{
-        //todo: artifically add friend request into profile
-        //todo: artifically reject button, open nav drawer, and connections
+        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
+        intent.putExtra("USER_ID", "109926616595958819946");
+        rule.launchActivity(intent);
+        solo.waitForActivity("FriendsActivity", 500);
+        solo.assertCurrentActivity("Wrong Activity", FriendsActivity.class);
+        assertTrue(solo.searchText("Ericson Yan"));
+        solo.clickOnText("Ericson Yan");
+        solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
     }
 }
