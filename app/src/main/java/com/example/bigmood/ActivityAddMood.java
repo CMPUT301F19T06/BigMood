@@ -122,7 +122,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         this.userId = getIntent().getExtras().getString("USER_ID");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
