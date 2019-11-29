@@ -57,7 +57,7 @@
         android:id="@+id/search_suggestions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/cool_background"
+        android:background="@color/DashboardBackground"
         android:layout_below="@+id/search_field"
         android:layout_marginTop="20dp"/>
 
