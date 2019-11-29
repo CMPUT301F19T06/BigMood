@@ -439,11 +439,11 @@ public class GpsActivity extends AppCompatActivity{
             Log.d(TAG, "setGraphics: entry: " + entry.getKey());
             Mood temp = userMoods.get(entry.getKey());
             Log.d(TAG, "setGraphics: entry (lat long): " + entry.getValue().toString());
-            SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.parseColor(temp.getMoodColor()), 10);
-            TextSymbol textSymbol = new TextSymbol(10, temp.getMoodUsername() + ": " + temp.getMoodTitle(), Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
+            SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.parseColor(temp.getMoodColor()), 16);
+            TextSymbol textSymbol = new TextSymbol(16, temp.getMoodUsername() + ": " + temp.getMoodTitle(), Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
 
             if (personal){
-                textSymbol = new TextSymbol(10, temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
+                textSymbol = new TextSymbol(16, temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
             }
             Graphic graphic = new Graphic(entry.getValue(), symbol);
             Graphic txtGraphic = new Graphic(entry.getValue(), textSymbol);
