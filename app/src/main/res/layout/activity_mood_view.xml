@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:scaleType="fitCenter"
-        android:outlineAmbientShadowColor="@color/Anger"
+        android:outlineAmbientShadowColor="@color/Angry"
         android:background="@color/colorAccent"
         android:orientation="horizontal"></ImageView>
 
@@ -80,7 +80,7 @@
             android:text="SELECT DATE"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:textColor="@color/Anger"
+            android:textColor="@color/Angry"
             android:textSize="15sp">
 
         </TextView>

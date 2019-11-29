@@ -3,16 +3,17 @@
     <color name="colorPrimary">#EDC0E1</color>
     <color name="colorPrimaryDark">#A87B9C</color>
     <color name="colorAccent">#F7BC4F</color>
-    <color name="Anger">#FF0101</color>
+    <color name="Angry">#FF0101</color>
     <color name="Anticipation">#FE6301</color>
     <color name="Happy">#FFFF00</color>
     <color name="Trust">#AEFF00</color>
-    <color name="Fear">#1AFF00</color>
-    <color name="Surprise">#00B7FF</color>
-    <color name="Sadness">#0054FF</color>
-    <color name="Disgust">#CC00FF</color>
-    <color name="Love">#EDC0E1</color>
+    <color name="Scared">#1AFF00</color>
+    <color name="Surprised">#00B7FF</color>
+    <color name="Sad">#0054FF</color>
+    <color name="Disgusted">#CC00FF</color>
+    <color name="Touched">#EDC0E1</color>
     <color name="Bored">#FE6301</color>
+    <color name="Base">#FFFFFF</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name= "colorBlue">#2400EE</color>
     // mood fragments
