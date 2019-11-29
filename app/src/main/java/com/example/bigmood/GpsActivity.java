@@ -209,8 +209,6 @@ public class GpsActivity extends AppCompatActivity{
         }
 
         final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
-        FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
-        FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
 
         modeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -271,22 +269,6 @@ public class GpsActivity extends AppCompatActivity{
         }
         locationManager.requestSingleUpdate(criteria, locationListener, looper);
         /////////////////////
-
-        zoominButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: When the zoom in button is pressed
-            }
-        });
-
-        zoomoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: When the zoom out button is pressed
-            }
-        });
-
-
     }
 
 
