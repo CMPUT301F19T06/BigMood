@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -18,7 +17,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -27,10 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,50 +33,23 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.google.android.gms.common.internal.ResourceUtils;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.cert.CertPathValidatorException;
-import java.security.spec.ECField;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -93,7 +61,7 @@ import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.N
  */
 
 public class ActivityAddMood extends AppCompatActivity {
-    private static final String TAG = "ActivityAddView";
+    private static final String TAG = "ActivityAddMood";
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
@@ -142,7 +110,7 @@ public class ActivityAddMood extends AppCompatActivity {
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
         description = findViewById(R.id.moodDescription);
-        moodTitle = findViewById(R.id.currentMoodSpinner);
+        moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         moodSituation = findViewById(R.id.moodSituationSpinner);
 
@@ -154,7 +122,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         this.userId = getIntent().getExtras().getString("USER_ID");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
@@ -194,7 +162,6 @@ public class ActivityAddMood extends AppCompatActivity {
         String date = getIntent().getExtras().getString("DATE");
         String mode = getIntent().getExtras().getString("EDIT");
 
-        dateText.setText(date);
 
         /**
          * handling if it's either editing or adding a mood
@@ -203,8 +170,18 @@ public class ActivityAddMood extends AppCompatActivity {
             case "AddingMode":
                 setMoodEmoji("Happy");
                 emojiPic.setColorFilter(getColor(R.color.Happy), PorterDuff.Mode.MULTIPLY);
+                dateText.setText(dateFormat.format(new Date()));
                 break;
             case "EditingMode":
+                Date parsedDate = new Date();
+                try {
+                    parsedDate = dateFormat.parse(date);
+
+                    Timestamp timestamp = new Timestamp(parsedDate);
+                    mood.setMoodDate(timestamp);
+                } catch(Exception e) { //this generic but you can control another types of exception
+                    e.printStackTrace();
+                }
                 setMoodEmoji(mood.getMoodTitle());
                 emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
                 moodTitle.setSelection(titleAdapter.getPosition(mood.getMoodTitle()));
@@ -215,7 +192,7 @@ public class ActivityAddMood extends AppCompatActivity {
                 emojiPic.setImageBitmap(bitmap);
                 setMoodEmoji(mood.getMoodTitle());
                 emojiPic.setColorFilter(Color.parseColor(mood.getMoodColor()), PorterDuff.Mode.MULTIPLY);
-                dateText.setText(date);
+                dateText.setText(dateFormat.format(parsedDate));
                 description.setText(mood.getMoodDescription());
 
                 /**
@@ -231,6 +208,9 @@ public class ActivityAddMood extends AppCompatActivity {
                     e.getMessage();
                 }
         }
+        /**
+         * changes the moodTitle and emojis here
+         */
         moodTitle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -287,6 +267,10 @@ public class ActivityAddMood extends AppCompatActivity {
                 String reason = description.getText().toString();
                 if (reason.length() > 20){
                     Toast.makeText(ActivityAddMood.this, "DESCRIPTION TOO LONG\nMAX 20 CHARACTERS",Toast.LENGTH_SHORT).show();
+                }
+                else if (words(reason) == false){
+                    Toast.makeText(ActivityAddMood.this, "MAX 3 WORDS",Toast.LENGTH_SHORT).show();
+
                 }
                 else {
                     mood.setMoodDescription(reason);
@@ -502,6 +486,20 @@ public class ActivityAddMood extends AppCompatActivity {
             case "Touched":
                 emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
+        }
+    }
+
+    /**
+     * number of words testing
+     * @param i
+     * @return
+     */
+    public boolean words(String i){
+        String[] arrOfi = i.split(" ");
+        if (arrOfi.length <= 3){
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -70,14 +70,7 @@ import java.util.Date;
  */
 public class ActivityMoodView extends AppCompatActivity {
     private static final String TAG = "ActivityMoodView";
-    /**
-     * todo: working on converting URL's to images
-     */
-    private ArrayList<String> mNames = new ArrayList<>();
-    private ArrayList<String> mImageUrls = new ArrayList<>();
 
-
-    private Context context;
     TextView dateText, moodUserName;
     EditText description;
     Button editButton;
@@ -85,7 +78,7 @@ public class ActivityMoodView extends AppCompatActivity {
     ImageView profileBackground;
     ImageView profilePic, emojiPic;
 
-    TextView moodTitle, moodSituation; // moodTitle and moodType is the same here for now
+    TextView moodTitle, moodSituation;
     String image;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd, HH:MM");
     Date date = Calendar.getInstance().getTime();
@@ -132,20 +125,19 @@ public class ActivityMoodView extends AppCompatActivity {
 
         final Mood mood = (Mood) getIntent().getSerializableExtra("Mood");
         final String date = (String) getIntent().getExtras().getString("DATE");
-        dateText.setText(date);
-
+        Date parsedDate = new Date();
         try {
-            Date parsedDate = dateFormat.parse(date);
+            parsedDate = dateFormat.parse(date);
 
             Timestamp timestamp = new Timestamp(parsedDate);
             mood.setMoodDate(timestamp);
         } catch(Exception e) { //this generic but you can control another types of exception
             e.printStackTrace();
         }
-
+        dateText.setText(dateFormat.format(parsedDate));
         Toast.makeText(getApplicationContext(),date,Toast.LENGTH_LONG);
         moodUserName.setText(mood.getMoodUsername());
-        moodSituation.setText("Was " + mood.getMoodSituation());
+        moodSituation.setText(mood.getMoodSituation());
         moodTitle.setText(mood.getMoodTitle());
         android.text.format.DateFormat df = new android.text.format.DateFormat();
 
