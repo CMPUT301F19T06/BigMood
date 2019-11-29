@@ -161,7 +161,7 @@ public class FriendsRequestRecyclerViewAdapter extends RecyclerView.Adapter<Frie
         final Query query = userCollectionReference.whereEqualTo("userId", targetId);
         final DocumentReference docRef = this.userCollectionReference.document(targetId);
         final HashMap<String, Object> data = new HashMap<>();
-        data.put("userId", this.userId);
+        data.put("userId", targetId);
             //accept the friend request
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
