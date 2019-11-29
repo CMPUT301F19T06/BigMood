@@ -83,14 +83,11 @@ public class AddMoodTest {
         rule.launchActivity(intent);
         solo.enterText((EditText)solo.getView(R.id.moodDescription), "Hi there");
         solo.clickOnView(solo.getView(R.id.save_button));
-        Intent moodView = new Intent(getApplicationContext(), ActivityMoodView.class);
-        intent.putExtra("USER_ID", "404");
-        date = mood.getMoodDate().toDate().toString();
-        intent.putExtra("DATE", date);
-        solo.waitForActivity(ActivityMoodView.class,2000);
-        rule.launchActivity(moodView);
+        solo.waitForActivity(ActivityMoodView.class, 2000);
         solo.clickOnButton("EDIT");
-        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is more than 20 than 20 characters");
+        solo.waitForActivity(ActivityAddMood.class, 2000);
+
+        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is more than 20 characters");
         solo.clickOnButton("SAVE");
         solo.assertCurrentActivity("Right activity",ActivityAddMood.class);
         solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is four words");
