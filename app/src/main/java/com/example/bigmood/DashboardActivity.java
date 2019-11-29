@@ -65,25 +65,24 @@ public class DashboardActivity extends BaseDrawerActivity {
         this.username = getIntent().getExtras().getString("User_Name");
 
         fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> {
-            Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
-            intent.putExtra("USER_ID", userId);
-            String date = Timestamp.now().toDate().toString();
-            intent.putExtra("DATE", date);
-            Mood mood = new Mood(userId);
-            mood.setMoodUsername(getUsername());
-            intent.putExtra("Mood",mood);
-            intent.putExtra("EDIT","AddingMode");
-            startActivity(intent);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DashboardActivity.this, ActivityAddMood.class);
+                intent.putExtra("USER_ID", userId);
+                String date = Timestamp.now().toDate().toString();
+                intent.putExtra("DATE", date);
+                Mood mood = new Mood(userId);
+                mood.setMoodUsername(DashboardActivity.this.getUsername());
+                intent.putExtra("Mood", mood);
+                intent.putExtra("EDIT", "AddingMode");
+                DashboardActivity.this.startActivity(intent);
+            }
         });
 
 
         this.recyclerView = findViewById(R.id.dashboard_recyclerview);
         this.moodCollectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
-            pullCurrentUserTopMood();
-            pullGetFriendMoods();
-        });
-        this.userCollectionReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
             pullCurrentUserTopMood();
             pullGetFriendMoods();
         });
@@ -124,27 +123,30 @@ public class DashboardActivity extends BaseDrawerActivity {
     // step 2: get most recent mood from user
     private void pullGetFriendMoods() {
         final Query query = userCollectionReference.whereEqualTo("userId", this.userId);
-        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-            for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                moodObjects.clear();
-                List<String> friends = (List<String>) doc.get("userFriends");
-                if (!friends.isEmpty()) {
-                    // This line might explode
-                    userFriends = (List) doc.get("userFriends");
-                    emptyFriends.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                    for (Object obj : userFriends) {
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    moodObjects.clear();
+                    List<String> friends = (List<String>) doc.get("userFriends");
+                    if (!friends.isEmpty()) {
                         // This line might explode
-                        String user = (String) obj;
-                        pullTopMood(user);
+                        userFriends = (List) doc.get("userFriends");
+                        emptyFriends.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        for (Object obj : userFriends) {
+                            // This line might explode
+                            String user = (String) obj;
+                            DashboardActivity.this.pullTopMood(user);
+                        }
+                    } else {
+                        emptyFriends.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
                     }
-                } else {
-                    emptyFriends.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
                 }
-            }
 
+            }
         });
     }
 
