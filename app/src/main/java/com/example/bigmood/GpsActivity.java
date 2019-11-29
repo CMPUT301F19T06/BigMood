@@ -221,14 +221,13 @@ public class GpsActivity extends AppCompatActivity{
                 } else{
                     Log.d(TAG, "Failed to get user friends");
                 }
+                Log.d(TAG, "Friends in listener: " + String.valueOf(followedUsers.size()));
+                retrieveFollowedMoods();
             }
         });
 
         displayMap();
-
-        if (mode.equals("USER")) {
-            retrieveUserMoods();
-        }
+        Log.d(TAG, "Friends out of listener: " + String.valueOf(followedUsers.size()));
 
         db.collection("Mood").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -241,7 +240,6 @@ public class GpsActivity extends AppCompatActivity{
         });
 
         retrieveUserMoods();
-        retrieveFollowedMoods();
 
         if (mode.equals("USER")){
             switchUserMoods();
@@ -279,12 +277,9 @@ public class GpsActivity extends AppCompatActivity{
 
                                 switchUserMoods();
                                 //Toast.makeText(GpsActivity.this, String.valueOf(userPoints.size()), Toast.LENGTH_LONG).show();
-                                //setGraphics();
                                 return true;
                             case R.id.gps_mode_menu_followed:
                                 switchFollowedMoods();
-
-                                //setGraphics();
                                 return true;
                             default:
                                 return false;
@@ -316,11 +311,19 @@ public class GpsActivity extends AppCompatActivity{
     private void switchUserMoods(){
         userPoints = personalPoints;
         userMoods = personalMoods;
+        for (Mood mood : userMoods.values()){
+            Log.d(TAG, "Mood in map: " + mood.getMoodID());
+        }
+        setGraphics();
     }
 
     private void switchFollowedMoods(){
         userPoints = followedPoints;
         userMoods = followedMoods;
+        for (Mood mood : userMoods.values()){
+            Log.d(TAG, "Mood in map: " + mood.getMoodID());
+        }
+        setGraphics();
     }
 
     private void retrieveUserMoods(){
@@ -339,11 +342,11 @@ public class GpsActivity extends AppCompatActivity{
                             personalMoods.put(doc.getId(), Mood.getFromDoc(doc));
 
                         }
-                        //setGraphics();
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
                 }
+                Log.d(TAG, "User moods retrieved:");
                 setGraphics();
             }
         });
@@ -352,7 +355,7 @@ public class GpsActivity extends AppCompatActivity{
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
         followedPoints.clear();
-        followedUsers.clear();
+        followedMoods.clear();
         if (!followedUsers.isEmpty()){
             userPoints.clear();
             userMoods.clear();
@@ -380,10 +383,9 @@ public class GpsActivity extends AppCompatActivity{
                         } else{
                             Log.d(TAG, "Failed to get friend moods");
                         }
-                        Toast.makeText(GpsActivity.this, "AAA The length of userMoods: " + String.valueOf(userPoints.size()), Toast.LENGTH_SHORT).show();
-
                         //userPoints.clear();
                         //userMoods.clear();
+                        Log.d(TAG, "Followed moods retrieved:");
                         setGraphics();
                     }
                 });
@@ -426,59 +428,16 @@ public class GpsActivity extends AppCompatActivity{
          */
 
 
-        //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
             Mood temp = userMoods.get(entry.getKey());
-            BitmapDrawable emoji = setEmojiDrawable(temp.getMoodTitle());
-            emoji.setColorFilter(new PorterDuffColorFilter(Color.parseColor(temp.getMoodColor()), PorterDuff.Mode.MULTIPLY));
-            ListenableFuture<PictureMarkerSymbol> e = createAsync(emoji);
             Log.d(TAG, "setGraphics: preTry:" + String.valueOf(userPoints.size()));
-            try {
-                PictureMarkerSymbol em = e.get();
-                em.setHeight(30);
-                em.setWidth(30);
-                Graphic graphic = new Graphic(entry.getValue(), em);
-                graphicsOverlay.getGraphics().add(graphic);
-            } catch (ExecutionException ex) {
-                ex.printStackTrace();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
+
+            Graphic graphic = new Graphic(entry.getValue(), symbol);
+            graphicsOverlay.getGraphics().add(graphic);
+
             Log.d(TAG, "setGraphics: postTry:" + String.valueOf(userPoints.size()));
         }
-    }
-
-    public BitmapDrawable setEmojiDrawable(String emotion){
-        BitmapDrawable emoji;
-        switch (emotion){
-            case "Happy":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_happy));
-                break;
-            case "Sad":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_sad));
-                break;
-            case "Scared":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_fear));
-                break;
-            case "Surprised":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_surprised));
-                break;
-            case "Angry":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_angry));
-                break;
-            case "Bored":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_bored));
-                break;
-            case "Disgusted":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_disgust));
-                break;
-            case "Touched":
-                emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_love));
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + emotion);
-        }
-        return emoji;
     }
 
     /**
