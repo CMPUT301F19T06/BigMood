@@ -74,6 +74,30 @@ public class SearchUserActivityTest {
     }
 
     /**
+     * Test Search functionality and clicking on user
+     */
+    @Test
+    public void checkBackButton(){
+        Intent intent = new Intent(getApplicationContext(), SearchUserActivity.class);
+        intent.putExtra("USER_ID", "109926616595958819946");
+        rule.launchActivity(intent);
+
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
+
+        solo.enterText((EditText)solo.getView(R.id.search_field), "Joshua");
+        solo.clickOnView(solo.getView(R.id.search_btn));
+        solo.clearEditText((EditText) solo.getView(R.id.search_field));
+
+        assertTrue(solo.waitForText("Joshua Derkson"));
+
+        solo.clickInRecyclerView(0);
+        solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
+
+        solo.goBack();
+        solo.assertCurrentActivity("Wrong Activity", SearchUserActivity.class);
+    }
+
+    /**
      * Close activity after each test
      * @throws Exception
      */
