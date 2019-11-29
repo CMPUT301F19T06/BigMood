@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -137,7 +138,7 @@ public class GpsActivity extends AppCompatActivity{
     private LocationManager locationManager;
     private Looper looper;
 
-    private BitmapDrawable emoji;
+    //private BitmapDrawable emoji;
 
 
     @Override
@@ -338,14 +339,14 @@ public class GpsActivity extends AppCompatActivity{
                             personalMoods.put(doc.getId(), Mood.getFromDoc(doc));
 
                         }
-                        setGraphics();
+                        //setGraphics();
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
                 }
+                setGraphics();
             }
         });
-        // Point point = new Point(long, lat, SpatialReferences.getWgs84())
     }
 
     private void retrieveFollowedMoods(){
@@ -387,6 +388,7 @@ public class GpsActivity extends AppCompatActivity{
                     }
                 });
             }
+            //setGraphics();
         }
     }
 
@@ -412,30 +414,42 @@ public class GpsActivity extends AppCompatActivity{
      * show gps points of moods on map
      */
     private void setGraphics(){
+        Log.d(TAG, "setGraphics: " + String.valueOf(userPoints.size()));
+
+        /*
+        if (!graphicsOverlay.getGraphics().isEmpty()){
+            for (Graphic g : graphicsOverlay.getGraphics()){
+                graphicsOverlay.getGraphics().remove(g);
+            }
+        }
+
+         */
 
 
         //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
             Mood temp = userMoods.get(entry.getKey());
-            setEmojiDrawable(temp.getMoodTitle());
-            emoji.setColorFilter(Color.parseColor(temp.getMoodColor()), PorterDuff.Mode.MULTIPLY);
+            BitmapDrawable emoji = setEmojiDrawable(temp.getMoodTitle());
+            emoji.setColorFilter(new PorterDuffColorFilter(Color.parseColor(temp.getMoodColor()), PorterDuff.Mode.MULTIPLY));
             ListenableFuture<PictureMarkerSymbol> e = createAsync(emoji);
-            Graphic graphic = null;
+            Log.d(TAG, "setGraphics: preTry:" + String.valueOf(userPoints.size()));
             try {
                 PictureMarkerSymbol em = e.get();
                 em.setHeight(30);
                 em.setWidth(30);
-                graphic = new Graphic(entry.getValue(), em);
+                Graphic graphic = new Graphic(entry.getValue(), em);
+                graphicsOverlay.getGraphics().add(graphic);
             } catch (ExecutionException ex) {
                 ex.printStackTrace();
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
-            graphicsOverlay.getGraphics().add(graphic);
+            Log.d(TAG, "setGraphics: postTry:" + String.valueOf(userPoints.size()));
         }
     }
 
-    public void setEmojiDrawable(String emotion){
+    public BitmapDrawable setEmojiDrawable(String emotion){
+        BitmapDrawable emoji;
         switch (emotion){
             case "Happy":
                 emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_happy));
@@ -461,7 +475,10 @@ public class GpsActivity extends AppCompatActivity{
             case "Touched":
                 emoji = new BitmapDrawable(getResources(), BitmapFactory.decodeResource(getResources(), R.drawable.emoji_love));
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + emotion);
         }
+        return emoji;
     }
 
     /**

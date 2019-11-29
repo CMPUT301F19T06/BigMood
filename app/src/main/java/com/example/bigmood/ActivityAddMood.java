@@ -173,15 +173,15 @@ public class ActivityAddMood extends AppCompatActivity {
          * changes the color according to moodtitle
          */
         final HashMap<String,String> colorHash = new HashMap<String, String>(){{
-            put("Set Color", "#FFFFFF");
-            put("Happy", "#FFFF00");
-            put("Scared", "#1AFF00");
-            put("Surprised", "#00B7FF");
-            put("Disgusted", "#CC00FF");
-            put("Angry", "#AEFF00");
-            put("Bored", "#FE6301");
-            put("Sad", "#0054FF");
-            put("Touched","#EDC0E1");
+            put("Set Color", getResources().getString(0+R.color.Base));
+            put("Happy", getResources().getString(0+R.color.Happy));
+            put("Scared", getResources().getString(0+R.color.Scared));
+            put("Surprised", getResources().getString(0+R.color.Surprised));
+            put("Disgusted", getResources().getString(0+R.color.Disgusted));
+            put("Angry", getResources().getString(0+R.color.Angry));
+            put("Bored", getResources().getString(0+R.color.Bored));
+            put("Sad", getResources().getString(0+R.color.Sad));
+            put("Touched", getResources().getString(0+R.color.Touched));
         }};
 
         /**
@@ -231,6 +231,21 @@ public class ActivityAddMood extends AppCompatActivity {
                     e.getMessage();
                 }
         }
+        moodTitle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                setMoodEmoji(titleAdapter.getItem(moodTitle.getSelectedItemPosition()).toString());
+                emojiPic.setColorFilter(Color.parseColor(
+                        colorHash.get(titleAdapter.getItem(moodTitle.getSelectedItemPosition())))
+                        , PorterDuff.Mode.MULTIPLY);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         /**
          * Set profile background
