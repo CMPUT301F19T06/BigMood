@@ -86,15 +86,15 @@
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/moodDescription"
+        <TextView
+            android:id="@+id/moodDescription_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="85dp"
             android:textColor="@color/common_google_signin_btn_text_dark_focused"
             android:textSize="20sp">
 
-        </EditText>
+        </TextView>
 
         <LinearLayout
             android:layout_width="match_parent"

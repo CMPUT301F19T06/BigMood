@@ -26,10 +26,10 @@
         <item name="Disgusted">#CC00FF</item>
     </string-array>
     <string-array name="editmood_moodsituation_spinner">
-        <item>in a group</item>
+        <item>in a crowd</item>
         <item>alone</item>
-        <item>with family</item>
-        <item>with another person</item>
+        <item>with someone</item>
+        <item>with a few others</item>
     </string-array>
     <string name="mood_user_name">mood_user_name</string>
     <string name="mood_date">mood_date</string>

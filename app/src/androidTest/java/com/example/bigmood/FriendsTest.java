@@ -33,7 +33,7 @@ public class FriendsTest {
         rule.launchActivity(intent);
         solo.waitForActivity("FriendsActivity", 500);
         solo.assertCurrentActivity("Wrong Activity", FriendsActivity.class);
-        assertTrue(solo.searchText("Jarrett Yu"));
+        assertTrue(solo.searchText("Donald Trump"));
     }
 
     @Test
