@@ -11,7 +11,7 @@
         android:id="@+id/background_pic"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:outlineAmbientShadowColor="@color/Angry"
         android:background="@color/colorAccent"
         android:orientation="horizontal"></ImageView>
@@ -60,7 +60,7 @@
                         android:gravity="top|left"
                         android:text="SELECT DATE"
                         android:textColor="@android:color/black"
-                        android:textSize="12sp">
+                        android:textSize="14sp">
 
                     </TextView>
 

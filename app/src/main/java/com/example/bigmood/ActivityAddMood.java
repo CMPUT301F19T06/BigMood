@@ -61,7 +61,7 @@ import static com.google.android.gms.common.internal.safeparcel.SafeParcelable.N
  */
 
 public class ActivityAddMood extends AppCompatActivity {
-    private static final String TAG = "ActivityAddView";
+    private static final String TAG = "ActivityAddMood";
 
     public static final int CAMERA_ACCESS = 1001;
     public static final int GALLERY_ACCESS = 9999;
@@ -122,7 +122,7 @@ public class ActivityAddMood extends AppCompatActivity {
 
         deleteMood = findViewById(R.id.deleteMood);
         emojiPic = findViewById(R.id.currentMoodImage);
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         this.userId = getIntent().getExtras().getString("USER_ID");
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         // object added to moods array adapter
@@ -208,6 +208,9 @@ public class ActivityAddMood extends AppCompatActivity {
                     e.getMessage();
                 }
         }
+        /**
+         * changes the moodTitle and emojis here
+         */
         moodTitle.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -264,6 +267,10 @@ public class ActivityAddMood extends AppCompatActivity {
                 String reason = description.getText().toString();
                 if (reason.length() > 20){
                     Toast.makeText(ActivityAddMood.this, "DESCRIPTION TOO LONG\nMAX 20 CHARACTERS",Toast.LENGTH_SHORT).show();
+                }
+                else if (words(reason) == false){
+                    Toast.makeText(ActivityAddMood.this, "MAX 3 WORDS",Toast.LENGTH_SHORT).show();
+
                 }
                 else {
                     mood.setMoodDescription(reason);
@@ -479,6 +486,20 @@ public class ActivityAddMood extends AppCompatActivity {
             case "Touched":
                 emojiPic.setImageResource(R.drawable.emoji_love);
                 break;
+        }
+    }
+
+    /**
+     * number of words testing
+     * @param i
+     * @return
+     */
+    public boolean words(String i){
+        String[] arrOfi = i.split(" ");
+        if (arrOfi.length <= 3){
+            return true;
+        } else {
+            return false;
         }
     }
 
