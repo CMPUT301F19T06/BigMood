@@ -109,7 +109,7 @@ public class ActivityAddMood extends AppCompatActivity {
         saveButton = findViewById(R.id.save_button);
         addLoc = findViewById(R.id.add_loc);
         dateText = findViewById(R.id.currentDate);
-        description = findViewById(R.id.moodDescription);
+        description = findViewById(R.id.moodDescription_edit);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         moodSituation = findViewById(R.id.moodSituationSpinner);

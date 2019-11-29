@@ -72,7 +72,7 @@ public class ActivityMoodView extends AppCompatActivity {
     private static final String TAG = "ActivityMoodView";
 
     TextView dateText, moodUserName;
-    EditText description;
+    TextView description;
     Button editButton;
     Button addLoc;
     ImageView profileBackground;
@@ -112,7 +112,7 @@ public class ActivityMoodView extends AppCompatActivity {
         addLoc = findViewById(R.id.add_loc);
 
         dateText = findViewById(R.id.currentDate);
-        description = findViewById(R.id.moodDescription);
+        description = findViewById(R.id.moodDescription_view);
         moodTitle = findViewById(R.id.currentMood);
         moodUserName = findViewById(R.id.moodUserName);
         moodSituation = findViewById(R.id.moodSituationSpinner);

@@ -2,26 +2,19 @@ package com.example.bigmood;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.icu.text.Transliterator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import com.example.bigmood.Mood;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 
 
 /**
@@ -46,7 +39,7 @@ public class CustomArrayAdapter extends ArrayAdapter<Mood> {
         Mood some_mood =  moodArrayList.get(position);
         moodTitle = view.findViewById(R.id.moodUserName);
         moodDate = view.findViewById(R.id.moodDate);
-        moodDescription = view.findViewById(R.id.moodDescription);
+        moodDescription = view.findViewById(R.id.moodDescription_edit);
         linearLayout = view.findViewById(R.id.linearLayout);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 

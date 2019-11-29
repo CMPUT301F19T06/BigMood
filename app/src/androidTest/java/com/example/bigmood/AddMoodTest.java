@@ -1,97 +1,56 @@
 package com.example.bigmood;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.view.View;
+import android.graphics.Point;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.google.firebase.Timestamp;
 import com.robotium.solo.Solo;
 
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static junit.framework.TestCase.assertTrue;
 
 /**
- * Test cases for add / edit mood activity
+ *  Tests add and view mood activities
  */
 public class AddMoodTest {
-    private String userId,username;
     private Solo solo;
-    /**
-     * Start ActivityAddMood
-     */
+
     @Rule
-    public ActivityTestRule<ActivityAddMood> rule = new ActivityTestRule<>(ActivityAddMood.class,false,false);
+    public ActivityTestRule<DashboardActivity> rule = new ActivityTestRule<>(DashboardActivity.class, false, false);
 
     @Before
     public void setUp() throws Exception {
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
     }
 
-    public Mood mockMood(){
-        return new Mood("Disgusted","Sad lief","#87C000",Timestamp.now(),"404");
-    }
-    /**
-     * Gets the Activity
-     * @throws Exception
-     */
     @Test
-    public void checkAddMood() throws Exception{
-        startAdd();
-        solo.clickOnButton("SAVE");
-        solo.waitForActivity(ActivityMoodView.class,2000);
+    public void basicAddViewTest() {
+        startDashboard();
+        solo.clickOnView(solo.getView(R.id.fab));
+        solo.waitForActivity("ActivityAddMood", 500);
         solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
-    }
-
-    @Test
-    public void testMoodDescription(){
-        Intent intent = new Intent(getApplicationContext(), ActivityAddMood.class);
-        intent.putExtra("USER_ID", "404");
-        intent.putExtra("EDIT","AddingMode");
-        String date = Timestamp.now().toDate().toString();
-        intent.putExtra("DATE", date);
-        Mood mood = mockMood();
-        mood.setMoodUsername("Donald Trump");
-        intent.putExtra("Mood",new Mood("404"));
-        rule.launchActivity(intent);
-        solo.enterText((EditText)solo.getView(R.id.moodDescription), "Hi there");
-        solo.clickOnView(solo.getView(R.id.save_button));
-        solo.waitForActivity(ActivityMoodView.class, 2000);
-        solo.clickOnButton("EDIT");
-        solo.waitForActivity(ActivityAddMood.class, 2000);
-
-        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is more than 20 characters");
-        solo.clickOnButton("SAVE");
-        solo.assertCurrentActivity("Right activity",ActivityAddMood.class);
-        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is four words");
-        solo.clickOnButton("SAVE");
-        solo.assertCurrentActivity("Right activity",ActivityAddMood.class);
-        solo.enterText((EditText)solo.getView(R.id.moodDescription), "This is fine");
-        solo.clickOnButton("SAVE");
-        solo.waitForActivity(ActivityMoodView.class, 2000);
-        solo.assertCurrentActivity("Right activity",ActivityMoodView.class);
+        solo.clickOnText("SAVE");
+        solo.assertCurrentActivity("Wrong Activity", ActivityMoodView.class);
+        assertTrue(solo.searchText("Happy"));
+        solo.goBack();
+        solo.waitForActivity("DashboardActivity");
+        deleteMood("Happy");
     }
 
     @Test
     public void testSpinners() {
         String[] moods = {"Sad", "Happy", "Angry", "Scared", "Disgusted", "Bored"};
         String[] situations = {"alone", "with someone", "with a few others"};
-        startAdd();
+        startDashboard();
+        solo.clickOnView(solo.getView(R.id.fab));
+        solo.waitForActivity("ActivityAddMood", 500);
         solo.clickOnText("Happy");
         for (String string : moods) {
             solo.clickOnText(string);
@@ -109,56 +68,92 @@ public class AddMoodTest {
         }
         solo.clickOnText("in a crowd");
         assertTrue(solo.searchText("in a crowd"));
-
     }
 
-    /**
-     * Add a mood
-     **/
     @Test
-    public void editTest() {
-        // Asserts that the current activity is the MainActivity. Otherwise, show “Wrong Activity”
-        //Get view for EditText and enter a city name
-        // 0 is the first spinner in the layout
-        View view1 = solo.getView(Spinner.class, 0);
-        solo.clickOnView(view1);
-        solo.scrollToTop(); // I put this in here so that it always keeps the list at start
-        // select the 10th item in the spinner
-        solo.clickOnView(solo.getView(TextView.class, 2));
+    public void addMoodTest2() {
+        startDashboard();
+        solo.clickOnView(solo.getView(R.id.fab));
+        solo.waitForActivity("ActivityAddMood", 1000);
+        solo.sleep(1000);
+        solo.clickOnText("Happy");
+        solo.sleep(1000);
+        solo.clickOnText("Sad");
+        assertTrue(solo.searchText("Sad"));
 
-        solo.clickOnButton("SAVE"); //Select CONFIRM Button
-        solo.waitForActivity("ActivityViewMood", 1000);
+        solo.clickOnText("in a crowd");
+        solo.sleep(500);
+        solo.clickOnText("alone");
+        assertTrue(solo.searchText("alone"));
 
-        solo.assertCurrentActivity("Wrong Activity", ActivityAddMood.class);
+        solo.enterText((EditText)solo.getView(R.id.moodDescription_edit), "Description is way too long");
+        solo.clickOnText("SAVE");
+        solo.sleep(500);
+        solo.assertCurrentActivity("Wrong activity", ActivityAddMood.class);
 
+        solo.clearEditText((EditText)solo.getView(R.id.moodDescription_edit));
+        solo.typeText((EditText)solo.getView(R.id.moodDescription_edit), "Too many words test");
+        solo.clickOnText("SAVE");
+        solo.sleep(500);
+        solo.assertCurrentActivity("Wrong activity", ActivityAddMood.class);
+
+        solo.clearEditText((EditText)solo.getView(R.id.moodDescription_edit));
+        solo.typeText((EditText)solo.getView(R.id.moodDescription_edit), "Just right");
+        solo.clickOnText("SAVE");
+        solo.waitForActivity("ActivityMoodView", 500);
+        solo.assertCurrentActivity("Wrong activity", ActivityMoodView.class);
+
+        solo.goBack();
+        solo.waitForActivity("DashboardActivity", 500);
+        deleteMood("Sad");
     }
 
-    public void startAdd() {
-        Intent intent = new Intent(getApplicationContext(), ActivityAddMood.class);
+
+    public void slideOutDrawer() {
+        Point deviceSize = new Point();
+        solo.getCurrentActivity().getWindowManager().getDefaultDisplay().getSize(deviceSize);
+
+        float screenWidth = deviceSize.x;
+        float screenHeight = deviceSize.y;
+        float fromX = 0;
+        float toX = screenWidth / 2;
+        float fromY = screenHeight / 2;
+        float toY = fromY;
+
+        solo.drag(fromX, toX, fromY, toY,5);
+    }
+
+    public void startDashboard() {
+        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
         intent.putExtra("USER_ID", "404");
-        intent.putExtra("EDIT","AddingMode");
-        String date = Timestamp.now().toDate().toString();
-        String id = String.valueOf(Timestamp.now().hashCode());
-        Mood mood = new Mood("404");
-        mood.setMoodUsername("Donald Trump");
-        mood.setMoodID(id);
-        intent.putExtra("DATE", date);
-        intent.putExtra("Mood", mood);
+        intent.putExtra("User_Name","Donald Trump");
         rule.launchActivity(intent);
-        solo.waitForActivity(ActivityAddMood.class, 2000);
-
+        solo.waitForActivity("DashboardActivity", 500);
+        solo.assertCurrentActivity("Wrong Activity", DashboardActivity.class);
     }
 
-
-    /**
-     * Close activity after each test
-     * @throws Exception
-     */
-    @After
-    public void tearDown() throws Exception{
-        solo.finishOpenedActivities();
+    public void addMood(String title) {
+        solo.clickOnView(solo.getView(R.id.fab));
+        solo.waitForActivity("ActivityAddMood", 1000);
+        solo.clickOnText("Happy");
+        solo.clickOnText(title);
+        solo.clickOnButton("SAVE");
+        solo.waitForActivity("ActivityViewMood", 1000);
+        solo.goBack();
+        solo.waitForActivity("DashboardActivity", 1000);
     }
 
+    public void deleteMood(String title) {
+        solo.clickOnText(title);
+        solo.waitForActivity("ActivityViewMood", 1000);
+        solo.clickOnText("EDIT");
+        solo.waitForActivity("ActivityAddMood", 1000);
+        solo.clickOnView(solo.getView(R.id.deleteMood));
+    }
 
-
+    @Test
+    public void checkFriend() throws InterruptedException {
+        solo.clickOnView(solo.getView(R.id.user_view_add_friend));
+        assertTrue(solo.searchText("Sent follow request!"));
+    }
 }
