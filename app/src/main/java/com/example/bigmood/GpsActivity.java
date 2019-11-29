@@ -223,6 +223,11 @@ public class GpsActivity extends AppCompatActivity{
             }
         });
 
+        displayMap();
+
+        if (mode.equals("USER")) {
+            retrieveUserMoods();
+        }
 
         db.collection("Mood").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -290,7 +295,7 @@ public class GpsActivity extends AppCompatActivity{
         });
 
         //call to display map
-        displayMap();
+
 
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -348,6 +353,8 @@ public class GpsActivity extends AppCompatActivity{
         followedPoints.clear();
         followedUsers.clear();
         if (!followedUsers.isEmpty()){
+            userPoints.clear();
+            userMoods.clear();
             for (String user : followedUsers){
                 moodCollection.whereEqualTo("moodCreator",user)
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -368,11 +375,15 @@ public class GpsActivity extends AppCompatActivity{
                                 followedPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
                                 followedMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
                             }
-                            setGraphics();
+                            //setGraphics();
                         } else{
                             Log.d(TAG, "Failed to get friend moods");
                         }
                         Toast.makeText(GpsActivity.this, "AAA The length of userMoods: " + String.valueOf(userPoints.size()), Toast.LENGTH_SHORT).show();
+
+                        //userPoints.clear();
+                        //userMoods.clear();
+                        setGraphics();
                     }
                 });
             }
