@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!--  Gradient Background For Menu Buttons -->
+    <gradient
+        android:startColor="#F2994A"
+        android:centerColor="#F2C94C"
+        android:endColor="@color/colorWhite"
+        android:angle="270" />
+    <corners android:radius="8dp" />
+</shape>
+
