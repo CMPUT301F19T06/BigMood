@@ -32,7 +32,6 @@ public class AddMoodTest {
 
     @Before
     public void setUp() throws Exception{
-        solo.clickOnButton(R.);
         solo = new Solo(InstrumentationRegistry.getInstrumentation(),rule.getActivity());
     }
     /**
