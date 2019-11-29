@@ -123,6 +123,8 @@ public class GpsActivity extends AppCompatActivity{
     private HashMap<String, Point> followedPoints;
     private HashMap<String, Mood> followedMoods;
 
+    private boolean personal;
+
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
@@ -314,6 +316,7 @@ public class GpsActivity extends AppCompatActivity{
     private void switchUserMoods(){
         userPoints = personalPoints;
         userMoods = personalMoods;
+        personal = true;
         for (Mood mood : userMoods.values()){
             Log.d(TAG, "Mood in map: " + mood.getMoodID());
         }
@@ -323,6 +326,7 @@ public class GpsActivity extends AppCompatActivity{
     private void switchFollowedMoods(){
         userPoints = followedPoints;
         userMoods = followedMoods;
+        personal = false;
         for (Mood mood : userMoods.values()){
             Log.d(TAG, "Mood in map: " + mood.getMoodID());
         }
@@ -436,8 +440,11 @@ public class GpsActivity extends AppCompatActivity{
             Mood temp = userMoods.get(entry.getKey());
             Log.d(TAG, "setGraphics: entry (lat long): " + entry.getValue().toString());
             SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.parseColor(temp.getMoodColor()), 10);
-            TextSymbol textSymbol = new TextSymbol(10, temp.getMoodUsername() + ": " + temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
+            TextSymbol textSymbol = new TextSymbol(10, temp.getMoodUsername() + ": " + temp.getMoodTitle(), Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
 
+            if (personal){
+                textSymbol = new TextSymbol(10, temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
+            }
             Graphic graphic = new Graphic(entry.getValue(), symbol);
             Graphic txtGraphic = new Graphic(entry.getValue(), textSymbol);
 
