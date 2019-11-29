@@ -214,6 +214,7 @@ public class GpsActivity extends AppCompatActivity{
 
         if (mode.equals("USER")){
             retrieveUserMoods();
+
         }
         else{
             retrieveFollowedMoods();
@@ -247,13 +248,13 @@ public class GpsActivity extends AppCompatActivity{
                             case R.id.gps_mode_menu_user:
 
                                 retrieveUserMoods();
-
-                                setGraphics();
+                                //Toast.makeText(GpsActivity.this, String.valueOf(userPoints.size()), Toast.LENGTH_LONG).show();
+                                //setGraphics();
                                 return true;
                             case R.id.gps_mode_menu_followed:
                                 retrieveFollowedMoods();
 
-                                setGraphics();
+                                //setGraphics();
                                 return true;
                             default:
                                 return false;
@@ -266,7 +267,7 @@ public class GpsActivity extends AppCompatActivity{
 
         //call to display map
         displayMap();
-        setGraphics();
+
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    Activity#requestPermissions
@@ -278,12 +279,14 @@ public class GpsActivity extends AppCompatActivity{
             ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         }
         locationManager.requestSingleUpdate(criteria, locationListener, looper);
+        //setGraphics();
         /////////////////////
     }
 
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
+
         userPoints.clear();
         userMoods.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
@@ -295,7 +298,9 @@ public class GpsActivity extends AppCompatActivity{
                         for (QueryDocumentSnapshot doc : task.getResult()) {
                             userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
                             userMoods.put(doc.getId(), Mood.getFromDoc(doc));
+
                         }
+                        setGraphics();
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
@@ -330,6 +335,7 @@ public class GpsActivity extends AppCompatActivity{
                                 userPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
                                 userMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
                             }
+                            setGraphics();
                         } else{
                             Log.d(TAG, "Failed to get friend moods");
                         }
