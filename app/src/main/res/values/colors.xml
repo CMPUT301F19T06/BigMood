@@ -17,8 +17,11 @@
     <color name= "colorBlue">#2400EE</color>
     // mood fragments
     <color name= "MoodfragmentShadow">@color/colorAccent</color>
-    <color name="MoodfragmentColor">#F9EBA5</color>
+    <color name="MoodfragmentColor">#FAE4AD</color>
     <color name="MoodFragmentBorder">#F4DD61</color>
     <color name="DashboardBackground">#FDFAE8</color>
+    <color name="ToolbarColor">#F3B61F</color>
+    <color name="GoldButtonColor">@color/colorAccent</color>
+    <color name="CustomButtonColor">#F3B61F</color>
 
 </resources>
