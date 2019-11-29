@@ -17,37 +17,7 @@
     </com.esri.arcgisruntime.mapping.view.MapView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/gps_button_zoomin"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/gps_button_zoomout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="30dp"
-        app:srcCompat="@android:drawable/arrow_up_float" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/gps_button_mode"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorPrimary"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/gps_button_zoomin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:maxImageSize="30dp"
-        app:srcCompat="@drawable/ic_view_headline_white_24dp" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/gps_button_zoomout"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
@@ -59,7 +29,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="30dp"
-        app:srcCompat="@android:drawable/arrow_down_float"
-        app:useCompatPadding="false" />
+        app:srcCompat="@drawable/ic_view_headline_white_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

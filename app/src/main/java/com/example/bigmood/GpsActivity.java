@@ -6,6 +6,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,7 +45,11 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyGraphicsOverlayResult;
 import com.esri.arcgisruntime.mapping.view.ViewpointChangedEvent;
 import com.esri.arcgisruntime.mapping.view.ViewpointChangedListener;
+import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
+import com.esri.arcgisruntime.symbology.TextSymbol;
+import com.esri.arcgisruntime.util.ListChangedEvent;
+import com.esri.arcgisruntime.util.ListChangedListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,16 +65,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.okhttp.internal.Platform;
+
+import static com.esri.arcgisruntime.symbology.PictureMarkerSymbol.createAsync;
 
 
 /**
@@ -103,6 +118,11 @@ public class GpsActivity extends AppCompatActivity{
 
     private HashMap<String, Mood> userMoods;
 
+    private HashMap<String, Point> personalPoints;
+    private HashMap<String, Mood> personalMoods;
+    private HashMap<String, Point> followedPoints;
+    private HashMap<String, Mood> followedMoods;
+
 
     private FirebaseFirestore db;
     private CollectionReference moodCollection;
@@ -120,6 +140,8 @@ public class GpsActivity extends AppCompatActivity{
     private Criteria criteria;
     private LocationManager locationManager;
     private Looper looper;
+
+    //private BitmapDrawable emoji;
 
 
     @Override
@@ -178,6 +200,10 @@ public class GpsActivity extends AppCompatActivity{
 
         this.userPoints = new HashMap<>();
         this.userMoods = new HashMap<>();
+        this.personalPoints = new HashMap<>();
+        this.personalMoods = new HashMap<>();
+        this.followedPoints = new HashMap<>();
+        this.followedMoods = new HashMap<>();
 
         //Initialize the friend list
         followedUsers = new ArrayList<>();
@@ -198,19 +224,34 @@ public class GpsActivity extends AppCompatActivity{
                 } else{
                     Log.d(TAG, "Failed to get user friends");
                 }
+                Log.d(TAG, "Friends in listener: " + String.valueOf(followedUsers.size()));
+                retrieveFollowedMoods();
             }
         });
 
+        displayMap();
+        Log.d(TAG, "Friends out of listener: " + String.valueOf(followedUsers.size()));
+
+        db.collection("Mood").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                for( QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                    retrieveUserMoods();
+                    retrieveFollowedMoods();
+                }
+            }
+        });
+
+        retrieveUserMoods();
+
         if (mode.equals("USER")){
-            retrieveUserMoods();
+            switchUserMoods();
         }
         else{
-            retrieveFollowedMoods();
+            switchFollowedMoods();
         }
 
         final FloatingActionButton modeButton = findViewById(R.id.gps_button_mode);
-        FloatingActionButton zoominButton = findViewById(R.id.gps_button_zoomin);
-        FloatingActionButton zoomoutButton = findViewById(R.id.gps_button_zoomout);
 
         modeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,19 +278,11 @@ public class GpsActivity extends AppCompatActivity{
 
                             case R.id.gps_mode_menu_user:
 
-                                if(userPoints == null){
-                                    retrieveUserMoods();
-                                }
+                                switchUserMoods();
                                 //Toast.makeText(GpsActivity.this, String.valueOf(userPoints.size()), Toast.LENGTH_LONG).show();
-                                //displayMap();
-                                locationManager.requestSingleUpdate(criteria, locationListener, looper);
-                                setGraphics();
                                 return true;
                             case R.id.gps_mode_menu_followed:
-                                retrieveFollowedMoods();
-                                //displayMap();
-                                locationManager.requestSingleUpdate(criteria, locationListener, looper);
-                                setGraphics();
+                                switchFollowedMoods();
                                 return true;
                             default:
                                 return false;
@@ -261,7 +294,8 @@ public class GpsActivity extends AppCompatActivity{
         });
 
         //call to display map
-        displayMap();
+
+
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    Activity#requestPermissions
@@ -273,30 +307,33 @@ public class GpsActivity extends AppCompatActivity{
             ActivityCompat.requestPermissions(GpsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
         }
         locationManager.requestSingleUpdate(criteria, locationListener, looper);
+        //setGraphics();
         /////////////////////
-
-        zoominButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: When the zoom in button is pressed
-            }
-        });
-
-        zoomoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO: When the zoom out button is pressed
-            }
-        });
-
-
     }
 
+    private void switchUserMoods(){
+        userPoints = personalPoints;
+        userMoods = personalMoods;
+        for (Mood mood : userMoods.values()){
+            Log.d(TAG, "Mood in map: " + mood.getMoodID());
+        }
+        setGraphics();
+    }
+
+    private void switchFollowedMoods(){
+        userPoints = followedPoints;
+        userMoods = followedMoods;
+        for (Mood mood : userMoods.values()){
+            Log.d(TAG, "Mood in map: " + mood.getMoodID());
+        }
+        setGraphics();
+    }
 
     private void retrieveUserMoods(){
         //TODO: Retrieve the users moods
-        userPoints.clear();
-        userMoods.clear();
+
+        personalPoints.clear();
+        personalMoods.clear();
         moodCollection.whereEqualTo("moodCreator",userId)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -304,23 +341,27 @@ public class GpsActivity extends AppCompatActivity{
                 if (task.isSuccessful()){
                     if (!task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot doc : task.getResult()) {
-                            userPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
-                            userMoods.put(doc.getId(), Mood.getFromDoc(doc));
+                            personalPoints.put(doc.getId(), new Point(doc.getDouble("longitude"), doc.getDouble("latitude"), wgs84));
+                            personalMoods.put(doc.getId(), Mood.getFromDoc(doc));
+
                         }
                     }
                 } else{
                     Log.d(TAG, "Failed to get user moods");
                 }
+                Log.d(TAG, "User moods retrieved:");
+                setGraphics();
             }
         });
-        // Point point = new Point(long, lat, SpatialReferences.getWgs84())
     }
 
     private void retrieveFollowedMoods(){
         //TODO: retrieve followed moods
-        userPoints.clear();
-        userMoods.clear();
+        followedPoints.clear();
+        followedMoods.clear();
         if (!followedUsers.isEmpty()){
+            userPoints.clear();
+            userMoods.clear();
             for (String user : followedUsers){
                 moodCollection.whereEqualTo("moodCreator",user)
                         .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -338,15 +379,21 @@ public class GpsActivity extends AppCompatActivity{
                                         return ((Timestamp)doc2.get("moodDate")).compareTo((Timestamp)doc1.get("moodDate"));
                                     }
                                 });
-                                userPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
-                                userMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
+                                followedPoints.put(temp.get(0).getId(), new Point(temp.get(0).getDouble("longitude"), temp.get(0).getDouble("latitude"), wgs84));
+                                followedMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
                             }
+                            //setGraphics();
                         } else{
-                            Log.d(TAG, "Failed to get user moods");
+                            Log.d(TAG, "Failed to get friend moods");
                         }
+                        //userPoints.clear();
+                        //userMoods.clear();
+                        Log.d(TAG, "Followed moods retrieved:");
+                        setGraphics();
                     }
                 });
             }
+            //setGraphics();
         }
     }
 
@@ -360,41 +407,47 @@ public class GpsActivity extends AppCompatActivity{
         mMapView.setMap(map);
 
         map.setMaxScale(1000);
-        map.setMinScale(8000);
-
-        //set center of map
-        //mMapView.setViewpoint(new Viewpoint(new Point(tempLong, tempLat, wgs84), 3000));
-
-        //init graphics overlay
+        map.setMinScale(25000);
 
         graphicsOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(graphicsOverlay);
 
-
-
-        //symbol type for map marker
-        //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-        //setGraphics();
-
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
-
     }
 
     /**
      * show gps points of moods on map
      */
     private void setGraphics(){
+        Log.d(TAG, "setGraphics: " + String.valueOf(userPoints.size()));
 
+        graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().set(0,graphicsOverlay);
 
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
-        for (Point p : userPoints.values()){
-            Graphic graphic = new Graphic(p, symbol);
+        graphicsOverlay.getGraphics().addListChangedListener(new ListChangedListener<Graphic>() {
+            @Override
+            public void listChanged(ListChangedEvent<Graphic> listChangedEvent) {
+                Log.d(TAG, "Graphics changed: " + listChangedEvent.getItems().size());
+            }
+        });
+
+        for(Map.Entry<String, Point> entry : userPoints.entrySet()){
+            Log.d(TAG, "setGraphics: entry: " + entry.getKey());
+            Mood temp = userMoods.get(entry.getKey());
+            Log.d(TAG, "setGraphics: entry (lat long): " + entry.getValue().toString());
+            SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.parseColor(temp.getMoodColor()), 10);
+            TextSymbol textSymbol = new TextSymbol(10, temp.getMoodUsername() + ": " + temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
+
+            Graphic graphic = new Graphic(entry.getValue(), symbol);
+            Graphic txtGraphic = new Graphic(entry.getValue(), textSymbol);
+
             graphicsOverlay.getGraphics().add(graphic);
+            graphicsOverlay.getGraphics().add(txtGraphic);
         }
     }
 
     /**
-     * Idenetify which point user clicked
+     * Identify which point user clicked
      */
     private void identifyGraphics(){
         ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
@@ -421,12 +474,12 @@ public class GpsActivity extends AppCompatActivity{
                             getSelectedMood();
                             displayMood();
 
-                            return;
                         }
                     }
                 } catch(Exception e) {
                     e.printStackTrace();
                 }
+                return;
             }
         });
     }
@@ -455,7 +508,7 @@ public class GpsActivity extends AppCompatActivity{
     private void displayMood(){
 
         Intent intent = new Intent(GpsActivity.this, ActivityMoodView.class);
-        //intent.putExtra("USER_ID", userId);
+        intent.putExtra("USER_ID", selectedMood.getMoodUsername());
         //Mood mood = new Mood();
         //mood.setMoodUsername(getUsername());
         intent.putExtra("Mood",selectedMood);
