@@ -5,7 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="80dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginBottom="10dp"
+    android:backgroundTintMode="src_over"
+    android:clipToPadding="true"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:elevation="5dp"
+    android:outlineSpotShadowColor="@color/Angry"
+    android:background="@drawable/cool_background"
+    app:layout_scrollFlags="snap">
 
     <TextView
         android:id="@+id/friendName"
@@ -22,8 +35,8 @@
 
     <ImageView
         android:id="@+id/pfpImage"
-        android:layout_width="78dp"
-        android:layout_height="78dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="1dp"
@@ -41,16 +54,26 @@
     <Button
         android:id="@+id/acceptButton"
         android:layout_width="78dp"
-        android:layout_height="77dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/colorPrimaryDark"
         android:text="Accept"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rejectButton"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/rejectButton"
         android:layout_width="78dp"
-        android:layout_height="77dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/CustomButtonColor"
+        android:gravity="center"
         android:text="Reject"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

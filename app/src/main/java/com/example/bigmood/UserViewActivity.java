@@ -1,5 +1,6 @@
 package com.example.bigmood;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -166,8 +167,11 @@ public class UserViewActivity extends BaseDrawerActivity
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: start gps
-                Toast.makeText(UserViewActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), GpsActivity.class);
+                intent.putExtra("USER_ID", currentUser);
+                intent.putExtra("User_Name", userName.getText().toString());
+                intent.putExtra("MODE", "USER");
+                startActivity(intent);
             }
         });
     }
