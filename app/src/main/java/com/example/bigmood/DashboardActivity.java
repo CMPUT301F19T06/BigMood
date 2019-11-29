@@ -149,7 +149,8 @@ public class DashboardActivity extends BaseDrawerActivity {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 moodObjects.clear();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.contains("userFriends")) {
+                    List<String> friends = (List<String>) doc.get("userFriends");
+                    if (!friends.isEmpty()) {
                         // This line might explode
                         userFriends = (List) doc.get("userFriends");
                         emptyFriends.setVisibility(View.GONE);
