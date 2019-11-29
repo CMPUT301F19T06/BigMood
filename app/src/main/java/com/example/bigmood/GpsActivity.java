@@ -235,9 +235,7 @@ public class GpsActivity extends AppCompatActivity{
 
                             case R.id.gps_mode_menu_user:
 
-                                if(userPoints == null){
-                                    retrieveUserMoods();
-                                }
+                                retrieveUserMoods();
 
                                 setGraphics();
                                 return true;
@@ -257,6 +255,7 @@ public class GpsActivity extends AppCompatActivity{
 
         //call to display map
         displayMap();
+        setGraphics();
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    Activity#requestPermissions
@@ -321,7 +320,7 @@ public class GpsActivity extends AppCompatActivity{
                                 userMoods.put(temp.get(0).getId(), Mood.getFromDoc(temp.get(0)));
                             }
                         } else{
-                            Log.d(TAG, "Failed to get user moods");
+                            Log.d(TAG, "Failed to get friend moods");
                         }
                     }
                 });
@@ -342,7 +341,6 @@ public class GpsActivity extends AppCompatActivity{
         map.setMinScale(25000);
 
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
-
     }
 
     /**
@@ -360,7 +358,7 @@ public class GpsActivity extends AppCompatActivity{
     }
 
     /**
-     * Idenetify which point user clicked
+     * Identify which point user clicked
      */
     private void identifyGraphics(){
         ListenableFuture<IdentifyGraphicsOverlayResult> identifyGraphic =
