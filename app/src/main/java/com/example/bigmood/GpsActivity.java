@@ -48,6 +48,8 @@ import com.esri.arcgisruntime.mapping.view.ViewpointChangedListener;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.esri.arcgisruntime.symbology.TextSymbol;
+import com.esri.arcgisruntime.util.ListChangedEvent;
+import com.esri.arcgisruntime.util.ListChangedListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -419,9 +421,20 @@ public class GpsActivity extends AppCompatActivity{
     private void setGraphics(){
         Log.d(TAG, "setGraphics: " + String.valueOf(userPoints.size()));
 
+        graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().set(0,graphicsOverlay);
+
+        graphicsOverlay.getGraphics().addListChangedListener(new ListChangedListener<Graphic>() {
+            @Override
+            public void listChanged(ListChangedEvent<Graphic> listChangedEvent) {
+                Log.d(TAG, "Graphics changed: " + listChangedEvent.getItems().size());
+            }
+        });
+
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
+            Log.d(TAG, "setGraphics: entry: " + entry.getKey());
             Mood temp = userMoods.get(entry.getKey());
-            Log.d(TAG, "setGraphics: preTry:" + String.valueOf(userPoints.size()));
+            Log.d(TAG, "setGraphics: entry (lat long): " + entry.getValue().toString());
             SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.parseColor(temp.getMoodColor()), 10);
             TextSymbol textSymbol = new TextSymbol(10, temp.getMoodUsername() + ": " + temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
 
@@ -430,8 +443,6 @@ public class GpsActivity extends AppCompatActivity{
 
             graphicsOverlay.getGraphics().add(graphic);
             graphicsOverlay.getGraphics().add(txtGraphic);
-
-            Log.d(TAG, "setGraphics: postTry:" + String.valueOf(userPoints.size()));
         }
     }
 
