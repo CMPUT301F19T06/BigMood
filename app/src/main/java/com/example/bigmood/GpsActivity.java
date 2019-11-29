@@ -47,6 +47,7 @@ import com.esri.arcgisruntime.mapping.view.ViewpointChangedEvent;
 import com.esri.arcgisruntime.mapping.view.ViewpointChangedListener;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
+import com.esri.arcgisruntime.symbology.TextSymbol;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -418,23 +419,17 @@ public class GpsActivity extends AppCompatActivity{
     private void setGraphics(){
         Log.d(TAG, "setGraphics: " + String.valueOf(userPoints.size()));
 
-        /*
-        if (!graphicsOverlay.getGraphics().isEmpty()){
-            for (Graphic g : graphicsOverlay.getGraphics()){
-                graphicsOverlay.getGraphics().remove(g);
-            }
-        }
-
-         */
-
-
-        SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
             Mood temp = userMoods.get(entry.getKey());
             Log.d(TAG, "setGraphics: preTry:" + String.valueOf(userPoints.size()));
+            SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.parseColor(temp.getMoodColor()), 10);
+            TextSymbol textSymbol = new TextSymbol(10, temp.getMoodUsername() + ": " + temp.getMoodTitle(),Color.BLUE, TextSymbol.HorizontalAlignment.LEFT, TextSymbol.VerticalAlignment.BOTTOM);
 
             Graphic graphic = new Graphic(entry.getValue(), symbol);
+            Graphic txtGraphic = new Graphic(entry.getValue(), textSymbol);
+
             graphicsOverlay.getGraphics().add(graphic);
+            graphicsOverlay.getGraphics().add(txtGraphic);
 
             Log.d(TAG, "setGraphics: postTry:" + String.valueOf(userPoints.size()));
         }
