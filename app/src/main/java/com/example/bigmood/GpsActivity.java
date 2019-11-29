@@ -351,6 +351,9 @@ public class GpsActivity extends AppCompatActivity{
         map.setMaxScale(1000);
         map.setMinScale(25000);
 
+        graphicsOverlay = new GraphicsOverlay();
+        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
         mMapView.setOnTouchListener(new mapOnTouchCustom(this, mMapView));
     }
 
@@ -358,8 +361,7 @@ public class GpsActivity extends AppCompatActivity{
      * show gps points of moods on map
      */
     private void setGraphics(){
-        graphicsOverlay = new GraphicsOverlay();
-        mMapView.getGraphicsOverlays().add(graphicsOverlay);
+
 
         //SimpleMarkerSymbol symbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
         for(Map.Entry<String, Point> entry : userPoints.entrySet()){
