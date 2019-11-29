@@ -23,7 +23,7 @@
     <ImageView
         android:id="@+id/pfpImage"
         android:layout_width="78dp"
-        android:layout_height="77dp"
+        android:layout_height="78dp"
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="1dp"
