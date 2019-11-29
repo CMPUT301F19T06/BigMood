@@ -26,7 +26,7 @@
         android:layout_marginStart="56dp"
         android:padding="2dp"
         android:text="@string/mood_user_name"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -54,7 +54,7 @@
         android:layout_height="19dp"
         android:layout_marginStart="56dp"
         android:text="@string/mood_date"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

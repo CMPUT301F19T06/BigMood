@@ -145,7 +145,7 @@ public class ActivityMoodView extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(),date,Toast.LENGTH_LONG);
         moodUserName.setText(mood.getMoodUsername());
-        moodSituation.setText("COMMUNITY: \n" + mood.getMoodSituation());
+        moodSituation.setText("Was " + mood.getMoodSituation());
         moodTitle.setText(mood.getMoodTitle());
         android.text.format.DateFormat df = new android.text.format.DateFormat();
 

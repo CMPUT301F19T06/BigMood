@@ -11,6 +11,7 @@
         android:id="@+id/friendName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="24dp"
         android:padding="2dp"
         android:text="FRIEND"
@@ -21,8 +22,8 @@
 
     <ImageView
         android:id="@+id/pfpImage"
-        android:layout_width="77dp"
-        android:layout_height="77dp"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
         android:layout_gravity="center"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="1dp"
@@ -31,7 +32,7 @@
         android:foregroundGravity="center"
         android:maxWidth="20sp"
         android:maxHeight="20sp"
-        android:scaleType="centerInside"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -39,7 +40,7 @@
 
     <Button
         android:id="@+id/acceptButton"
-        android:layout_width="77dp"
+        android:layout_width="78dp"
         android:layout_height="77dp"
         android:text="Accept"
         app:layout_constraintEnd_toStartOf="@+id/rejectButton"
@@ -47,7 +48,7 @@
 
     <Button
         android:id="@+id/rejectButton"
-        android:layout_width="77dp"
+        android:layout_width="78dp"
         android:layout_height="77dp"
         android:text="Reject"
         app:layout_constraintEnd_toEndOf="parent"

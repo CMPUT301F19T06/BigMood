@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#EDC0E1</color>
-    <color name="colorPrimaryDark">#A87B9C</color>
+    <color name="colorPrimary">#FAE4AD</color>
+    <color name="colorPrimaryDark">#F3B61F</color>
     <color name="colorAccent">#F7BC4F</color>
     <color name="Angry">#FF0101</color>
     <color name="Anticipation">#FE6301</color>
     <color name="Happy">#FFFF00</color>
     <color name="Trust">#AEFF00</color>
-    <color name="Scared">#1AFF00</color>
-    <color name="Surprised">#00B7FF</color>
-    <color name="Sad">#0054FF</color>
-    <color name="Disgusted">#CC00FF</color>
-    <color name="Touched">#EDC0E1</color>
-    <color name="Bored">#FE6301</color>
+    <color name="Scared">#E23669FF</color>
+    <color name="Surprised">#6FE984</color>
+    <color name="Sad">#6A7AE2</color>
+    <color name="Disgusted">#87C000</color>
+    <color name="Touched">#F09600</color>
+    <color name="Bored">#789B78</color>
     <color name="Base">#FFFFFF</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name= "colorBlue">#2400EE</color>
