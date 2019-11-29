@@ -29,7 +29,7 @@ public class FriendsTest {
     @Test
     public void checkUsername() throws InterruptedException {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
+        intent.putExtra("USER_ID", "404");
         rule.launchActivity(intent);
         solo.waitForActivity("FriendsActivity", 500);
         solo.assertCurrentActivity("Wrong Activity", FriendsActivity.class);
@@ -39,7 +39,7 @@ public class FriendsTest {
     @Test
     public void checkOpenNavDrawer(){
         Intent intent = new Intent(getApplicationContext(), UserViewActivity.class);
-        intent.putExtra("USER_ID", "109926616595958819946");
+        intent.putExtra("USER_ID", "404");
         intent.putExtra("TARGET_ID", "109926616595958819946");
         rule.launchActivity(intent);
         solo.assertCurrentActivity("Wrong Activity", UserViewActivity.class);
